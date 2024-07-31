@@ -38,143 +38,151 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.stroke
 
-@Composable
-fun ReceiptScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .imePadding()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
+
+class ReceiptScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize()
+                .imePadding()
+                .statusBarsPadding()
+                .navigationBarsPadding()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0XFFDBFFF6), RoundedCornerShape(10.dp))
-                    .padding(16.dp),
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0XFFDBFFF6), RoundedCornerShape(10.dp))
+                        .padding(16.dp),
                 ) {
-                    Text(
-                        text = "Tokone Dewe",
-                        style = MaterialTheme.typography.h6,
-                        color = dark,
-                        modifier = Modifier
-                            .padding(8.dp),
-                    )
-                    Text(text = "Jln. Semarang", color = dark)
-                    Text(text = "Telp: +623937873893 / Fax: -", color = dark)
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(text = "NO: POS20240707133202", color = dark)
-                    Text(text = "06 Mei 2024, 08:56 WIB", color = dark)
-                }
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(text = "Tunai", color = dark)
-                    Text(text = "Kasir Abdul", color = dark)
-                }
-            }
-            Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
-            Text(
-                text = "Produk:",
-                style = MaterialTheme.typography.h6,
-                color = dark,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            ItemRow(
-                name = "SUSU KAMBING KETAWA 250GR",
-                qty = "x1",
-                price = "50.100",
-                discount = "0"
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            ItemRow(
-                name = "MINYAK GORENG CAP GIMBUL 2L",
-                qty = "x1",
-                price = "60.000",
-                discount = "0"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            DashedDivider(color = dark, thickness = 1.dp)
-            Spacer(modifier = Modifier.height(16.dp))
-            TotalRow(label = "TOTAL HARGA:", amount = "Rp. 110.100")
-            TotalRow(label = "PPN:", amount = "Rp. 0")
-            TotalRow(label = "DISKON:", amount = "- Rp. 0")
-            Spacer(modifier = Modifier.height(8.dp))
-            TotalRow(label = "TOTAL TAGIHAN:", amount = "Rp. 110.100", isBold = true)
-            Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
-            TotalRow(label = "TUNAI:", amount = "Rp. 120.000")
-            TotalRow(label = "KEMBALIAN:", amount = "Rp. 9.900")
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "==TERIMA KASIH SUDAH BERBELANJA==",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                color = primary_text,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
-                textAlign = TextAlign.Center,
-                fontSize = 12.sp,
-                color = primary_text,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Column {
-            Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                IconButton(onClick = {}) {
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.Print,
-                            contentDescription = "Cetak",
-                            tint = primary
-                        )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
-                            "Cetak",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = primary,
-                            modifier = Modifier.padding(start = 6.dp)
+                            text = "Tokone Dewe",
+                            style = MaterialTheme.typography.h6,
+                            color = dark,
+                            modifier = Modifier
+                                .padding(8.dp),
                         )
+                        Text(text = "Jln. Semarang", color = dark)
+                        Text(text = "Telp: +623937873893 / Fax: -", color = dark)
                     }
                 }
-                IconButton(onClick = {}) {
-                    Row {
-                        Icon(
-                            imageVector = Icons.Outlined.CheckCircle,
-                            contentDescription = "Selesai",
-                            tint = icon
-                        )
-                        Text(
-                            "Kembali",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = icon,
-                            modifier = Modifier.padding(start = 6.dp)
-                        )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(text = "NO: POS20240707133202", color = dark)
+                        Text(text = "06 Mei 2024, 08:56 WIB", color = dark)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(text = "Tunai", color = dark)
+                        Text(text = "Kasir Abdul", color = dark)
+                    }
+                }
+                Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
+                Text(
+                    text = "Produk:",
+                    style = MaterialTheme.typography.h6,
+                    color = dark,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                ItemRow(
+                    name = "SUSU KAMBING KETAWA 250GR",
+                    qty = "x1",
+                    price = "50.100",
+                    discount = "0"
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ItemRow(
+                    name = "MINYAK GORENG CAP GIMBUL 2L",
+                    qty = "x1",
+                    price = "60.000",
+                    discount = "0"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                DashedDivider(color = dark, thickness = 1.dp)
+                Spacer(modifier = Modifier.height(16.dp))
+                TotalRow(label = "TOTAL HARGA:", amount = "Rp. 110.100")
+                TotalRow(label = "PPN:", amount = "Rp. 0")
+                TotalRow(label = "DISKON:", amount = "- Rp. 0")
+                Spacer(modifier = Modifier.height(8.dp))
+                TotalRow(label = "TOTAL TAGIHAN:", amount = "Rp. 110.100", isBold = true)
+                Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
+                TotalRow(label = "TUNAI:", amount = "Rp. 120.000")
+                TotalRow(label = "KEMBALIAN:", amount = "Rp. 9.900")
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "==TERIMA KASIH SUDAH BERBELANJA==",
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = primary_text,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    color = primary_text,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column {
+                Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    IconButton(onClick = {}) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.Print,
+                                contentDescription = "Cetak",
+                                tint = primary
+                            )
+                            Text(
+                                "Cetak",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = primary,
+                                modifier = Modifier.padding(start = 6.dp)
+                            )
+                        }
+                    }
+                    IconButton(onClick = { navigator.pop() }) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = "Selesai",
+                                tint = icon
+                            )
+                            Text(
+                                "Kembali",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = icon,
+                                modifier = Modifier.padding(start = 6.dp)
+                            )
+                        }
                     }
                 }
             }

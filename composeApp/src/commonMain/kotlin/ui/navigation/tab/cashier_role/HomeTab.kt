@@ -12,7 +12,7 @@ import org.jetbrains.compose.resources.painterResource
 object HomeTab : Tab {
     @Composable
     override fun Content() {
-        HomeScreen()
+        HomeScreen().Content()
     }
 
     override val options: TabOptions

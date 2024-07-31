@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_bell
 import mbakkasir.composeapp.generated.resources.img_jml_sales
@@ -36,107 +37,110 @@ import ui.theme.pinkLight3
 import ui.theme.secondary_text
 import ui.theme.stroke
 
-@Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.padding(16.dp).statusBarsPadding()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(resource = Res.drawable.profile),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp).clip(CircleShape)
-                    .border(width = 1.dp, color = stroke, shape = CircleShape)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text("Role", fontSize = 14.sp, color = dark)
-                Text("Penjualan", fontWeight = FontWeight.Bold, color = dark)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = stroke,
-                    shape = RoundedCornerShape(8.dp)
-                )
-            ) {
-                Image(
-                    painter = painterResource(resource = Res.drawable.ic_bell),
-                    contentDescription = null
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = cyanLight3,
-            shape = RoundedCornerShape(10.dp)
-        ) {
+
+class HomeScreen : Screen {
+    @Composable
+    override fun Content() {
+        Column(modifier = Modifier.padding(16.dp).statusBarsPadding()) {
             Row(
-                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Nominal penjualan", fontSize = 14.sp, color = secondary_text)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Text(
-                            "RP. 60.000.0000",
-                            color = dark,
-                            style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
-                }
                 Image(
-                    painterResource(resource = Res.drawable.img_nom_sales),
+                    painter = painterResource(resource = Res.drawable.profile),
                     contentDescription = null,
-                    modifier = Modifier.padding(end = 24.dp).size(68.dp)
+                    modifier = Modifier.size(48.dp).clip(CircleShape)
+                        .border(width = 1.dp, color = stroke, shape = CircleShape)
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text("Role", fontSize = 14.sp, color = dark)
+                    Text("Penjualan", fontWeight = FontWeight.Bold, color = dark)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = {  },
+                    modifier = Modifier.border(
+                        width = 1.dp,
+                        color = stroke,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                ) {
+                    Image(
+                        painter = painterResource(resource = Res.drawable.ic_bell),
+                        contentDescription = null
+                    )
+                }
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = pinkLight3,
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Spacer(modifier = Modifier.height(24.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = cyanLight3,
+                shape = RoundedCornerShape(10.dp)
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
+                Row(
+                    modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Jumlah penjualan", fontSize = 14.sp, color = secondary_text)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.Bottom
+                    Column(
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text(
-                            "1.000",
-                            color = dark,
-                            style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            "items",
-                            color = dark,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 6.dp)
-                        )
+                        Text("Nominal penjualan", fontSize = 14.sp, color = secondary_text)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Text(
+                                "RP. 60.000.0000",
+                                color = dark,
+                                style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
                     }
+                    Image(
+                        painterResource(resource = Res.drawable.img_nom_sales),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 24.dp).size(68.dp)
+                    )
                 }
-                Image(
-                    painterResource(resource = Res.drawable.img_jml_sales),
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 24.dp).size(68.dp)
-                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = pinkLight3,
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Jumlah penjualan", fontSize = 14.sp, color = secondary_text)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Text(
+                                "1.000",
+                                color = dark,
+                                style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                "items",
+                                color = dark,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 6.dp)
+                            )
+                        }
+                    }
+                    Image(
+                        painterResource(resource = Res.drawable.img_jml_sales),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 24.dp).size(68.dp)
+                    )
+                }
             }
         }
     }

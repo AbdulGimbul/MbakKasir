@@ -15,28 +15,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
 import ui.component.DefaultTextField
 import ui.theme.dark
 
-@Composable
-fun SalesScreen() {
-    var search by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Text(
-            "Penjualan",
-            style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold),
-            color = dark,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        DefaultTextField(
-            value = search,
-            onValueChange = { search = it },
-            placehoder = "Search ...",
-            leadingIcon = Icons.Default.Search,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
-        )
+
+class SalesScreen : Screen {
+    @Composable
+    override fun Content() {
+        var search by remember { mutableStateOf("") }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Penjualan",
+                style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold),
+                color = dark,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+            DefaultTextField(
+                value = search,
+                onValueChange = { search = it },
+                placehoder = "Search ...",
+                leadingIcon = Icons.Default.Search,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+            )
+        }
     }
 }

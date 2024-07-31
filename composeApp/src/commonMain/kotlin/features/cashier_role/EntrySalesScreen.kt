@@ -31,103 +31,118 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import ui.component.EntrySalesItem
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.red
 import ui.theme.secondary_text
 
-@Composable
-fun EntrySalesScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .imePadding()
-            .statusBarsPadding()
-    ) {
+class EntrySalesScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
+            modifier = Modifier.fillMaxSize()
+                .imePadding()
+                .statusBarsPadding()
         ) {
-            Text(
-                "Entry:",
-                style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
-                color = dark
-            )
-            Text(
-                "Penjualan",
-                style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
-                color = secondary_text,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Scan Barcode", color = secondary_text) },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            Icons.Default.QrCodeScanner,
-                            contentDescription = "Back",
-                            tint = primary
-                        )
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
+            ) {
+                Text(
+                    "Entry:",
+                    style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
+                    color = dark
+                )
+                Text(
+                    "Penjualan",
+                    style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
+                    color = secondary_text,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                )
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    label = { Text("Scan Barcode", color = secondary_text) },
+                    trailingIcon = {
+                        IconButton(onClick = { }) {
+                            Icon(
+                                Icons.Default.QrCodeScanner,
+                                contentDescription = "Back",
+                                tint = primary
+                            )
+                        }
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                LazyColumn {
+                    items(10) {
+                        EntrySalesItem(modifier = Modifier.padding(vertical = 4.dp))
                     }
-                },
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            LazyColumn {
-                items(10) {
-                    EntrySalesItem(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
-        }
-        Column {
-            Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+            Column {
+                Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
                 ) {
-                    Text(
-                        "Total Tagihan", color = dark,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Rp. 613.000", color = dark,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OutlinedButton(
-                        onClick = {},
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = red
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier.weight(1f)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Batal", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(4.dp))
+                        Text(
+                            "Total Tagihan", color = dark,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "Rp. 613.000", color = dark,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = primary,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier.weight(1f)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Pembayaran", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(4.dp))
+                        OutlinedButton(
+                            onClick = { navigator.pop() },
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = red
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                "Batal",
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Button(
+                            onClick = { navigator.push(PaymentScreen()) },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = primary,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                "Pembayaran",
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
                     }
                 }
             }

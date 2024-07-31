@@ -1,3 +1,6 @@
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -11,18 +14,22 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import features.admin_role.product.StockOpnamePreviewScreen
-import features.admin_role.product.StockOpnameScreen
+import features.auth.LoginScreen
 import features.cashier_role.EntrySalesScreen
-import features.cashier_role.PaymentScreen
-import features.cashier_role.ReceiptScreen
+import features.cashier_role.HomeScreen
+import features.cashier_role.SalesScreen
 import mbakkasir.composeapp.generated.resources.Poppins_Regular
 import mbakkasir.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.Font
@@ -37,38 +44,57 @@ import ui.theme.primary
 @Composable
 @Preview
 fun App() {
-    MaterialTheme(
+    var salesNavigator by remember { mutableStateOf<Navigator?>(null) }
+    var isVisible by remember { mutableStateOf(true) }
+    var isFabVisible by remember { mutableStateOf(true) }
+
+        MaterialTheme(
 //        typography = Typography(
 //            defaultFontFamily = PoppinsFontFamily()
 //        )
-    ) {
-//        TabNavigator(HomeTab) {
-//            val currentTab = LocalTabNavigator.current.current
-//            Scaffold(
-//                bottomBar = {
-//                    BottomNavigation(
-//                        backgroundColor = Color.White
-//                    ) {
-//                        TabNavigationItem(HomeTab)
-//                        TabNavigationItem(SalesTab)
-//                        TabNavigationItem(HistoryTab)
-//                        TabNavigationItem(ProfileTab)
-//                    }
-//                },
-//                floatingActionButton = {
-//                    if (currentTab == SalesTab) {
-//                        FloatingActionButton(onClick = { /* TODO: Add action */ }) {
-//                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-//                        }
-//                    }
-//                },
-//                modifier = Modifier.statusBarsPadding().navigationBarsPadding()
-//            ) {
-//                CurrentTab()
-//            }
-//        }
-        StockOpnamePreviewScreen()
-    }
+        ) {
+            TabNavigator(HomeTab) {
+                val currentTab = LocalTabNavigator.current.current
+                Scaffold(
+                    bottomBar = {
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            enter = slideInVertically { height -> height },
+                            exit = slideOutVertically { height -> height }
+                        ) {
+                            BottomNavigation(
+                                backgroundColor = Color.White
+                            ) {
+                                TabNavigationItem(HomeTab)
+                                TabNavigationItem(SalesTab { navigator ->
+                                    salesNavigator = navigator
+                                    isVisible = navigator.lastItem::class in setOf(
+                                        HomeScreen::class,
+                                        SalesScreen::class,
+                                        LoginScreen::class
+                                    )
+                                    isFabVisible = navigator.lastItem::class == SalesScreen::class
+                                })
+                                TabNavigationItem(HistoryTab)
+                                TabNavigationItem(ProfileTab)
+                            }
+                        }
+                    },
+                    floatingActionButton = {
+                        if (currentTab == SalesTab && isFabVisible) {
+                            FloatingActionButton(onClick = {
+                                salesNavigator?.push(EntrySalesScreen())
+                            }) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                            }
+                        }
+                    },
+                    modifier = Modifier.statusBarsPadding().navigationBarsPadding()
+                ) {
+                    CurrentTab()
+                }
+            }
+        }
 }
 
 @Composable
