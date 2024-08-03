@@ -48,6 +48,8 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.transitions)
+
+            implementation(libs.kmp.date.time.picker)
         }
     }
 }

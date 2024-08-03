@@ -38,17 +38,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
+import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
+import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import ui.component.DefaultTextField
 import ui.component.DisabledTextField
 import ui.theme.dark
+import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.red
+import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
 
@@ -57,10 +64,44 @@ class PaymentScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-
         var uangDiterima by remember { mutableStateOf("") }
         val radioOptions = listOf("Tunai", "Kredit")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+        var showDatePicker by remember { mutableStateOf(false) }
+        var selectedDate by remember { mutableStateOf("") }
+
+        if (showDatePicker) {
+            WheelDatePickerView(
+                modifier = Modifier.padding(top = 18.dp, bottom = 10.dp).fillMaxWidth(),
+                showDatePicker = showDatePicker,
+                title = "Pilih Tanggal",
+                titleStyle = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = dark,
+                ),
+                doneLabelStyle = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primary,
+                ),
+                selectorProperties = WheelPickerDefaults.selectorProperties(
+                    borderColor = secondary,
+                ),
+                dateTextColor = primary,
+                rowCount = 5,
+                height = 170.dp,
+                onDoneClick = { date ->
+                    val formattedDate = "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
+                    selectedDate = formattedDate
+                    showDatePicker = false
+                },
+                dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
+                onDismiss = {
+                    showDatePicker = false
+                }
+            )
+        }
 
         Column(
             modifier = Modifier.fillMaxSize()
@@ -116,11 +157,12 @@ class PaymentScreen : Screen {
                         color = dark,
                     )
                     OutlinedTextField(
-                        value = "",
+                        value = selectedDate,
                         onValueChange = {},
                         label = { Text("dd/mm/yyyy", color = secondary_text) },
+                        enabled = false,
                         trailingIcon = {
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = { showDatePicker = true }) {
                                 Icon(
                                     Icons.Default.DateRange,
                                     contentDescription = "Date",
@@ -130,15 +172,11 @@ class PaymentScreen : Screen {
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = stroke,
-                            unfocusedBorderColor = stroke,
-                            cursorColor = primary_text,
-                            focusedLabelColor = primary,
-                            unfocusedLabelColor = secondary_text,
-                            placeholderColor = secondary_text,
                             disabledPlaceholderColor = secondary_text,
-                            leadingIconColor = secondary_text,
-                            trailingIconColor = secondary_text,
+                            disabledBorderColor = stroke,
+                            disabledLabelColor = secondary_text,
+                            disabledTextColor = primary_text,
+                            disabledTrailingIconColor = icon,
                         ),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                     )

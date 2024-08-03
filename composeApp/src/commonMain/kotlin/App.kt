@@ -85,7 +85,7 @@ fun App() {
                             FloatingActionButton(onClick = {
                                 salesNavigator?.push(EntrySalesScreen())
                             }) {
-                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
                             }
                         }
                     },
