@@ -50,6 +50,8 @@ kotlin {
             implementation(libs.voyager.transitions)
 
             implementation(libs.kmp.date.time.picker)
+            implementation(libs.compottie)
+            implementation(libs.compottie.dot)
         }
     }
 }

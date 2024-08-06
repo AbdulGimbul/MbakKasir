@@ -11,6 +11,7 @@ androidx-espresso-core = "3.5.1"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.1.5"
 compose-plugin = "1.6.11"
+compottieDot = "2.0.0-beta02"
 junit = "4.13.2"
 kmpDateTimePicker = "1.0.3"
 kotlin = "2.0.0"
@@ -20,6 +21,8 @@ sdp-ssp = "1.0.4"
 voyager = "1.1.0-beta02"
 
 [libraries]
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottieDot" }
+compottie-dot = { module = "io.github.alexzhirkevich:compottie-dot", version.ref = "compottieDot" }
 kmp-date-time-picker = { module = "network.chaintech:kmp-date-time-picker", version.ref = "kmpDateTimePicker" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
