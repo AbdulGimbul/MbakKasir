@@ -14,17 +14,17 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,12 +55,12 @@ class EntrySalesScreen : Screen {
             ) {
                 Text(
                     "Entry:",
-                    style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                     color = dark
                 )
                 Text(
                     "Penjualan",
-                    style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                     color = secondary_text,
                     modifier = Modifier.padding(bottom = 32.dp)
                 )
@@ -131,7 +131,7 @@ class EntrySalesScreen : Screen {
                         Button(
                             onClick = { navigator.push(PaymentScreen()) },
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = primary,
+                                containerColor = primary,
                                 contentColor = Color.White
                             ),
                             shape = RoundedCornerShape(10.dp),

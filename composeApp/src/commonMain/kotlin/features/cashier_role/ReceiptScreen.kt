@@ -18,14 +18,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +76,7 @@ class ReceiptScreen : Screen {
                     ) {
                         Text(
                             text = "Tokone Dewe",
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.titleSmall,
                             color = dark,
                             modifier = Modifier
                                 .padding(8.dp),
@@ -101,7 +102,7 @@ class ReceiptScreen : Screen {
                 Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
                 Text(
                     text = "Produk:",
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleSmall,
                     color = dark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -147,42 +148,48 @@ class ReceiptScreen : Screen {
                 )
             }
             Column {
-                Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    IconButton(onClick = {}) {
-                        Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        IconButton(onClick = {}) {
                             Icon(
                                 imageVector = Icons.Default.Print,
                                 contentDescription = "Cetak",
                                 tint = primary
                             )
-                            Text(
-                                "Cetak",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = primary,
-                                modifier = Modifier.padding(start = 6.dp)
-                            )
                         }
+                        Text(
+                            "Cetak",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            color = primary,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
                     }
-                    IconButton(onClick = { navigator.pop() }) {
-                        Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        IconButton(onClick = { navigator.pop() }) {
                             Icon(
                                 imageVector = Icons.Outlined.CheckCircle,
                                 contentDescription = "Selesai",
                                 tint = icon
                             )
-                            Text(
-                                "Kembali",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = icon,
-                                modifier = Modifier.padding(start = 6.dp)
-                            )
                         }
+                        Text(
+                            "Kembali",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            color = icon,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
                     }
                 }
             }

@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -7,6 +6,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -16,7 +16,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,31 +27,43 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
             implementation(compose.materialIconsExtended)
-            implementation(libs.compose.navigation)
 
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.transitions)
 
             implementation(libs.kmp.date.time.picker)
+
             implementation(libs.compottie)
             implementation(libs.compottie.dot)
+
+            api(libs.androidx.datastore)
+            api(libs.androidx.datastore.preferences)
+            implementation(libs.compose.navigation)
+            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.compose)
+
+            implementation(libs.bundles.ktor)
+        }
+        nativeMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

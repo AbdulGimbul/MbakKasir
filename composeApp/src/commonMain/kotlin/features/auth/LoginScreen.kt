@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +39,7 @@ class LoginScreen : Screen {
             Spacer(modifier = Modifier.height(40.dp))
             Text(
                 text = "Welcome",
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.displaySmall,
                 color = dark,
             )
             Row(
@@ -47,11 +47,11 @@ class LoginScreen : Screen {
             ) {
                 Text(
                     text = "Back",
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.displaySmall,
                     modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
                     color = dark
                 )
-                Text(text = "\uD83D\uDC4B\uD83C\uDFFC", style = MaterialTheme.typography.h4)
+                Text(text = "\uD83D\uDC4B\uD83C\uDFFC", style = MaterialTheme.typography.titleLarge)
             }
             Text(
                 "Silahkan login ke akun yang sudah ada.",

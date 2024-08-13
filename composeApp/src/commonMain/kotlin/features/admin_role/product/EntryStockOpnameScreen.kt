@@ -9,17 +9,19 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +37,7 @@ import ui.theme.dark
 import ui.theme.primary
 import ui.theme.secondary_text
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryStockOpnameScreen() {
     var barcode by remember { mutableStateOf("") }
@@ -50,8 +53,9 @@ fun EntryStockOpnameScreen() {
                         Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Back")
                     }
                 },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 modifier = Modifier.statusBarsPadding()
             )
         }
@@ -62,10 +66,10 @@ fun EntryStockOpnameScreen() {
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text("Entry:", style = MaterialTheme.typography.h4, color = dark)
+            Text("Entry:", style = MaterialTheme.typography.titleLarge, color = dark)
             Text(
                 "Stock Opname",
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.titleLarge,
                 color = secondary_text,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
@@ -88,7 +92,7 @@ fun EntryStockOpnameScreen() {
             Divider(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp))
             Text(
                 text = "Nama Barang",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleSmall,
                 color = dark,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -99,7 +103,7 @@ fun EntryStockOpnameScreen() {
             )
             Text(
                 text = "Stok",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleSmall,
                 color = dark,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -110,7 +114,7 @@ fun EntryStockOpnameScreen() {
             )
             Text(
                 text = "Stok Nyata",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleSmall,
                 color = dark,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -122,7 +126,7 @@ fun EntryStockOpnameScreen() {
             )
             Text(
                 text = "Keterangan",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleSmall,
                 color = dark,
                 modifier = Modifier.padding(bottom = 8.dp)
             )

@@ -10,18 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.PunchClock
-import androidx.compose.material.icons.filled.SyncLock
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +47,11 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row {
-                    Icon(imageVector = Icons.Default.AccessTime, contentDescription = "Lock Clock", modifier = Modifier.padding(end = 4.dp))
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = "Lock Clock",
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
                     Text(text = "2024-06-30 17:13:00", color = primary_text)
                 }
                 Text(
@@ -77,7 +77,7 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = blue,
+                        containerColor = blue,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(24.dp),

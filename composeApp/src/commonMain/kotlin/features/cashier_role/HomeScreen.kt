@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +60,7 @@ class HomeScreen : Screen {
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
-                    onClick = {  },
+                    onClick = { },
                     modifier = Modifier.border(
                         width = 1.dp,
                         color = stroke,
@@ -75,7 +76,9 @@ class HomeScreen : Screen {
             Spacer(modifier = Modifier.height(24.dp))
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = cyanLight3,
+                colors = CardDefaults.cardColors(
+                    containerColor = cyanLight3
+                ),
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Row(
@@ -93,7 +96,7 @@ class HomeScreen : Screen {
                             Text(
                                 "RP. 60.000.0000",
                                 color = dark,
-                                style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
                     }
@@ -107,7 +110,9 @@ class HomeScreen : Screen {
             Spacer(modifier = Modifier.height(16.dp))
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = pinkLight3,
+                colors = CardDefaults.cardColors(
+                    containerColor = pinkLight3
+                ),
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Row(
@@ -125,7 +130,7 @@ class HomeScreen : Screen {
                             Text(
                                 "1.000",
                                 color = dark,
-                                style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Text(
                                 "items",

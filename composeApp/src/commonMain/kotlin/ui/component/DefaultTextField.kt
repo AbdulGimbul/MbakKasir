@@ -2,15 +2,14 @@ package ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,16 +48,18 @@ fun DefaultTextField(
         } else null,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = stroke,
             unfocusedBorderColor = stroke,
             cursorColor = primary_text,
             focusedLabelColor = primary,
             unfocusedLabelColor = secondary_text,
-            placeholderColor = secondary_text,
-            disabledPlaceholderColor = secondary_text,
-            leadingIconColor = secondary_text,
-            trailingIconColor = secondary_text,
+            focusedPlaceholderColor = secondary_text,
+            unfocusedPlaceholderColor = secondary_text,
+            focusedLeadingIconColor = secondary_text,
+            unfocusedLeadingIconColor = secondary_text,
+            focusedTrailingIconColor = secondary_text,
+            unfocusedTrailingIconColor = secondary_text,
         ),
         leadingIcon = if (leadingIcon != null) {
             {

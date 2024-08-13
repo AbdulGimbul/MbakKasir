@@ -17,19 +17,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -115,13 +115,13 @@ class PaymentScreen : Screen {
             ) {
                 Text(
                     "Pembayaran",
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.titleLarge,
                     color = dark,
                     modifier = Modifier.padding(bottom = 32.dp)
                 )
                 Text(
                     text = "Jenis Pembayaran",
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleSmall,
                     color = dark,
                 )
                 Row(
@@ -153,7 +153,7 @@ class PaymentScreen : Screen {
                 if (selectedOption == "Kredit") {
                     Text(
                         text = "Jatuh Tempo",
-                        style = MaterialTheme.typography.h6,
+                        style = MaterialTheme.typography.titleSmall,
                         color = dark,
                     )
                     OutlinedTextField(
@@ -171,7 +171,7 @@ class PaymentScreen : Screen {
                             }
                         },
                         shape = RoundedCornerShape(10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                        colors = OutlinedTextFieldDefaults.colors(
                             disabledPlaceholderColor = secondary_text,
                             disabledBorderColor = stroke,
                             disabledLabelColor = secondary_text,
@@ -183,7 +183,7 @@ class PaymentScreen : Screen {
                 }
                 Text(
                     text = "Uang Diterima",
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleSmall,
                     color = dark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -195,7 +195,7 @@ class PaymentScreen : Screen {
                 )
                 Text(
                     text = "Kembalian",
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleSmall,
                     color = dark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -206,7 +206,7 @@ class PaymentScreen : Screen {
                 )
             }
             Column {
-                Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(16.dp)
                 ) {
@@ -226,7 +226,7 @@ class PaymentScreen : Screen {
                         Text("Diskon: ")
                         Text("Rp. 1.000")
                     }
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().width(1.dp).padding(vertical = 10.dp)
                     )
                     Row(
@@ -268,7 +268,7 @@ class PaymentScreen : Screen {
                         Button(
                             onClick = { navigator.push(ReceiptScreen()) },
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = primary,
+                                containerColor = primary,
                                 contentColor = Color.White
                             ),
                             shape = RoundedCornerShape(10.dp),

@@ -4,15 +4,17 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -38,69 +42,74 @@ import ui.navigation.tab.cashier_role.HistoryTab
 import ui.navigation.tab.cashier_role.HomeTab
 import ui.navigation.tab.cashier_role.ProfileTab
 import ui.navigation.tab.cashier_role.SalesTab
+import ui.theme.PoppinsTypography
 import ui.theme.icon
 import ui.theme.primary
 
 @Composable
 @Preview
-fun App() {
+fun App(prefs: DataStore<Preferences>) {
     var salesNavigator by remember { mutableStateOf<Navigator?>(null) }
     var isVisible by remember { mutableStateOf(true) }
     var isFabVisible by remember { mutableStateOf(true) }
 
-        MaterialTheme(
-//        typography = Typography(
-//            defaultFontFamily = PoppinsFontFamily()
-//        )
-        ) {
-            TabNavigator(HomeTab) {
-                val currentTab = LocalTabNavigator.current.current
-                Scaffold(
-                    bottomBar = {
-                        AnimatedVisibility(
-                            visible = isVisible,
-                            enter = slideInVertically { height -> height },
-                            exit = slideOutVertically { height -> height }
+    MaterialTheme(
+        typography = PoppinsTypography(),
+    ) {
+        TabNavigator(HomeTab) {
+            val currentTab = LocalTabNavigator.current.current
+            Scaffold(
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = isVisible,
+                        enter = slideInVertically { height -> height },
+                        exit = slideOutVertically { height -> height }
+                    ) {
+                        BottomAppBar(
+                            containerColor = Color.White
                         ) {
-                            BottomNavigation(
-                                backgroundColor = Color.White
-                            ) {
-                                TabNavigationItem(HomeTab)
-                                TabNavigationItem(SalesTab { navigator ->
-                                    salesNavigator = navigator
-                                    isVisible = navigator.lastItem::class in setOf(
-                                        HomeScreen::class,
-                                        SalesScreen::class,
-                                        LoginScreen::class
-                                    )
-                                    isFabVisible = navigator.lastItem::class == SalesScreen::class
-                                })
-                                TabNavigationItem(HistoryTab)
-                                TabNavigationItem(ProfileTab)
-                            }
+                            TabNavigationItem(HomeTab)
+                            TabNavigationItem(SalesTab { navigator ->
+                                salesNavigator = navigator
+                                isVisible = navigator.lastItem::class in setOf(
+                                    HomeScreen::class,
+                                    SalesScreen::class,
+                                    LoginScreen::class
+                                )
+                                isFabVisible = navigator.lastItem::class == SalesScreen::class
+                            })
+                            TabNavigationItem(HistoryTab)
+                            TabNavigationItem(ProfileTab)
                         }
-                    },
-                    floatingActionButton = {
-                        if (currentTab == SalesTab && isFabVisible) {
-                            FloatingActionButton(onClick = {
-                                salesNavigator?.push(EntrySalesScreen())
-                            }) {
-                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
-                            }
+                    }
+                },
+                floatingActionButton = {
+                    if (currentTab == SalesTab && isFabVisible) {
+                        FloatingActionButton(
+                            onClick = { salesNavigator?.push(EntrySalesScreen()) },
+                            shape = CircleShape,
+                            containerColor = primary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add",
+                                tint = Color.White
+                            )
                         }
-                    },
-                    modifier = Modifier.statusBarsPadding().navigationBarsPadding()
-                ) {
-                    CurrentTab()
-                }
+                    }
+                },
+                modifier = Modifier.statusBarsPadding().navigationBarsPadding()
+            ) {
+                CurrentTab()
             }
         }
+    }
 }
 
 @Composable
 private fun RowScope.TabNavigationItem(tab: Tab) {
     val tabNavigator = LocalTabNavigator.current
-    BottomNavigationItem(
+    NavigationBarItem(
         selected = tabNavigator.current == tab,
         onClick = { tabNavigator.current = tab },
         label = {
@@ -117,7 +126,12 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
                 )
             }
         },
-        selectedContentColor = primary,
-        unselectedContentColor = icon
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = primary,
+            selectedTextColor = primary,
+            indicatorColor = Color.White,
+            unselectedIconColor = icon,
+            unselectedTextColor = icon
+        )
     )
 }
