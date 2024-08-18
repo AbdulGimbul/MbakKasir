@@ -4,15 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import features.auth.LoginScreen
+import features.auth.data.AuthRepository
+import features.auth.presentation.LoginScreen
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_user
+import network.createHttpClient
 import org.jetbrains.compose.resources.painterResource
 
 object ProfileTab : Tab {
     @Composable
     override fun Content() {
-        LoginScreen().Content()
+//        LoginScreen().Content()
     }
 
     override val options: TabOptions
@@ -22,7 +24,7 @@ object ProfileTab : Tab {
             return remember {
                 TabOptions(
                     index = 0u,
-                    title = "Home",
+                    title = "Profil",
                     icon = icon
                 )
             }

@@ -5,18 +5,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.remember
 import createDataStore
+import features.auth.data.AuthRepositoryImpl
+import io.ktor.client.engine.okhttp.OkHttp
+import network.createHttpClient
+import storage.SessionHandler
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val sessionHandler = SessionHandler(dataStore = createDataStore(applicationContext))
+        val authRepository = AuthRepositoryImpl(
+            httpClient = createHttpClient(
+                sessionHandler = sessionHandler,
+                engine = OkHttp.create()
+            )
+        )
+
         setContent {
             App(
-                prefs = remember {
-                    createDataStore(applicationContext)
-                }
+                sessionHandler = sessionHandler,
+                authRepository = authRepository
             )
         }
     }

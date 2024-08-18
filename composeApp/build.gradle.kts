@@ -48,6 +48,13 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.transitions)
+            implementation(libs.voyager.screen.model)
+            implementation(libs.voyager.koin)
+            implementation(libs.koin.core)
+
+            implementation(libs.mongodb.realm)
+            implementation(libs.kotlin.coroutines)
+            implementation(libs.stately.common)
 
             implementation(libs.kmp.date.time.picker)
 

@@ -34,6 +34,7 @@ fun DefaultTextField(
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
     minLines: Int = 1,
+    singleLine: Boolean = true,
     placehoder: String? = null,
 ) {
     var passwordVisibility by remember { mutableStateOf(isPassword) }
@@ -81,6 +82,7 @@ fun DefaultTextField(
         } else null,
         visualTransformation = if (isPassword && passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
         minLines = minLines,
+        singleLine = singleLine,
         placeholder = if (placehoder != null) {
             {
                 Text(text = placehoder, color = secondary_text)

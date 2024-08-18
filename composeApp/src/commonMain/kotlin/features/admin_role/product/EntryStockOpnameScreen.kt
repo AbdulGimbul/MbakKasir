@@ -135,6 +135,7 @@ fun EntryStockOpnameScreen() {
                 onValueChange = { keterangan = it },
                 placehoder = "Input Keterangan",
                 minLines = 2,
+                singleLine = false,
                 modifier = Modifier.fillMaxWidth(),
             )
             DefaultButton(
