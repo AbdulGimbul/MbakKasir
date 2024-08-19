@@ -1,5 +1,6 @@
 package features.auth.presentation
 
+import ContentWithMessageBar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import kotlinx.coroutines.launch
 import network.NetworkError
 import network.onError
 import network.onSuccess
+import rememberMessageBarState
 import storage.SessionHandler
 import ui.component.DefaultButton
 import ui.component.DefaultTextField
@@ -48,89 +50,95 @@ class LoginScreen(
 
     @Composable
     override fun Content() {
+//        val authRepository: AuthRepository = getKoin().get()
+
         val navigator = LocalNavigator.currentOrThrow
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-
-        var isLoading by remember {
-            mutableStateOf(false)
-        }
-        var errorMessage by remember {
-            mutableStateOf<NetworkError?>(null)
-        }
-
+        var isLoading by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf<NetworkError?>(null) }
         val scope = rememberCoroutineScope()
+        val state = rememberMessageBarState()
 
-        if (isLoading) {
-            EnhancedLoading()
-        } else {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp).statusBarsPadding(),
-            ) {
-                Spacer(modifier = Modifier.height(40.dp))
-                Text(
-                    text = "Welcome",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = dark,
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+        ContentWithMessageBar(
+            messageBarState = state, errorMaxLines = 2, showCopyButton = false,
+            visibilityDuration = 5000L,
+            modifier = Modifier.statusBarsPadding()
+        ) {
+            if (isLoading) {
+                EnhancedLoading()
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp),
                 ) {
+                    Spacer(modifier = Modifier.height(40.dp))
                     Text(
-                        text = "Back",
+                        text = "Welcome",
                         style = MaterialTheme.typography.displaySmall,
-                        modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
-                        color = dark
+                        color = dark,
                     )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Back",
+                            style = MaterialTheme.typography.displaySmall,
+                            modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
+                            color = dark
+                        )
+                        Text(
+                            text = "\uD83D\uDC4B\uD83C\uDFFC",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     Text(
-                        text = "\uD83D\uDC4B\uD83C\uDFFC",
-                        style = MaterialTheme.typography.titleLarge
+                        "Silahkan login ke akun yang sudah ada.",
+                        modifier = Modifier.padding(bottom = 24.dp),
+                        color = secondary_text
+                    )
+                    DefaultTextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        leadingIcon = Icons.Outlined.AccountCircle,
+                        label = "Username"
+                    )
+                    DefaultTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        leadingIcon = Icons.Outlined.Lock,
+                        label = "Password",
+                        isPassword = true
+                    )
+                    DefaultButton(
+                        text = "Login",
+                        onClick = {
+                            scope.launch {
+                                isLoading = true
+                                errorMessage = null
+
+                                authRepository.login(LoginRequest(username, password))
+                                    .onSuccess {
+                                        if (it.code == "200") {
+                                            sessionHandler.setUserToken(it.token)
+                                            navigator.push(CashierScreen())
+                                        }
+                                    }
+                                    .onError {
+                                        errorMessage = it
+                                        if (errorMessage == NetworkError.UNAUTHORIZED) {
+                                            state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
+                                        }
+                                    }
+
+                                isLoading = false
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
                     )
                 }
-                Text(
-                    "Silahkan login ke akun yang sudah ada.",
-                    modifier = Modifier.padding(bottom = 24.dp),
-                    color = secondary_text
-                )
-                DefaultTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    leadingIcon = Icons.Outlined.AccountCircle,
-                    label = "Username"
-                )
-                DefaultTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    leadingIcon = Icons.Outlined.Lock,
-                    label = "Password",
-                    isPassword = true
-                )
-                DefaultButton(
-                    text = "Login",
-                    onClick = {
-                        scope.launch {
-                            isLoading = true
-                            errorMessage = null
-
-                            authRepository.login(LoginRequest(username, password))
-                                .onSuccess {
-                                    if (it.code == "200") {
-                                        sessionHandler.setUserToken(it.token)
-                                        navigator.push(CashierScreen())
-                                    }
-                                }
-                                .onError {
-                                    errorMessage = it
-                                }
-
-                            isLoading = false
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
-                )
             }
         }
     }

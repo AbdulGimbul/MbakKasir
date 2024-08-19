@@ -35,6 +35,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -50,7 +52,8 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.screen.model)
             implementation(libs.voyager.koin)
-            implementation(libs.koin.core)
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
 
             implementation(libs.mongodb.realm)
             implementation(libs.kotlin.coroutines)
@@ -68,6 +71,8 @@ kotlin {
             implementation(libs.androidx.paging.compose)
 
             implementation(libs.bundles.ktor)
+
+            implementation(libs.messagebarkmp)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
