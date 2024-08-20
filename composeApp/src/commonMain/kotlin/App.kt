@@ -4,16 +4,17 @@ import cafe.adriel.voyager.navigator.Navigator
 import di.initKoin
 import features.auth.data.AuthRepository
 import features.auth.presentation.LoginScreen
+import features.auth.presentation.LoginViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import storage.SessionHandler
 import ui.theme.PoppinsTypography
 
 @Composable
 @Preview
-fun App(sessionHandler: SessionHandler, authRepository: AuthRepository) {
+fun App(viewModel: LoginViewModel) {
     MaterialTheme(
         typography = PoppinsTypography(),
     ) {
-        Navigator(LoginScreen(sessionHandler = sessionHandler, authRepository = authRepository))
+        Navigator(LoginScreen(viewModel))
     }
 }

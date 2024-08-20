@@ -1,6 +1,7 @@
 import androidx.compose.ui.window.ComposeUIViewController
 import di.initKoin
 import features.auth.data.AuthRepositoryImpl
+import features.auth.presentation.LoginViewModel
 import io.ktor.client.engine.darwin.Darwin
 import network.createHttpClient
 import storage.SessionHandler
@@ -15,8 +16,6 @@ fun MainViewController() = ComposeUIViewController(
     val authRepository = AuthRepositoryImpl(
         httpClient = createHttpClient(sessionHandler = sessionHandler, engine = Darwin.create())
     )
-    App(
-        sessionHandler = sessionHandler,
-        authRepository = authRepository
-    )
+    val viewModel = LoginViewModel(sessionHandler, authRepository)
+    App(viewModel)
 }

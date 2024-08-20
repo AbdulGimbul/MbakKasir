@@ -17,10 +17,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,25 +29,16 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import features.auth.data.AuthRepository
-import features.auth.data.LoginRequest
 import features.cashier_role.CashierScreen
-import kotlinx.coroutines.launch
 import network.NetworkError
-import network.onError
-import network.onSuccess
 import rememberMessageBarState
-import storage.SessionHandler
 import ui.component.DefaultButton
 import ui.component.DefaultTextField
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.secondary_text
 
-class LoginScreen(
-    private val sessionHandler: SessionHandler,
-    private val authRepository: AuthRepository
-) : Screen {
+class LoginScreen(private val viewModel: LoginViewModel) : Screen {
 
     @Composable
     override fun Content() {
@@ -55,14 +47,26 @@ class LoginScreen(
         val navigator = LocalNavigator.currentOrThrow
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        var isLoading by remember { mutableStateOf(false) }
-        var errorMessage by remember { mutableStateOf<NetworkError?>(null) }
-        val scope = rememberCoroutineScope()
+        val isLoading by viewModel.isLoading.collectAsState()
+        val errorMessage by viewModel.errorMessage.collectAsState()
+        val loginSuccess by viewModel.loginSuccess.collectAsState()
         val state = rememberMessageBarState()
+
+        LaunchedEffect(loginSuccess) {
+            if (loginSuccess) {
+                navigator.push(CashierScreen())
+            }
+        }
+
+        LaunchedEffect(errorMessage) {
+            if (errorMessage == NetworkError.UNAUTHORIZED) {
+                state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
+            }
+        }
 
         ContentWithMessageBar(
             messageBarState = state, errorMaxLines = 2, showCopyButton = false,
-            visibilityDuration = 5000L,
+            visibilityDuration = 4000L,
             modifier = Modifier.statusBarsPadding()
         ) {
             if (isLoading) {
@@ -115,26 +119,7 @@ class LoginScreen(
                     DefaultButton(
                         text = "Login",
                         onClick = {
-                            scope.launch {
-                                isLoading = true
-                                errorMessage = null
-
-                                authRepository.login(LoginRequest(username, password))
-                                    .onSuccess {
-                                        if (it.code == "200") {
-                                            sessionHandler.setUserToken(it.token)
-                                            navigator.push(CashierScreen())
-                                        }
-                                    }
-                                    .onError {
-                                        errorMessage = it
-                                        if (errorMessage == NetworkError.UNAUTHORIZED) {
-                                            state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
-                                        }
-                                    }
-
-                                isLoading = false
-                            }
+                            viewModel.login(username, password)
                         },
                         modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
                     )

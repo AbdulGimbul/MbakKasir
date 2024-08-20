@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import features.auth.data.AuthRepositoryImpl
+import features.auth.presentation.LoginViewModel
 import io.ktor.client.engine.okhttp.OkHttp
 import network.createHttpClient
 import storage.SessionHandler
@@ -23,12 +24,10 @@ class MainActivity : ComponentActivity() {
                 engine = OkHttp.create()
             )
         )
+        val viewModel = LoginViewModel(sessionHandler, authRepository)
 
         setContent {
-            App(
-                sessionHandler = sessionHandler,
-                authRepository = authRepository
-            )
+            App(viewModel)
         }
     }
 }
