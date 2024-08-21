@@ -1,3 +1,5 @@
 package di
 
-//expect val platformModule: Module
+import org.koin.core.module.Module
+
+expect val platformModule: Module

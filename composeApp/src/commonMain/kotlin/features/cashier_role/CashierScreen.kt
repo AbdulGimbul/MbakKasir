@@ -41,7 +41,7 @@ import ui.navigation.tab.cashier_role.SalesTab
 import ui.theme.icon
 import ui.theme.primary
 
-class CashierScreen() : Screen{
+class CashierScreen() : Screen {
 
     @Composable
     override fun Content() {

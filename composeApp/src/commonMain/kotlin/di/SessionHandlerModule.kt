@@ -1,6 +1,8 @@
 package di
 
-//val provideSessionHandlerModule = module {
-//    single { createDataStore(get()) }
-//    single { SessionHandler(get()) }
-//}
+import org.koin.dsl.module
+import storage.SessionHandler
+
+val provideSessionHandlerModule = module {
+    single { SessionHandler(get()) }
+}

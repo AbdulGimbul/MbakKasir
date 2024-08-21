@@ -2,10 +2,7 @@ package features.auth.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.get
 import io.ktor.client.request.post
-import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
@@ -21,21 +18,22 @@ class AuthRepositoryImpl(
         val response = try {
             httpClient.post(
                 urlString = "https://dev.mbakasir.com/api/login"
-            ){
+            ) {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
-        } catch(e: UnresolvedAddressException) {
+        } catch (e: UnresolvedAddressException) {
             return NetworkResult.Error(NetworkError.NO_INTERNET)
-        } catch(e: SerializationException) {
+        } catch (e: SerializationException) {
             return NetworkResult.Error(NetworkError.SERIALIZATION)
         }
 
-        return when(response.status.value) {
+        return when (response.status.value) {
             in 200..299 -> {
                 val result = response.body<LoginApiModel>()
                 NetworkResult.Success(result)
             }
+
             401 -> NetworkResult.Error(NetworkError.UNAUTHORIZED)
             409 -> NetworkResult.Error(NetworkError.CONFLICT)
             408 -> NetworkResult.Error(NetworkError.REQUEST_TIMEOUT)

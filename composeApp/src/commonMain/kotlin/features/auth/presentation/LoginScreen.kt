@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import features.cashier_role.CashierScreen
@@ -38,11 +39,13 @@ import ui.theme.dark
 import ui.theme.primary
 import ui.theme.secondary_text
 
-class LoginScreen(private val viewModel: LoginViewModel) : Screen {
+class LoginScreen(
+//    private val viewModel: LoginViewModel
+) : Screen {
 
     @Composable
     override fun Content() {
-//        val authRepository: AuthRepository = getKoin().get()
+        val viewModel = getScreenModel<LoginViewModel>()
 
         val navigator = LocalNavigator.currentOrThrow
         var username by remember { mutableStateOf("") }

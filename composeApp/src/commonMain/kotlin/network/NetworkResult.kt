@@ -1,23 +1,23 @@
 package network
 
-sealed interface NetworkResult<out D, out E: Error> {
-    data class Success<out D>(val data: D): NetworkResult<D, Nothing>
-    data class Error<out E: network.Error>(val error: E): NetworkResult<Nothing, E>
+sealed interface NetworkResult<out D, out E : Error> {
+    data class Success<out D>(val data: D) : NetworkResult<D, Nothing>
+    data class Error<out E : network.Error>(val error: E) : NetworkResult<Nothing, E>
 }
 
-inline fun <T, E: Error, R> NetworkResult<T, E>.map(map: (T) -> R): NetworkResult<R, E> {
-    return when(this) {
+inline fun <T, E : Error, R> NetworkResult<T, E>.map(map: (T) -> R): NetworkResult<R, E> {
+    return when (this) {
         is NetworkResult.Error -> NetworkResult.Error(error)
         is NetworkResult.Success -> NetworkResult.Success(map(data))
     }
 }
 
-fun <T, E: Error> NetworkResult<T, E>.asEmptyDataResult(): EmptyResult<E> {
-    return map {  }
+fun <T, E : Error> NetworkResult<T, E>.asEmptyDataResult(): EmptyResult<E> {
+    return map { }
 }
 
-inline fun <T, E: Error> NetworkResult<T, E>.onSuccess(action: (T) -> Unit): NetworkResult<T, E> {
-    return when(this) {
+inline fun <T, E : Error> NetworkResult<T, E>.onSuccess(action: (T) -> Unit): NetworkResult<T, E> {
+    return when (this) {
         is NetworkResult.Error -> this
         is NetworkResult.Success -> {
             action(data)
@@ -25,12 +25,14 @@ inline fun <T, E: Error> NetworkResult<T, E>.onSuccess(action: (T) -> Unit): Net
         }
     }
 }
-inline fun <T, E: Error> NetworkResult<T, E>.onError(action: (E) -> Unit): NetworkResult<T, E> {
-    return when(this) {
+
+inline fun <T, E : Error> NetworkResult<T, E>.onError(action: (E) -> Unit): NetworkResult<T, E> {
+    return when (this) {
         is NetworkResult.Error -> {
             action(error)
             this
         }
+
         is NetworkResult.Success -> this
     }
 }
