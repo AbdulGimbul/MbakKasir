@@ -14,3 +14,16 @@ class Product : RealmObject {
     var harga_jual: String = ""
     var stok: String = ""
 }
+
+// Extension function to convert Product to Barang
+fun Product.toBarang(): Barang {
+    return Barang(
+        id_barang = this.id_barang.toHexString(),
+        kode_barang = this.kode_barang,
+        barcode = this.barcode,
+        nama_barang = this.nama_barang,
+        satuan = this.satuan,
+        harga_jual = this.harga_jual,
+        stok = this.stok
+    )
+}

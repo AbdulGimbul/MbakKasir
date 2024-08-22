@@ -43,4 +43,13 @@ class MongoDB {
             }
         }
     }
+
+    suspend fun getProducts(): List<Product>? {
+        return realm?.query<Product>()?.find()
+    }
+
+    fun isProductCacheAvailable(): Boolean {
+        val productCount = realm?.query<Product>()?.count() ?: 0
+        return productCount.toString().toInt() > 0
+    }
 }

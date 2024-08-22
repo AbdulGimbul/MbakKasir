@@ -9,8 +9,9 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         modules(
             platformModule,
             provideSessionHandlerModule,
-            provideRepositoryModule,
-            provideHttpClientModule
+            provideHttpClientModule,
+            provideAuthRepositoryModule,
+            provideHomeRepositoryModule
         )
     }
 }

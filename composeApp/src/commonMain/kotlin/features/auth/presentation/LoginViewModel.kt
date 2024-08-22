@@ -4,6 +4,8 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.auth.data.AuthRepository
 import features.auth.data.LoginRequest
+import features.cashier_role.home.data.HomeRepository
+import features.cashier_role.home.data.MongoDB
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,7 +16,7 @@ import storage.SessionHandler
 
 class LoginViewModel(
     private val sessionHandler: SessionHandler,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ScreenModel {
 
     private val _isLoading = MutableStateFlow(false)
@@ -36,11 +38,11 @@ class LoginViewModel(
                     if (it.code == "200") {
                         sessionHandler.setUserToken(it.token)
                         _loginSuccess.value = true
+
                     }
                 }
                 .onError {
                     _errorMessage.value = it
-                    println("cek error : $it")
                 }
 
             _isLoading.value = false
