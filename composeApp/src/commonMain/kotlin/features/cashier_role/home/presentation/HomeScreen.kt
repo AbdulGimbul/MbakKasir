@@ -1,4 +1,4 @@
-package features.cashier_role
+package features.cashier_role.home.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border

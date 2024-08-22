@@ -40,6 +40,7 @@ class LoginViewModel(
                 }
                 .onError {
                     _errorMessage.value = it
+                    println("cek error : $it")
                 }
 
             _isLoading.value = false

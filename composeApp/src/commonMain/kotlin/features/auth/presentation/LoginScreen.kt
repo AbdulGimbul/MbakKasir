@@ -39,9 +39,7 @@ import ui.theme.dark
 import ui.theme.primary
 import ui.theme.secondary_text
 
-class LoginScreen(
-//    private val viewModel: LoginViewModel
-) : Screen {
+class LoginScreen : Screen {
 
     @Composable
     override fun Content() {
