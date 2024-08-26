@@ -55,7 +55,7 @@ class LoginScreen : Screen {
 
         LaunchedEffect(loginSuccess) {
             if (loginSuccess) {
-                navigator.push(CashierScreen())
+                navigator.replaceAll(CashierScreen())
             }
         }
 
@@ -65,65 +65,67 @@ class LoginScreen : Screen {
             }
         }
 
-        ContentWithMessageBar(
-            messageBarState = state, errorMaxLines = 2, showCopyButton = false,
-            visibilityDuration = 4000L,
-            modifier = Modifier.statusBarsPadding()
-        ) {
-            if (isLoading) {
-                EnhancedLoading()
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Spacer(modifier = Modifier.height(40.dp))
-                    Text(
-                        text = "Welcome",
-                        style = MaterialTheme.typography.displaySmall,
-                        color = dark,
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+        if (!loginSuccess) {
+            ContentWithMessageBar(
+                messageBarState = state, errorMaxLines = 2, showCopyButton = false,
+                visibilityDuration = 4000L,
+                modifier = Modifier.statusBarsPadding()
+            ) {
+                if (isLoading) {
+                    EnhancedLoading()
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp),
                     ) {
+                        Spacer(modifier = Modifier.height(40.dp))
                         Text(
-                            text = "Back",
+                            text = "Welcome",
                             style = MaterialTheme.typography.displaySmall,
-                            modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
-                            color = dark
+                            color = dark,
                         )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Back",
+                                style = MaterialTheme.typography.displaySmall,
+                                modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
+                                color = dark
+                            )
+                            Text(
+                                text = "\uD83D\uDC4B\uD83C\uDFFC",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
                         Text(
-                            text = "\uD83D\uDC4B\uD83C\uDFFC",
-                            style = MaterialTheme.typography.titleLarge
+                            "Silahkan login ke akun yang sudah ada.",
+                            modifier = Modifier.padding(bottom = 24.dp),
+                            color = secondary_text
+                        )
+                        DefaultTextField(
+                            value = username,
+                            onValueChange = { username = it },
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            label = "Username"
+                        )
+                        DefaultTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            leadingIcon = Icons.Outlined.Lock,
+                            label = "Password",
+                            isPassword = true
+                        )
+                        DefaultButton(
+                            text = "Login",
+                            onClick = {
+                                viewModel.login(username, password)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
                         )
                     }
-                    Text(
-                        "Silahkan login ke akun yang sudah ada.",
-                        modifier = Modifier.padding(bottom = 24.dp),
-                        color = secondary_text
-                    )
-                    DefaultTextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        leadingIcon = Icons.Outlined.AccountCircle,
-                        label = "Username"
-                    )
-                    DefaultTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        leadingIcon = Icons.Outlined.Lock,
-                        label = "Password",
-                        isPassword = true
-                    )
-                    DefaultButton(
-                        text = "Login",
-                        onClick = {
-                            viewModel.login(username, password)
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
-                    )
                 }
             }
         }
