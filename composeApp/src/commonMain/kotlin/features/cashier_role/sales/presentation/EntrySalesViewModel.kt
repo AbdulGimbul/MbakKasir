@@ -3,6 +3,8 @@ package features.cashier_role.sales.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.cashier_role.home.domain.Product
+import features.cashier_role.home.domain.ProductTrans
+import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -19,8 +21,8 @@ class EntrySalesViewModel(
 
     private val _searchResults = MutableStateFlow<List<Product>>(emptyList())
     val searchResults: StateFlow<List<Product>> = _searchResults
-    private val _scannedProducts = MutableStateFlow<List<Product>>(emptyList())
-    val scannedProducts: StateFlow<List<Product>> = _scannedProducts
+    private val _scannedProducts = MutableStateFlow<List<ProductTrans>>(emptyList())
+    val scannedProducts: StateFlow<List<ProductTrans>> = _scannedProducts
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage
     private val _startBarCodeScan = MutableStateFlow(false)
@@ -37,7 +39,8 @@ class EntrySalesViewModel(
                 product?.let { newProduct ->
                     val currentList = _scannedProducts.value.toMutableList()
                     if (!currentList.any { it.barcode == product.barcode }) {
-                        currentList.add(newProduct)
+                        val productTrans = newProduct.toProductTrans()
+                        currentList.add(productTrans)
                         _scannedProducts.value = currentList
                     } else {
                         _errorMessage.value = "Barang sudah ditambahkan."
@@ -54,6 +57,30 @@ class EntrySalesViewModel(
             salesRepository.searchProductsByBarcode(query).collectLatest { products ->
                 _searchResults.value = products
             }
+        }
+    }
+
+    fun increaseProductQty(product: ProductTrans) {
+        val currentList = _scannedProducts.value.toMutableList()
+        val updatedProduct = product.copy(
+            qty_jual = product.qty_jual + 1,
+            subtotal = (product.qty_jual + 1) * product.harga_item
+        )
+        currentList[currentList.indexOf(product)] = updatedProduct
+        _scannedProducts.value = currentList
+    }
+
+    fun decreaseProductQty(product: ProductTrans) {
+        if (product.qty_jual > 1) {
+            val currentList = _scannedProducts.value.toMutableList()
+            val updatedProduct = product.copy(
+                qty_jual = product.qty_jual - 1,
+                subtotal = (product.qty_jual - 1) * product.harga_item
+            )
+            currentList[currentList.indexOf(product)] = updatedProduct
+            _scannedProducts.value = currentList
+        } else {
+            _errorMessage.value = "Minimal quantity is 1."
         }
     }
 }

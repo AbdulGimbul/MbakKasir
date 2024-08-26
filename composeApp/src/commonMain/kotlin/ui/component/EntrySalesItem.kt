@@ -27,13 +27,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import features.cashier_role.home.domain.Product
+import features.cashier_role.home.domain.ProductTrans
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
 
 @Composable
-fun EntrySalesItem(product: Product, modifier: Modifier = Modifier) {
+fun EntrySalesItem(
+    product: ProductTrans,
+    onIncreaseQty: (ProductTrans) -> Unit,
+    onDecreaseQty: (ProductTrans) -> Unit,
+    modifier: Modifier = Modifier
+) {
+
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
@@ -69,7 +75,7 @@ fun EntrySalesItem(product: Product, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Rp. ${product.harga_jual}", color = dark,
+                    "Rp. ${product.harga_item}", color = dark,
                     fontWeight = FontWeight.Bold,
                 )
                 Row(
@@ -77,7 +83,7 @@ fun EntrySalesItem(product: Product, modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     IconButton(
-                        onClick = { },
+                        onClick = { onDecreaseQty(product) },
                         modifier = Modifier.border(
                             width = 1.dp,
                             color = primary,
@@ -91,13 +97,13 @@ fun EntrySalesItem(product: Product, modifier: Modifier = Modifier) {
                         )
                     }
                     Text(
-                        "1",
+                        product.qty_jual.toString(),
                         fontWeight = FontWeight.Bold,
                         color = dark,
                         textAlign = TextAlign.Center
                     )
                     IconButton(
-                        onClick = {},
+                        onClick = { onIncreaseQty(product) },
                         modifier = Modifier.background(
                             color = primary,
                             shape = CircleShape

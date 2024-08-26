@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import features.cashier_role.ReceiptScreen
+import features.cashier_role.home.domain.ProductTrans
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
@@ -61,16 +63,29 @@ import ui.theme.secondary_text
 import ui.theme.stroke
 
 
-class PaymentScreen : Screen {
+data class PaymentScreen(val products: List<ProductTrans>) : Screen {
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         var uangDiterima by remember { mutableStateOf("") }
         val radioOptions = listOf("Tunai", "Kredit")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-
         var showDatePicker by remember { mutableStateOf(false) }
         var selectedDate by remember { mutableStateOf("") }
+        var totalHarga by remember { mutableStateOf(0) }
+        var diskon by remember { mutableStateOf(0) }
+        var subtotal by remember { mutableStateOf(0) }
+        var kembalian by remember { mutableStateOf(0) }
+
+
+        LaunchedEffect(products) {
+            products.forEach { productTrans ->
+                totalHarga = products.sumOf { it.subtotal }
+                diskon = products.sumOf { it.diskon }
+                subtotal = totalHarga - diskon
+            }
+        }
 
         if (showDatePicker) {
             WheelDatePickerView(
@@ -190,7 +205,10 @@ class PaymentScreen : Screen {
                 )
                 DefaultTextField(
                     value = uangDiterima,
-                    onValueChange = { uangDiterima = it },
+                    onValueChange = {
+                        uangDiterima = it
+                        kembalian = (uangDiterima.toIntOrNull() ?: 0) - subtotal
+                    },
                     placehoder = "Nominal Uang",
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                 )
@@ -201,7 +219,7 @@ class PaymentScreen : Screen {
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 DisabledTextField(
-                    value = "",
+                    value = kembalian.toString(),
                     onValueChange = {},
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                 )
@@ -217,7 +235,7 @@ class PaymentScreen : Screen {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Total Harga: ")
-                        Text("Rp. 100.000")
+                        Text("Rp. $totalHarga")
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -225,7 +243,7 @@ class PaymentScreen : Screen {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Diskon: ")
-                        Text("Rp. 1.000")
+                        Text("Rp. $diskon")
                     }
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().width(1.dp).padding(vertical = 10.dp)
@@ -240,7 +258,7 @@ class PaymentScreen : Screen {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Rp. 613.000", color = dark,
+                            "Rp. $subtotal", color = dark,
                             fontWeight = FontWeight.Bold
                         )
                     }

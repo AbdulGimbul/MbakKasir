@@ -4,8 +4,6 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.MongoDB
-import features.cashier_role.home.domain.Barang
-import features.cashier_role.home.domain.toBarang
 import features.cashier_role.home.domain.toProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,8 +19,6 @@ class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val mongoDB: MongoDB
 ) : ScreenModel {
-    private val _productsResponse = MutableStateFlow<List<Barang>>(emptyList())
-    val productsResponse: StateFlow<List<Barang>> = _productsResponse
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -42,17 +38,9 @@ class HomeViewModel(
             try {
                 val isCacheAvailable = mongoDB.isProductCacheAvailable().first()
 
-                if (isCacheAvailable) {
-                    // Collect the products from the Flow
-                    mongoDB.getProducts().collect { products ->
-                        _productsResponse.value = products.map { it.toBarang() }
-                    }
-                } else {
-                    // Fetch products from network
+                if (!isCacheAvailable) {
                     val result = homeRepository.getProducts()
                     result.onSuccess { data ->
-                        _productsResponse.value = data.barangs
-                        // Cache the fetched products
                         data.barangs.forEach { barang ->
                             mongoDB.addProduct(barang.toProduct())
                         }

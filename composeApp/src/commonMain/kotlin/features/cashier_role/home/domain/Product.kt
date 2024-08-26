@@ -14,14 +14,25 @@ class Product : RealmObject {
     var stok: String = ""
 }
 
-fun Product.toBarang(): Barang {
-    return Barang(
+fun Product.toProductTrans(): ProductTrans {
+    return ProductTrans(
         id_barang = this.id_barang,
+        harga_item = this.harga_jual.toInt(),
         kode_barang = this.kode_barang,
         barcode = this.barcode,
-        nama_barang = this.nama_barang,
-        satuan = this.satuan,
-        harga_jual = this.harga_jual,
-        stok = this.stok
+        nama_barang = this.nama_barang
     )
 }
+
+data class ProductTrans(
+    val id_barang: String,
+    val kode_barang: String,
+    val barcode: String,
+    val nama_barang: String,
+    val id_karyawan: String = "",
+    val jenis: String = "Produk",
+    val qty_jual: Int = 1,
+    val harga_item: Int = 0,
+    val diskon: Int = 0,
+    val subtotal: Int = qty_jual * harga_item - diskon,
+)

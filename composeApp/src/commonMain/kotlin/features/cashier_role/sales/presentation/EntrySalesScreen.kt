@@ -77,6 +77,11 @@ class EntrySalesScreen : Screen {
         val expanded = allowExpanded && searchResults.isNotEmpty()
         var flashlightOn by remember { mutableStateOf(false) }
         var launchGallery by remember { mutableStateOf(false) }
+        var totalTagihan by remember { mutableStateOf(0) }
+
+        LaunchedEffect(scannedProducts) {
+            totalTagihan = scannedProducts.sumOf { it.harga_item * it.qty_jual }
+        }
 
         LaunchedEffect(errorMessage) {
             if (errorMessage.isNotEmpty()) {
@@ -177,7 +182,12 @@ class EntrySalesScreen : Screen {
                     Spacer(modifier = Modifier.height(16.dp))
                     LazyColumn {
                         items(scannedProducts) { product ->
-                            EntrySalesItem(product, modifier = Modifier.padding(vertical = 4.dp))
+                            EntrySalesItem(
+                                product = product,
+                                onIncreaseQty = { viewModel.increaseProductQty(it) },
+                                onDecreaseQty = { viewModel.decreaseProductQty(it) },
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
                         }
                     }
                 }
@@ -220,7 +230,7 @@ class EntrySalesScreen : Screen {
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Rp. 613.000", color = dark,
+                                "Rp. $totalTagihan", color = dark,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -247,7 +257,7 @@ class EntrySalesScreen : Screen {
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Button(
-                                onClick = { navigator.push(PaymentScreen()) },
+                                onClick = { navigator.push(PaymentScreen(scannedProducts)) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = primary,
                                     contentColor = Color.White
