@@ -1,5 +1,6 @@
 package features.cashier_role.home.domain
 
+import features.cashier_role.sales.domain.ProductTrans
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
@@ -23,16 +24,3 @@ fun Product.toProductTrans(): ProductTrans {
         nama_barang = this.nama_barang
     )
 }
-
-data class ProductTrans(
-    val id_barang: String,
-    val kode_barang: String,
-    val barcode: String,
-    val nama_barang: String,
-    val id_karyawan: String = "",
-    val jenis: String = "Produk",
-    val qty_jual: Int = 1,
-    val harga_item: Int = 0,
-    val diskon: Int = 0,
-    val subtotal: Int = qty_jual * harga_item - diskon,
-)

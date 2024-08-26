@@ -1,4 +1,4 @@
-package features.auth.data
+package features.auth.domain
 
 import kotlinx.serialization.Serializable
 

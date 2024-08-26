@@ -1,4 +1,4 @@
-package features.cashier_role.sales.presentation
+package features.cashier_role.sales.presentation.sales
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

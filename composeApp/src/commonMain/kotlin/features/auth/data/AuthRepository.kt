@@ -1,6 +1,7 @@
 package features.auth.data
 
 import features.auth.domain.LoginApiModel
+import features.auth.domain.LoginRequest
 import features.auth.domain.SalesHistoryApiModel
 import network.NetworkError
 import network.NetworkResult

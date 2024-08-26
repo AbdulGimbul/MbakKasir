@@ -1,4 +1,4 @@
-package features.cashier_role
+package features.cashier_role.sales.presentation.payment
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +41,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import features.auth.domain.Toko
+import features.cashier_role.sales.domain.CreatePaymentApiModel
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
@@ -49,7 +50,12 @@ import ui.theme.primary_text
 import ui.theme.stroke
 
 
-class ReceiptScreen : Screen {
+data class ReceiptScreen(
+    val receipt: CreatePaymentApiModel,
+    val totalHarga: Int,
+    val totalTagihan: Int,
+    val toko: Toko?
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -61,7 +67,10 @@ class ReceiptScreen : Screen {
                 .navigationBarsPadding()
         ) {
             Column(
-                modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Box(
@@ -75,14 +84,17 @@ class ReceiptScreen : Screen {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Tokone Dewe",
-                            style = MaterialTheme.typography.titleSmall,
+                            text = toko?.nama.toString(),
+                            style = MaterialTheme.typography.titleLarge,
                             color = dark,
-                            modifier = Modifier
-                                .padding(8.dp),
+                            modifier = Modifier.padding(8.dp),
                         )
-                        Text(text = "Jln. Semarang", color = dark)
-                        Text(text = "Telp: +623937873893 / Fax: -", color = dark)
+                        Text(
+                            text = toko?.alamat.toString(),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(text = toko?.telp.toString(), color = dark)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -91,45 +103,44 @@ class ReceiptScreen : Screen {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text(text = "NO: POS20240707133202", color = dark)
-                        Text(text = "06 Mei 2024, 08:56 WIB", color = dark)
+                        Text(text = receipt.data.invoice, color = dark)
+                        Text(text = receipt.data.tanggal, color = dark)
                     }
                     Column(horizontalAlignment = Alignment.End) {
-                        Text(text = "Tunai", color = dark)
-                        Text(text = "Kasir Abdul", color = dark)
+                        Text(text = receipt.data.method, color = dark)
+                        Text(text = receipt.data.kasir, color = dark)
                     }
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
                 Text(
                     text = "Produk:",
                     style = MaterialTheme.typography.titleSmall,
                     color = dark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                ItemRow(
-                    name = "SUSU KAMBING KETAWA 250GR",
-                    qty = "x1",
-                    price = "50.100",
-                    discount = "0"
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                ItemRow(
-                    name = "MINYAK GORENG CAP GIMBUL 2L",
-                    qty = "x1",
-                    price = "60.000",
-                    discount = "0"
-                )
+                receipt.data.detil.forEach {
+                    ItemRow(
+                        name = it.nama_barang,
+                        qty = it.qty_jual,
+                        price = "Rp. ${it.subtotal}",
+                        discount = "Rp. ${it.diskon}"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 DashedDivider(color = dark, thickness = 1.dp)
                 Spacer(modifier = Modifier.height(16.dp))
-                TotalRow(label = "TOTAL HARGA:", amount = "Rp. 110.100")
-                TotalRow(label = "PPN:", amount = "Rp. 0")
-                TotalRow(label = "DISKON:", amount = "- Rp. 0")
+                TotalRow(label = "TOTAL HARGA:", amount = "Rp. $totalHarga")
+                TotalRow(label = "PPN:", amount = "Rp. ${receipt.data.ppn}")
+                TotalRow(
+                    label = "DISKON:",
+                    amount = "- Rp. ${receipt.data.detil.sumOf { it.diskon.toIntOrNull() ?: 0 }}"
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                TotalRow(label = "TOTAL TAGIHAN:", amount = "Rp. 110.100", isBold = true)
-                Divider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
-                TotalRow(label = "TUNAI:", amount = "Rp. 120.000")
-                TotalRow(label = "KEMBALIAN:", amount = "Rp. 9.900")
+                TotalRow(label = "TOTAL TAGIHAN:", amount = "Rp. $totalTagihan", isBold = true)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
+                TotalRow(label = "TUNAI:", amount = "Rp. ${receipt.data.bayar}")
+                TotalRow(label = "KEMBALIAN:", amount = "Rp. ${receipt.data.kembali}")
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "==TERIMA KASIH SUDAH BERBELANJA==",

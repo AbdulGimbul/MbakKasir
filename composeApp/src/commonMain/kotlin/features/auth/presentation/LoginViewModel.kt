@@ -3,7 +3,7 @@ package features.auth.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.auth.data.AuthRepository
-import features.auth.data.LoginRequest
+import features.auth.domain.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +37,15 @@ class LoginViewModel(
             authRepository.login(LoginRequest(username, password))
                 .onSuccess {
                     if (it.code == "200") {
-                        sessionHandler.setUserToken(it.token)
+                        sessionHandler.setUserData(
+                            username = it.user.username,
+                            nama = it.user.nama,
+                            role = it.user.role,
+                            namaToko = it.toko.nama,
+                            alamat = it.toko.alamat,
+                            telp = it.toko.telp,
+                            token = it.token
+                        )
                         _loginSuccess.value = true
 
                     }

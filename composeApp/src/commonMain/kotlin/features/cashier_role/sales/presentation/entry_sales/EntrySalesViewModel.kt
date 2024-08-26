@@ -1,11 +1,11 @@
-package features.cashier_role.sales.presentation
+package features.cashier_role.sales.presentation.entry_sales
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.cashier_role.home.domain.Product
-import features.cashier_role.home.domain.ProductTrans
 import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
+import features.cashier_role.sales.domain.ProductTrans
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job

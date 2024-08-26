@@ -2,6 +2,7 @@ package ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -36,6 +37,7 @@ fun DefaultTextField(
     minLines: Int = 1,
     singleLine: Boolean = true,
     placehoder: String? = null,
+    keyboardOptions: KeyboardOptions? = null
 ) {
     var passwordVisibility by remember { mutableStateOf(isPassword) }
 
@@ -87,6 +89,7 @@ fun DefaultTextField(
             {
                 Text(text = placehoder, color = secondary_text)
             }
-        } else null
+        } else null,
+        keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
     )
 }

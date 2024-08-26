@@ -1,4 +1,4 @@
-package features.cashier_role.sales.presentation
+package features.cashier_role.sales.presentation.entry_sales
 
 import ContentWithMessageBar
 import androidx.compose.foundation.BorderStroke
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Button
@@ -46,11 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import features.cashier_role.sales.presentation.payment.PaymentScreen
 import qrscanner.QrScanner
 import rememberMessageBarState
 import ui.component.EntrySalesItem
@@ -85,7 +89,7 @@ class EntrySalesScreen : Screen {
 
         LaunchedEffect(errorMessage) {
             if (errorMessage.isNotEmpty()) {
-                state.addError(Exception("Ups, barang sudah ditambahkan ya!"))
+                state.addError(Exception("Ups, barang ini sudah ditambahkan ya!"))
             }
         }
 
@@ -140,6 +144,11 @@ class EntrySalesScreen : Screen {
                                     )
                                 }
                             },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            singleLine = true,
                             shape = RoundedCornerShape(10.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = stroke,

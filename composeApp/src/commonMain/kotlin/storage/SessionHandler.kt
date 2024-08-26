@@ -13,19 +13,27 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         const val DATA = "Data"
-        private const val UserId = "UserId"
         private const val USERNAME = "Username"
         private const val TOKEN = "Token"
-        val name = stringPreferencesKey(USERNAME)
-        val userToken = stringPreferencesKey(TOKEN)
-        val userId = stringPreferencesKey(UserId)
+        private const val NAME = "Nama"
+        private const val ROLE = "Role"
+        private const val STORE_NAME = "Nama Toko"
+        private const val ADDRESS = "Alamat"
+        private const val TELP = "Telp"
+        val _username = stringPreferencesKey(USERNAME)
+        val _name = stringPreferencesKey(NAME)
+        val _role = stringPreferencesKey(ROLE)
+        val _storeName = stringPreferencesKey(STORE_NAME)
+        val _address = stringPreferencesKey(ADDRESS)
+        val _telp = stringPreferencesKey(TELP)
+        val _userToken = stringPreferencesKey(TOKEN)
     }
 
     fun getUsername(): Flow<String> {
         return dataStore.data.catch {
             emit(emptyPreferences())
         }.map { pref ->
-            pref[name] ?: ""
+            pref[_username] ?: ""
         }
     }
 
@@ -33,29 +41,51 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.catch {
             emit(emptyPreferences())
         }.map { pref ->
-            pref[userToken] ?: ""
+            pref[_userToken] ?: ""
         }
     }
 
-    fun getUserId(): Flow<String> {
+    fun getStoreName(): Flow<String> {
         return dataStore.data.catch {
             emit(emptyPreferences())
         }.map { pref ->
-            pref[userId] ?: ""
+            pref[_storeName] ?: ""
         }
     }
 
-    suspend fun setUserToken(token: String) {
-        dataStore.edit { pref ->
-            pref[userToken] = token
+    fun getAddress(): Flow<String> {
+        return dataStore.data.catch {
+            emit(emptyPreferences())
+        }.map { pref ->
+            pref[_address] ?: ""
         }
     }
 
-    suspend fun setUserData(username: String, token: String, idUser: String) {
+    fun getTelp(): Flow<String> {
+        return dataStore.data.catch {
+            emit(emptyPreferences())
+        }.map { pref ->
+            pref[_telp] ?: ""
+        }
+    }
+
+    suspend fun setUserData(
+        username: String,
+        nama: String,
+        role: String,
+        namaToko: String,
+        alamat: String,
+        telp: String,
+        token: String
+    ) {
         dataStore.edit { pref ->
-            pref[name] = username
-            pref[userToken] = token
-            pref[userId] = idUser
+            pref[_username] = username
+            pref[_name] = nama
+            pref[_role] = role
+            pref[_storeName] = namaToko
+            pref[_address] = alamat
+            pref[_telp] = telp
+            pref[_userToken] = token
         }
     }
 
