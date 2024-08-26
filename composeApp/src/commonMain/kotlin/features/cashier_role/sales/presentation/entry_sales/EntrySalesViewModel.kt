@@ -71,16 +71,16 @@ class EntrySalesViewModel(
     }
 
     fun decreaseProductQty(product: ProductTrans) {
+        val currentList = _scannedProducts.value.toMutableList()
         if (product.qty_jual > 1) {
-            val currentList = _scannedProducts.value.toMutableList()
             val updatedProduct = product.copy(
                 qty_jual = product.qty_jual - 1,
                 subtotal = (product.qty_jual - 1) * product.harga_item
             )
             currentList[currentList.indexOf(product)] = updatedProduct
-            _scannedProducts.value = currentList
         } else {
-            _errorMessage.value = "Minimal quantity is 1."
+            currentList.remove(product)
         }
+        _scannedProducts.value = currentList
     }
 }

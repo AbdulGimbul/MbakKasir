@@ -55,6 +55,7 @@ import features.auth.presentation.EnhancedLoading
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.ProductTrans
 import features.cashier_role.sales.domain.toDetailPayload
+import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
 import network.NetworkError
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
@@ -82,8 +83,8 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
         val paymentResponse by viewModel.paymentResponse.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
         val storeInfo by viewModel.store.collectAsState()
-        var uangDiterima by remember { mutableStateOf("") }
-        val radioOptions = listOf("Cash", "Kredit")
+        var uangDiterima by remember { mutableStateOf(0.toString()) }
+        val radioOptions = listOf("Tunai", "Kredit")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
         var showDatePicker by remember { mutableStateOf(false) }
         var selectedDate by remember { mutableStateOf("") }
@@ -109,8 +110,8 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
 
         LaunchedEffect(paymentResponse) {
             if (paymentResponse?.message == "Insert Succesful") {
+                navigator.popUntil { it is EntrySalesScreen }
                 navigator.replace(ReceiptScreen(paymentResponse!!, totalHarga, subtotal, storeInfo))
-                state.addSuccess("Pembayaran berhasil!")
             }
         }
 
@@ -294,11 +295,17 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Button(
                                     onClick = {
+                                        if (uangDiterima.isEmpty()) {
+                                            state.addError(Exception("Hei, uang diterima tidak boleh kosong!"))
+                                            return@Button
+                                        }
+                                        val method =
+                                            if (selectedOption == "Tunai") "Cash" else "Kredit"
                                         viewModel.createPayment(
                                             CreatePaymentRequest(
                                                 kembali = kembalian.toString(),
                                                 bayar = uangDiterima,
-                                                metode = selectedOption,
+                                                metode = method,
                                                 kasir = "3",
                                                 cus = "1",
                                                 nominal_ppn = "0",
