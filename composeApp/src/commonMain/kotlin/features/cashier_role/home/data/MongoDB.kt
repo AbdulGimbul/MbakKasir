@@ -4,6 +4,10 @@ import features.cashier_role.home.domain.Product
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class MongoDB {
     private var realm: Realm? = null
@@ -31,25 +35,39 @@ class MongoDB {
 
     suspend fun deleteProduct(product: Product) {
         realm?.write {
-            try {
-                val queriedProduct = query<Product>(query = "id_barang == $0", product.id_barang)
-                    .first()
-                    .find()
-                queriedProduct?.let { currentProduct ->
-                    delete(currentProduct)
-                }
-            } catch (e: Exception) {
-                println(e)
+            val productToDelete: Product? =
+                query<Product>("id_barang == $0", product.id_barang).first().find()
+            if (productToDelete != null) {
+                delete(productToDelete)
             }
         }
     }
 
-    suspend fun getProducts(): List<Product>? {
-        return realm?.query<Product>()?.find()
+    fun getProducts(): Flow<List<Product>> {
+        return realm?.query<Product>()
+            ?.asFlow()
+            ?.map { it.list.sortedByDescending { it.id_barang } }
+            ?: flow { throw IllegalArgumentException("Tidak ada barang") }
     }
 
-    fun isProductCacheAvailable(): Boolean {
-        val productCount = realm?.query<Product>()?.count() ?: 0
-        return productCount.toString().toInt() > 0
+    fun searchProductsByBarcode(query: String): Flow<List<Product>> {
+        return realm?.query<Product>("barcode CONTAINS[c] $0", query)
+            ?.asFlow()
+            ?.map { data -> data.list.sortedByDescending { it.barcode } }
+            ?: flow { throw IllegalArgumentException("Tidak ada barang") }
+    }
+
+    fun getProductByBarcode(barcode: String): Flow<Product?> {
+        return realm?.query<Product>("barcode == $0", barcode)
+            ?.first()
+            ?.asFlow()
+            ?.map { it.obj }
+            ?: flow { throw IllegalArgumentException("Tidak ada barang") }
+    }
+
+    fun isProductCacheAvailable(): Flow<Boolean> {
+        return realm?.query<Product>()?.asFlow()?.map { results ->
+            results.list.isNotEmpty()
+        } ?: flowOf(false)
     }
 }

@@ -2,11 +2,10 @@ package features.cashier_role.home.domain
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
 
 class Product : RealmObject {
     @PrimaryKey
-    var id_barang: ObjectId = ObjectId()
+    var id_barang: String = ""
     var kode_barang: String = ""
     var barcode: String = ""
     var nama_barang: String = ""
@@ -15,10 +14,9 @@ class Product : RealmObject {
     var stok: String = ""
 }
 
-// Extension function to convert Product to Barang
 fun Product.toBarang(): Barang {
     return Barang(
-        id_barang = this.id_barang.toHexString(),
+        id_barang = this.id_barang,
         kode_barang = this.kode_barang,
         barcode = this.barcode,
         nama_barang = this.nama_barang,

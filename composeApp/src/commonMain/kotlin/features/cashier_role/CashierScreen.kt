@@ -32,6 +32,8 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import features.auth.presentation.LoginScreen
 import features.cashier_role.home.presentation.HomeScreen
+import features.cashier_role.sales.presentation.EntrySalesScreen
+import features.cashier_role.sales.presentation.SalesScreen
 import mbakkasir.composeapp.generated.resources.Poppins_Regular
 import mbakkasir.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.Font

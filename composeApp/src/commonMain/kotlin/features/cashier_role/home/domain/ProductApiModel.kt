@@ -1,7 +1,6 @@
 package features.cashier_role.home.domain
 
 import kotlinx.serialization.Serializable
-import org.mongodb.kbson.ObjectId
 
 @Serializable
 data class ProductApiModel(
@@ -21,7 +20,7 @@ data class Barang(
 
 fun Barang.toProduct(): Product {
     return Product().apply {
-        id_barang = ObjectId(this@toProduct.id_barang.toString())
+        id_barang = this@toProduct.id_barang.toString()
         kode_barang = this@toProduct.kode_barang.toString()
         barcode = this@toProduct.barcode.toString()
         nama_barang = this@toProduct.nama_barang.toString()

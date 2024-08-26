@@ -74,6 +74,8 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             implementation(libs.messagebarkmp)
+
+            implementation(libs.qrkit)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
