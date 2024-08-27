@@ -1,4 +1,4 @@
-package dev.abdl.mbakkasir
+package dev.mbakasir.com
 
 import App
 import android.os.Bundle

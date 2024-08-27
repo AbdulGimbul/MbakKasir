@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import network.NetworkError
 import network.onError
 import network.onSuccess
@@ -40,12 +41,14 @@ class HomeViewModel(
 
                 if (!isCacheAvailable) {
                     val result = homeRepository.getProducts()
-                    result.onSuccess { data ->
-                        data.barangs.forEach { barang ->
-                            mongoDB.addProduct(barang.toProduct())
+                    withContext(Dispatchers.Main) {
+                        result.onSuccess { data ->
+                            data.barangs.forEach { barang ->
+                                mongoDB.addProduct(barang.toProduct())
+                            }
+                        }.onError { error ->
+                            _errorMessage.value = error
                         }
-                    }.onError { error ->
-                        _errorMessage.value = error
                     }
                 }
             } catch (e: Exception) {

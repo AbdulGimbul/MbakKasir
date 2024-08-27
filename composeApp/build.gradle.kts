@@ -85,7 +85,7 @@ kotlin {
 }
 
 android {
-    namespace = "dev.abdl.mbakkasir"
+    namespace = "dev.mbakasir.com"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -93,7 +93,7 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "dev.abdl.mbakkasir"
+        applicationId = "dev.mbakasir.com"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

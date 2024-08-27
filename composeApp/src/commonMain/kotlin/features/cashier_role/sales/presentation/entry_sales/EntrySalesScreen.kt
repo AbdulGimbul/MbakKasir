@@ -266,7 +266,13 @@ class EntrySalesScreen : Screen {
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Button(
-                                onClick = { navigator.push(PaymentScreen(scannedProducts)) },
+                                onClick = {
+                                    if (scannedProducts.isEmpty()) {
+                                        state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
+                                        return@Button
+                                    }
+                                    navigator.push(PaymentScreen(scannedProducts))
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = primary,
                                     contentColor = Color.White

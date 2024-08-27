@@ -1,4 +1,4 @@
-package dev.abdl.mbakkasir
+package dev.mbakasir.com
 
 import android.app.Application
 import di.initKoin
