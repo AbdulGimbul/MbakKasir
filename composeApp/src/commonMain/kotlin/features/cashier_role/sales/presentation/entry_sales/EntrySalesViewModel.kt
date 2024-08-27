@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EntrySalesViewModel(
     private val salesRepository: SalesRepository
@@ -34,16 +35,20 @@ class EntrySalesViewModel(
     }
 
     fun scanProductByBarcode(barcode: String) {
-        screenModelScope.launch(Dispatchers.Main) {
+        screenModelScope.launch(Dispatchers.IO) {
             salesRepository.getProductByBarcode(barcode).collectLatest { product ->
-                product?.let { newProduct ->
-                    val currentList = _scannedProducts.value.toMutableList()
-                    if (!currentList.any { it.barcode == product.barcode }) {
-                        val productTrans = newProduct.toProductTrans()
-                        currentList.add(productTrans)
-                        _scannedProducts.value = currentList
-                    } else {
-                        _errorMessage.value = "Barang sudah ditambahkan."
+                withContext(Dispatchers.Main) {
+                    product?.let { newProduct ->
+                        val currentList = _scannedProducts.value.toMutableList()
+                        if (!currentList.any { it.barcode == product.barcode }) {
+                            val productTrans = newProduct.toProductTrans()
+                            currentList.add(productTrans)
+                            _scannedProducts.value = currentList
+                        } else {
+                            _errorMessage.value = "Barang sudah ditambahkan."
+                        }
+                    } ?: run {
+                        _errorMessage.value = "Barang tidak ditemukan."
                     }
                 }
             }
@@ -55,7 +60,9 @@ class EntrySalesViewModel(
         searchJob = screenModelScope.launch(Dispatchers.IO) {
             delay(300)
             salesRepository.searchProductsByBarcode(query).collectLatest { products ->
-                _searchResults.value = products
+                withContext(Dispatchers.Main) {
+                    _searchResults.value = products
+                }
             }
         }
     }
