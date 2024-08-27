@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import network.NetworkError
 import network.onError
 import network.onSuccess
@@ -35,22 +36,23 @@ class PaymentViewModel(
         _errorMessage.value = null
 
         screenModelScope.launch(Dispatchers.IO) {
-            salesRepository.createPayment(paymentRequest)
-                .onSuccess {
+            val result = salesRepository.createPayment(paymentRequest)
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
                     if (it.code == "200") {
-                        _paymentResponse.value = it
                         _store.value = Toko(
                             nama = sessionHandler.getStoreName().first(),
                             alamat = sessionHandler.getAddress().first(),
                             telp = sessionHandler.getTelp().first()
                         )
+                        _paymentResponse.value = it
                     }
-                }
-                .onError {
+                }.onError {
                     _errorMessage.value = it
                 }
 
-            _isLoading.value = false
+                _isLoading.value = false
+            }
         }
     }
 }

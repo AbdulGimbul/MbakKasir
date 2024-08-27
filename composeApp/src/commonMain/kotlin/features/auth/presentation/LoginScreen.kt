@@ -55,7 +55,7 @@ class LoginScreen : Screen {
 
         LaunchedEffect(loginSuccess) {
             if (loginSuccess) {
-                navigator.replaceAll(CashierScreen())
+                navigator.replace(CashierScreen())
             }
         }
 

@@ -4,9 +4,12 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.auth.data.AuthRepository
 import features.auth.domain.LoginRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import network.NetworkError
 import network.onError
 import network.onSuccess
@@ -30,12 +33,13 @@ class LoginViewModel(
     }
 
     fun login(username: String, password: String) {
-        screenModelScope.launch {
+        screenModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             _errorMessage.value = null
 
-            authRepository.login(LoginRequest(username, password))
-                .onSuccess {
+            val result = authRepository.login(LoginRequest(username, password))
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
                     if (it.code == "200") {
                         sessionHandler.setUserData(
                             username = it.user.username,
@@ -47,14 +51,13 @@ class LoginViewModel(
                             token = it.token
                         )
                         _loginSuccess.value = true
-
                     }
-                }
-                .onError {
+                }.onError {
                     _errorMessage.value = it
                 }
 
-            _isLoading.value = false
+                _isLoading.value = false
+            }
         }
     }
 
@@ -63,15 +66,16 @@ class LoginViewModel(
             _isLoading.value = true
             _errorMessage.value = null
 
-            authRepository.isTokenValid("", "", "1", "1")
-                .onSuccess {
+            val result = authRepository.isTokenValid("", "", "1", "1")
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
                     _loginSuccess.value = true
-                }
-                .onError {
+                }.onError {
                     _errorMessage.value = it
                 }
 
-            _isLoading.value = false
+                _isLoading.value = false
+            }
         }
     }
 }

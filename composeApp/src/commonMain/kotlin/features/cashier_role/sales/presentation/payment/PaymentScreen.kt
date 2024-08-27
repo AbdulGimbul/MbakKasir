@@ -295,8 +295,8 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Button(
                                     onClick = {
-                                        if (uangDiterima.isEmpty()) {
-                                            state.addError(Exception("Hei, uang diterima tidak boleh kosong!"))
+                                        if (uangDiterima.isEmpty() || uangDiterima.toInt() < subtotal) {
+                                            state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
                                             return@Button
                                         }
                                         val method =
