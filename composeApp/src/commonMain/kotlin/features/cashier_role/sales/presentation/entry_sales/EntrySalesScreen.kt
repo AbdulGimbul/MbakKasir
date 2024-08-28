@@ -75,7 +75,7 @@ class EntrySalesScreen : Screen {
         val scannedProducts by viewModel.scannedProducts.collectAsState()
         val errorMessage by viewModel.errorMessage.collectAsState()
         val startBarCodeScan by viewModel.startBarCodeScan.collectAsState()
-        var barcode by remember { mutableStateOf("") }
+        var inputUser by remember { mutableStateOf("") }
         val state = rememberMessageBarState()
         val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
         val expanded = allowExpanded && searchResults.isNotEmpty()
@@ -126,9 +126,9 @@ class EntrySalesScreen : Screen {
                         onExpandedChange = setExpanded
                     ) {
                         OutlinedTextField(
-                            value = barcode,
+                            value = inputUser,
                             onValueChange = { newBarcode ->
-                                barcode = newBarcode
+                                inputUser = newBarcode
                                 if (newBarcode.length >= 5) {
                                     viewModel.searchProductsByBarcode(newBarcode)
                                 }
@@ -174,17 +174,26 @@ class EntrySalesScreen : Screen {
                                 .heightIn(max = 200.dp)
                         ) {
                             searchResults.forEach { product ->
-                                DropdownMenuItem(
-                                    onClick = {
-                                        barcode = product.barcode
-                                        viewModel.scanProductByBarcode(product.barcode)
-                                        setExpanded(false)
-                                    },
-                                    text = {
-                                        Text(product.barcode)
-                                    },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                )
+                                val displayText = when {
+                                    product.barcode.contains(inputUser, ignoreCase = true) -> product.barcode
+                                    product.nama_barang.contains(inputUser, ignoreCase = true) -> product.nama_barang
+                                    product.kode_barang.contains(inputUser, ignoreCase = true) -> product.kode_barang
+                                    else -> ""
+                                }
+
+                                if (displayText.isNotEmpty()) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            inputUser = product.barcode
+                                            viewModel.scanProductByBarcode(product.barcode)
+                                            setExpanded(false)
+                                        },
+                                        text = {
+                                            Text(displayText)
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
                             }
                         }
                     }
@@ -209,7 +218,7 @@ class EntrySalesScreen : Screen {
                             .clip(shape = RoundedCornerShape(size = 14.dp)),
                         flashlightOn = flashlightOn,
                         onCompletion = {
-                            barcode = it
+                            inputUser = it
                             viewModel.onScanIconClick()
                             viewModel.scanProductByBarcode(it)
                         },

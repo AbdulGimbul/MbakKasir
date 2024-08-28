@@ -51,7 +51,7 @@ class MongoDB {
     }
 
     fun searchProductsByBarcode(query: String): Flow<List<Product>> {
-        return realm?.query<Product>("barcode CONTAINS[c] $0", query)
+        return realm?.query<Product>("barcode CONTAINS[c] $0 OR nama_barang CONTAINS[c] $0 OR kode_barang CONTAINS[c] $0", query)
             ?.asFlow()
             ?.map { data -> data.list.sortedByDescending { it.barcode } }
             ?: flow { throw IllegalArgumentException("Tidak ada barang") }
