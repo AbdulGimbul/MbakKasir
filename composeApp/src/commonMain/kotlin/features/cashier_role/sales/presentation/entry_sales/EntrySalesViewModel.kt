@@ -35,20 +35,16 @@ class EntrySalesViewModel(
     }
 
     fun scanProductByBarcode(barcode: String) {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch(Dispatchers.Main) {
             salesRepository.getProductByBarcode(barcode).collectLatest { product ->
-                withContext(Dispatchers.Main) {
-                    product?.let { newProduct ->
-                        val currentList = _scannedProducts.value.toMutableList()
-                        if (!currentList.any { it.barcode == product.barcode }) {
-                            val productTrans = newProduct.toProductTrans()
-                            currentList.add(productTrans)
-                            _scannedProducts.value = currentList
-                        } else {
-                            _errorMessage.value = "Barang sudah ditambahkan."
-                        }
-                    } ?: run {
-                        _errorMessage.value = "Barang tidak ditemukan."
+                product?.let { newProduct ->
+                    val currentList = _scannedProducts.value.toMutableList()
+                    if (!currentList.any { it.barcode == product.barcode }) {
+                        val productTrans = newProduct.toProductTrans()
+                        currentList.add(productTrans)
+                        _scannedProducts.value = currentList
+                    } else {
+                        _errorMessage.value = "Ups, barang ini sudah ditambahkan ya!"
                     }
                 }
             }
@@ -89,5 +85,9 @@ class EntrySalesViewModel(
             currentList.remove(product)
         }
         _scannedProducts.value = currentList
+    }
+
+    fun resetErrorMessage() {
+        _errorMessage.value = ""
     }
 }

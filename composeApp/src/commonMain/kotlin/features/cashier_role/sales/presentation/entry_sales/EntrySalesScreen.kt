@@ -89,7 +89,8 @@ class EntrySalesScreen : Screen {
 
         LaunchedEffect(errorMessage) {
             if (errorMessage.isNotEmpty()) {
-                state.addError(Exception("Ups, barang ini sudah ditambahkan ya!"))
+                state.addError(Exception(errorMessage))
+                viewModel.resetErrorMessage()
             }
         }
 
