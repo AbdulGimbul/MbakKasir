@@ -14,7 +14,6 @@ import io.ktor.client.request.header
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import storage.SessionHandler
 
@@ -44,12 +43,7 @@ class MbakKasirHttpClientBuilder(
                     this@MbakKasirHttpClientBuilder.port?.let { port = it }
                 }
 
-                val token = runBlocking {
-                    sessionHandler.getToken().first()
-                }
-
                 header("Content-Type", "application/json")
-                header("Authorization", "Bearer $token")
             }
 
             install(ContentNegotiation) {

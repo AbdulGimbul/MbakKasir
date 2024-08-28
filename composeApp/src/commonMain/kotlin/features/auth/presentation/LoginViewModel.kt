@@ -70,8 +70,6 @@ class LoginViewModel(
             withContext(Dispatchers.Main) {
                 result.onSuccess {
                     _loginSuccess.value = true
-                }.onError {
-                    _errorMessage.value = it
                 }
 
                 _isLoading.value = false

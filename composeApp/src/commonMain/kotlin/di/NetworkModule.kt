@@ -6,7 +6,7 @@ import network.RequestHandler
 import org.koin.dsl.module
 
 val provideHttpClientModule = module {
-    factory {
+    single {
         MbakKasirHttpClientBuilder(get())
             .protocol(URLProtocol.HTTPS)
             .host("dev.mbakasir.com")

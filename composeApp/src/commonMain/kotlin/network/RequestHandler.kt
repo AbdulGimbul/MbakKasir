@@ -1,8 +1,12 @@
 package network
 
+import features.auth.domain.LoginRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import io.ktor.client.request.parameter
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.request.setBody
@@ -38,6 +42,11 @@ class RequestHandler(val httpClient: HttpClient) {
                         }
                     }
                 }.execute().body<R>()
+
+                if (body is LoginRequest) {
+                    httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().first()
+                        .clearToken()
+                }
 
                 NetworkResult.Success(response)
             } catch (e: ResponseException) {
