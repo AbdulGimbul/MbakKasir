@@ -16,7 +16,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val provideAuthRepositoryModule = module {
-    single { RequestHandler(get()) }
     single<AuthRepositoryImpl> { AuthRepositoryImpl(get()) }.bind<AuthRepository>()
     factory { LoginViewModel(sessionHandler = get(), authRepository = get()) }
 }
