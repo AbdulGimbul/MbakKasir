@@ -1,13 +1,14 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.data.MongoDB
 import features.cashier_role.home.domain.Product
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
+import features.cashier_role.sales.domain.ProductTrans
 import kotlinx.coroutines.flow.Flow
 import network.NetworkError
 import network.NetworkResult
 import network.RequestHandler
+import storage.MongoDB
 
 class SalesRepositoryImpl(
     private val mongoDB: MongoDB,
@@ -27,5 +28,24 @@ class SalesRepositoryImpl(
 
     override suspend fun searchProductsByBarcode(barcode: String): Flow<List<Product>> {
         return mongoDB.searchProductsByBarcode(barcode)
+    }
+
+    override suspend fun addProductTrans(productTrans: ProductTrans) {
+        return mongoDB.addProductTrans(productTrans)
+    }
+
+    override suspend fun updateProductTrans(
+        product: ProductTrans,
+        qty: Int,
+    ) {
+        return mongoDB.updateProductTrans(product, qty)
+    }
+
+    override suspend fun deleteProductTrans(product: ProductTrans) {
+        return mongoDB.deleteProductTrans(product)
+    }
+
+    override suspend fun getScannedProducts(): Flow<List<ProductTrans>> {
+        return mongoDB.getProductsTrans()
     }
 }

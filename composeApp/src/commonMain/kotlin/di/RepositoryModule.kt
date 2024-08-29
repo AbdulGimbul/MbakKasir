@@ -5,15 +5,14 @@ import features.auth.data.AuthRepositoryImpl
 import features.auth.presentation.LoginViewModel
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.HomeRepositoryImpl
-import features.cashier_role.home.data.MongoDB
 import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
-import network.RequestHandler
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import storage.MongoDB
 
 val provideAuthRepositoryModule = module {
     single<AuthRepositoryImpl> { AuthRepositoryImpl(get()) }.bind<AuthRepository>()

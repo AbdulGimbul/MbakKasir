@@ -96,6 +96,7 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
 
         LaunchedEffect(products) {
             products.forEach { productTrans ->
+                println("Products cek: ${productTrans.subtotal}")
                 totalHarga = products.sumOf { it.subtotal }
                 diskon = products.sumOf { it.diskon }
                 subtotal = totalHarga - diskon
@@ -110,6 +111,9 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
 
         LaunchedEffect(paymentResponse) {
             if (paymentResponse?.message == "Insert Succesful") {
+                products.forEach {
+                    viewModel.deleteScannedProducts(it)
+                }
                 navigator.popUntil { it is EntrySalesScreen }
                 navigator.replace(ReceiptScreen(paymentResponse!!, totalHarga, subtotal, storeInfo))
             }

@@ -3,7 +3,6 @@ package features.cashier_role.home.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import features.cashier_role.home.data.HomeRepository
-import features.cashier_role.home.data.MongoDB
 import features.cashier_role.home.domain.toProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -15,6 +14,7 @@ import kotlinx.coroutines.withContext
 import network.NetworkError
 import network.onError
 import network.onSuccess
+import storage.MongoDB
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,

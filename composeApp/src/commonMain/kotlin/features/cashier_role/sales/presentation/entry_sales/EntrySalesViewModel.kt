@@ -30,19 +30,23 @@ class EntrySalesViewModel(
     val startBarCodeScan: StateFlow<Boolean> = _startBarCodeScan
     private var searchJob: Job? = null
 
+    init {
+        loadScannedProducts()
+    }
+
     fun onScanIconClick() {
         _startBarCodeScan.value = !_startBarCodeScan.value
     }
 
-    fun scanProductByBarcode(barcode: String) {
+    fun scanProductByBarcode(inputBarcode: String) {
         screenModelScope.launch(Dispatchers.Main) {
-            salesRepository.getProductByBarcode(barcode).collectLatest { product ->
+            salesRepository.getProductByBarcode(inputBarcode).collectLatest { product ->
                 product?.let { newProduct ->
-                    val currentList = _scannedProducts.value.toMutableList()
+                    val currentList = _scannedProducts.value
                     if (!currentList.any { it.barcode == product.barcode }) {
-                        val productTrans = newProduct.toProductTrans()
-                        currentList.add(productTrans)
-                        _scannedProducts.value = currentList
+                        val scannedProduct = newProduct.toProductTrans()
+                        salesRepository.addProductTrans(scannedProduct)
+                        loadScannedProducts()
                     } else {
                         _errorMessage.value = "Ups, barang ini sudah ditambahkan ya!"
                     }
@@ -64,27 +68,26 @@ class EntrySalesViewModel(
     }
 
     fun increaseProductQty(product: ProductTrans) {
-        val currentList = _scannedProducts.value.toMutableList()
-        val updatedProduct = product.copy(
-            qty_jual = product.qty_jual + 1,
-            subtotal = (product.qty_jual + 1) * product.harga_item
-        )
-        currentList[currentList.indexOf(product)] = updatedProduct
-        _scannedProducts.value = currentList
+        screenModelScope.launch(Dispatchers.IO) {
+            val newQty = product.qty_jual + 1
+            salesRepository.updateProductTrans(product, newQty)
+            loadScannedProducts()
+        }
     }
 
     fun decreaseProductQty(product: ProductTrans) {
-        val currentList = _scannedProducts.value.toMutableList()
-        if (product.qty_jual > 1) {
-            val updatedProduct = product.copy(
-                qty_jual = product.qty_jual - 1,
-                subtotal = (product.qty_jual - 1) * product.harga_item
-            )
-            currentList[currentList.indexOf(product)] = updatedProduct
-        } else {
-            currentList.remove(product)
+        screenModelScope.launch(Dispatchers.IO) {
+            val newQty = product.qty_jual - 1
+            salesRepository.updateProductTrans(product, newQty)
         }
-        _scannedProducts.value = currentList
+    }
+
+    private fun loadScannedProducts() {
+        screenModelScope.launch(Dispatchers.Main) {
+            salesRepository.getScannedProducts().collectLatest { scannedProductsList ->
+                _scannedProducts.value = scannedProductsList
+            }
+        }
     }
 
     fun resetErrorMessage() {

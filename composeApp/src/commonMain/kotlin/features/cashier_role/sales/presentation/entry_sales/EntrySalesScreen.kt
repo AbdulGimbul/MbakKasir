@@ -175,9 +175,21 @@ class EntrySalesScreen : Screen {
                         ) {
                             searchResults.forEach { product ->
                                 val displayText = when {
-                                    product.barcode.contains(inputUser, ignoreCase = true) -> product.barcode
-                                    product.nama_barang.contains(inputUser, ignoreCase = true) -> product.nama_barang
-                                    product.kode_barang.contains(inputUser, ignoreCase = true) -> product.kode_barang
+                                    product.barcode.contains(
+                                        inputUser,
+                                        ignoreCase = true
+                                    ) -> product.barcode
+
+                                    product.nama_barang.contains(
+                                        inputUser,
+                                        ignoreCase = true
+                                    ) -> product.nama_barang
+
+                                    product.kode_barang.contains(
+                                        inputUser,
+                                        ignoreCase = true
+                                    ) -> product.kode_barang
+
                                     else -> ""
                                 }
 

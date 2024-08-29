@@ -16,11 +16,11 @@ class Product : RealmObject {
 }
 
 fun Product.toProductTrans(): ProductTrans {
-    return ProductTrans(
-        id_barang = this.id_barang,
-        harga_item = this.harga_jual.toInt(),
-        kode_barang = this.kode_barang,
-        barcode = this.barcode,
-        nama_barang = this.nama_barang
-    )
+    return ProductTrans().apply {
+        id_barang = this@toProductTrans.id_barang
+        harga_item = this@toProductTrans.harga_jual.toInt()
+        kode_barang = this@toProductTrans.kode_barang
+        barcode = this@toProductTrans.barcode
+        nama_barang = this@toProductTrans.nama_barang
+    }
 }
