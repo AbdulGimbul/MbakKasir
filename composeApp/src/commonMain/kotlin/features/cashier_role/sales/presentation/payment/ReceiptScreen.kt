@@ -48,6 +48,7 @@ import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.stroke
+import util.currencyFormat
 
 
 data class ReceiptScreen(
@@ -122,25 +123,32 @@ data class ReceiptScreen(
                     ItemRow(
                         name = it.nama_barang,
                         qty = it.qty_jual,
-                        price = "Rp. ${it.subtotal}",
-                        discount = "Rp. ${it.diskon}"
+                        price = currencyFormat(it.subtotal.toDouble()),
+                        discount = currencyFormat(it.diskon.toDouble())
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 DashedDivider(color = dark, thickness = 1.dp)
                 Spacer(modifier = Modifier.height(16.dp))
-                TotalRow(label = "TOTAL HARGA:", amount = "Rp. $totalHarga")
-                TotalRow(label = "PPN:", amount = "Rp. ${receipt.data.ppn}")
+                TotalRow(label = "TOTAL HARGA:", amount = currencyFormat(totalHarga.toDouble()))
+                TotalRow(label = "PPN:", amount = currencyFormat(receipt.data.ppn.toDouble()))
                 TotalRow(
                     label = "DISKON:",
-                    amount = "- Rp. ${receipt.data.detil.sumOf { it.diskon.toIntOrNull() ?: 0 }}"
+                    amount = "- ${currencyFormat(receipt.data.detil.sumOf { it.diskon.toDoubleOrNull() ?: 0.0 })}"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TotalRow(label = "TOTAL TAGIHAN:", amount = "Rp. $totalTagihan", isBold = true)
+                TotalRow(
+                    label = "TOTAL TAGIHAN:",
+                    amount = currencyFormat(totalTagihan.toDouble()),
+                    isBold = true
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
-                TotalRow(label = "TUNAI:", amount = "Rp. ${receipt.data.bayar}")
-                TotalRow(label = "KEMBALIAN:", amount = "Rp. ${receipt.data.kembali}")
+                TotalRow(label = "TUNAI:", amount = currencyFormat(receipt.data.bayar.toDouble()))
+                TotalRow(
+                    label = "KEMBALIAN:",
+                    amount = currencyFormat(receipt.data.kembali.toDouble())
+                )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "==TERIMA KASIH SUDAH BERBELANJA==",

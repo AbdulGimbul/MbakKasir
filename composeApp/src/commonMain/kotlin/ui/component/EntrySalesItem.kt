@@ -31,6 +31,7 @@ import features.cashier_role.sales.domain.ProductTrans
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
+import util.currencyFormat
 
 @Composable
 fun EntrySalesItem(
@@ -75,7 +76,7 @@ fun EntrySalesItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Rp. ${product.harga_item}", color = dark,
+                    currencyFormat(product.harga_item.toDouble()), color = dark,
                     fontWeight = FontWeight.Bold,
                 )
                 Row(

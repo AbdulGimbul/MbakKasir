@@ -71,6 +71,7 @@ import ui.theme.red
 import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
+import util.currencyFormat
 
 
 data class PaymentScreen(val products: List<ProductTrans>) : Screen {
@@ -247,7 +248,7 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text("Total Harga: ")
-                                Text("Rp. $totalHarga")
+                                Text(currencyFormat(totalHarga.toDouble()))
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -255,7 +256,7 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text("Diskon: ")
-                                Text("Rp. $diskon")
+                                Text(currencyFormat(diskon.toDouble()))
                             }
                             HorizontalDivider(
                                 modifier = Modifier.fillMaxWidth().width(1.dp)
@@ -271,7 +272,7 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "Rp. $subtotal", color = dark,
+                                    currencyFormat(subtotal.toDouble()), color = dark,
                                     fontWeight = FontWeight.Bold
                                 )
                             }

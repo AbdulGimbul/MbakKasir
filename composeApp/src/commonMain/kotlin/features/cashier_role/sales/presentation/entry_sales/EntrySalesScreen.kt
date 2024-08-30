@@ -64,6 +64,7 @@ import ui.theme.primary_text
 import ui.theme.red
 import ui.theme.secondary_text
 import ui.theme.stroke
+import util.currencyFormat
 
 class EntrySalesScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -261,7 +262,7 @@ class EntrySalesScreen : Screen {
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Rp. $totalTagihan", color = dark,
+                                currencyFormat(totalTagihan.toDouble()), color = dark,
                                 fontWeight = FontWeight.Bold
                             )
                         }
