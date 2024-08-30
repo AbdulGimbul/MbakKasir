@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "496201024111",
+    "project_id": "mbak-kasir",
+    "storage_bucket": "mbak-kasir.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496201024111:android:935c453a37d4421ac8439a",
+        "android_client_info": {
+          "package_name": "dev.mbakasir.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByhT5BQUuWnU5AMJfQd24y0H2NwNyxaH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

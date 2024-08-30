@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.realm.plugin)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 kotlin {
@@ -77,6 +79,8 @@ kotlin {
             implementation(libs.messagebarkmp)
 
             implementation(libs.qrkit)
+
+            api(libs.gitlive.firebase.kotlin.crashlytics)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
