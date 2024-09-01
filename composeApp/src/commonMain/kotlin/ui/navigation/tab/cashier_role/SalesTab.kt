@@ -12,17 +12,29 @@ import mbakkasir.composeapp.generated.resources.ic_cart
 import org.jetbrains.compose.resources.painterResource
 
 object SalesTab : Tab {
-    private var setNavigator: (Navigator) -> Unit = {}
+    var _navigator: Navigator? = null
+    val navigator: Navigator
+        get() = _navigator ?: throw RuntimeException("Navigator has not been initialized")
 
-    operator fun invoke(setNavigator: (Navigator) -> Unit): SalesTab {
-        this.setNavigator = setNavigator
+    private var updateFabVisibility: ((Boolean) -> Unit)? = null
+    private var updateBottomBarVisibility: ((Boolean) -> Unit)? = null
+
+    operator fun invoke(
+        updateFabVisibility: (Boolean) -> Unit,
+        updateBottomBarVisibility: (Boolean) -> Unit
+    ): SalesTab {
+        this.updateFabVisibility = updateFabVisibility
+        this.updateBottomBarVisibility = updateBottomBarVisibility
         return this
     }
 
     @Composable
     override fun Content() {
         Navigator(SalesScreen()) { navigator ->
-            setNavigator(navigator)
+            _navigator = navigator
+            val isSalesScreen = navigator.lastItem is SalesScreen
+            updateFabVisibility?.invoke(isSalesScreen)
+            updateBottomBarVisibility?.invoke(isSalesScreen)
             SlideTransition(navigator = navigator)
         }
     }

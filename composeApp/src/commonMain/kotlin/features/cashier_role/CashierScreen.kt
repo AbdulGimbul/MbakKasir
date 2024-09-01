@@ -25,15 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import features.auth.presentation.LoginScreen
-import features.cashier_role.home.presentation.HomeScreen
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
-import features.cashier_role.sales.presentation.sales.SalesScreen
 import mbakkasir.composeapp.generated.resources.Poppins_Regular
 import mbakkasir.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.Font
@@ -48,16 +44,21 @@ class CashierScreen() : Screen {
 
     @Composable
     override fun Content() {
-        var salesNavigator by remember { mutableStateOf<Navigator?>(null) }
-        var isVisible by remember { mutableStateOf(true) }
         var isFabVisible by remember { mutableStateOf(true) }
+        var isBottomBarVisible by remember { mutableStateOf(true) }
 
         TabNavigator(HomeTab) {
-            val currentTab = LocalTabNavigator.current.current
+            val currentTab = LocalTabNavigator.current
+
+            isBottomBarVisible = when (currentTab.current) {
+                is SalesTab -> true  // Show bottom bar when navigating to SalesTab
+                else -> showBottomBar(currentTab.current)
+            }
+
             Scaffold(
                 bottomBar = {
                     AnimatedVisibility(
-                        visible = isVisible,
+                        visible = isBottomBarVisible,
                         enter = slideInVertically { height -> height },
                         exit = slideOutVertically { height -> height }
                     ) {
@@ -65,24 +66,21 @@ class CashierScreen() : Screen {
                             containerColor = Color.White
                         ) {
                             TabNavigationItem(HomeTab)
-                            TabNavigationItem(SalesTab { navigator ->
-                                salesNavigator = navigator
-                                isVisible = navigator.lastItem::class in setOf(
-                                    HomeScreen::class,
-                                    SalesScreen::class,
-                                    LoginScreen::class
-                                )
-                                isFabVisible = navigator.lastItem::class == SalesScreen::class
-                            })
+                            TabNavigationItem(SalesTab(
+                                updateFabVisibility = { isFabVisible = it },
+                                updateBottomBarVisibility = { isBottomBarVisible = it }
+                            ))
                             TabNavigationItem(HistoryTab)
                             TabNavigationItem(ProfileTab)
                         }
                     }
                 },
                 floatingActionButton = {
-                    if (currentTab == SalesTab && isFabVisible) {
+                    if (currentTab.current is SalesTab && isFabVisible) {
                         FloatingActionButton(
-                            onClick = { salesNavigator?.push(EntrySalesScreen()) },
+                            onClick = {
+                                (currentTab.current as SalesTab)._navigator?.push(EntrySalesScreen())
+                            },
                             shape = CircleShape,
                             containerColor = primary
                         ) {
@@ -100,6 +98,10 @@ class CashierScreen() : Screen {
             }
         }
     }
+}
+
+private fun showBottomBar(tab: Tab): Boolean {
+    return tab is HomeTab || tab is SalesTab || tab is HistoryTab || tab is ProfileTab
 }
 
 @Composable
@@ -128,6 +130,6 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
             indicatorColor = Color.White,
             unselectedIconColor = icon,
             unselectedTextColor = icon
-        )
+        ),
     )
 }
