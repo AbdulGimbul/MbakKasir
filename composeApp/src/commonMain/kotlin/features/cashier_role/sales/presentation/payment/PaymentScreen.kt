@@ -94,6 +94,7 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
         var subtotal by remember { mutableStateOf(0) }
         var kembalian by remember { mutableStateOf(0) }
         val state = rememberMessageBarState()
+        val isConnented by viewModel.connectivity.value.isConnectedState.collectAsState()
 
         LaunchedEffect(products) {
             products.forEach { productTrans ->
@@ -117,6 +118,12 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
                 }
                 navigator.popUntil { it is EntrySalesScreen }
                 navigator.replace(ReceiptScreen(paymentResponse!!, totalHarga, subtotal, storeInfo))
+            }
+        }
+
+        LaunchedEffect(isConnented) {
+            if (!isConnented) {
+                state.addError(Exception("Awas, internetmu mati!"))
             }
         }
 

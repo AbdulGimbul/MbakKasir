@@ -2,6 +2,7 @@ package features.cashier_role.sales.presentation.payment
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.plusmobileapps.konnectivity.Konnectivity
 import features.auth.domain.Toko
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.CreatePaymentApiModel
@@ -31,6 +32,8 @@ class PaymentViewModel(
     val paymentResponse: StateFlow<CreatePaymentApiModel?> = _paymentResponse
     private val _store = MutableStateFlow<Toko?>(null)
     val store: StateFlow<Toko?> = _store
+    private val _connectivity = MutableStateFlow(Konnectivity())
+    val connectivity: StateFlow<Konnectivity> = _connectivity
 
     fun createPayment(paymentRequest: CreatePaymentRequest) {
         _isLoading.value = true

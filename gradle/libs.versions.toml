@@ -15,6 +15,7 @@ compottieDot = "2.0.0-beta02"
 datastorePreferences = "1.1.1"
 junit = "4.13.2"
 kmpDateTimePicker = "1.0.3"
+konnectivity = "0.1-alpha01"
 kotlin = "2.0.0"
 compose-navigation = "2.8.0-alpha08"
 messagebarkmp = "1.0.5"
@@ -42,6 +43,7 @@ androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.r
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottieDot" }
 compottie-dot = { module = "io.github.alexzhirkevich:compottie-dot", version.ref = "compottieDot" }
 kmp-date-time-picker = { module = "network.chaintech:kmp-date-time-picker", version.ref = "kmpDateTimePicker" }
+konnectivity = { module = "com.plusmobileapps:konnectivity", version.ref = "konnectivity" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
