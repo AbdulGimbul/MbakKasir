@@ -18,7 +18,8 @@ import kotlinx.serialization.json.Json
 import storage.SessionHandler
 
 class MbakKasirHttpClientBuilder(
-    private val sessionHandler: SessionHandler
+    private val sessionHandler: SessionHandler,
+    private val remoteConfigManager: RemoteConfigManager
 ) {
 
     private lateinit var protocol: URLProtocol
@@ -39,7 +40,7 @@ class MbakKasirHttpClientBuilder(
             defaultRequest {
                 url {
                     protocol = this@MbakKasirHttpClientBuilder.protocol
-                    host = this@MbakKasirHttpClientBuilder.host
+                    host = remoteConfigManager.fetchBaseUrl()
                     this@MbakKasirHttpClientBuilder.port?.let { port = it }
                 }
 

@@ -81,6 +81,7 @@ kotlin {
             implementation(libs.qrkit)
 
             api(libs.gitlive.firebase.kotlin.crashlytics)
+            api(libs.gitlive.firebase.kotlin.config)
 
             implementation(libs.konnectivity)
         }
