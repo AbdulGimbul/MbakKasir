@@ -34,6 +34,7 @@ firebase-android-bom = "33.2.0"
 gradlePlugins-crashlytics = "3.0.2"
 gradlePlugins-google-services = "4.4.2"
 firebase-gitlive-sdk = "1.13.0"
+build-konfig = "0.15.2"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -93,6 +94,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 realm-plugin = { id = "io.realm.kotlin", version.ref = "realm" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugins-crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradlePlugins-google-services" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "build-konfig" }
 
 [bundles]
 ktor = [

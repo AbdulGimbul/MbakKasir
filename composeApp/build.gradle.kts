@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -10,6 +11,7 @@ plugins {
     alias(libs.plugins.realm.plugin)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -87,6 +89,32 @@ kotlin {
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+    }
+}
+
+buildkonfig {
+    packageName = "dev.mbakasir.com"
+
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "dev.mbakasir.com")
+    }
+
+    targetConfigs("prod") {
+        create("android") {
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "mbakasir.com")
+        }
+        create("ios") {
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "mbakasir.com")
+        }
+    }
+
+    targetConfigs("dev"){
+        create("android") {
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "dev.mbakasir.com")
+        }
+        create("ios") {
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "dev.mbakasir.com")
         }
     }
 }

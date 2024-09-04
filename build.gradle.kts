@@ -10,4 +10,5 @@ plugins {
     alias(libs.plugins.realm.plugin) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.buildkonfig) apply false
 }
