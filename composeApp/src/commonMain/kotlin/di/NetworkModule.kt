@@ -7,8 +7,9 @@ import org.koin.dsl.module
 
 val provideHttpClientModule = module {
     single {
-        MbakKasirHttpClientBuilder(sessionHandler = get(), remoteConfigManager = get())
+        MbakKasirHttpClientBuilder(sessionHandler = get())
             .protocol(URLProtocol.HTTPS)
+            .host("dev.mbakasir.com")
             .build(get())
     }
 

@@ -9,6 +9,6 @@ import storage.createDataStore
 actual val platformModule: Module
     get() = module {
         single { createDataStore() }
-        single { RemoteConfigManager() }
+//        single { RemoteConfigManager() }
         single { Darwin.create() }
     }

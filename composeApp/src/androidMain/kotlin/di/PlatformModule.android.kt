@@ -10,6 +10,6 @@ import storage.createDataStore
 actual val platformModule: Module
     get() = module {
         single { createDataStore(context = androidContext()) }
-        single { RemoteConfigManager() }
+//        single { RemoteConfigManager() }
         single { OkHttp.create() }
     }
