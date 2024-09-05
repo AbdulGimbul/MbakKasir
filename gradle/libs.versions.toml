@@ -1,15 +1,16 @@
 [versions]
-agp = "8.2.0"
+agp = "8.2.2"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
-androidx-activityCompose = "1.9.0"
-androidx-appcompat = "1.6.1"
+androidx-activityCompose = "1.9.1"
+androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.1.4"
 androidx-core-ktx = "1.13.1"
-androidx-espresso-core = "3.5.1"
+androidx-espresso-core = "3.6.1"
 androidx-material = "1.12.0"
-androidx-test-junit = "1.1.5"
+androidx-test-junit = "1.2.1"
+blueFalcon = "1.2.0"
 compose-plugin = "1.6.11"
 compottieDot = "2.0.0-beta02"
 datastorePreferences = "1.1.1"
@@ -33,14 +34,16 @@ core-splashscreen = "1.0.1"
 firebase-android-bom = "33.2.0"
 gradlePlugins-crashlytics = "3.0.2"
 gradlePlugins-google-services = "4.4.2"
-firebase-gitlive-sdk = "1.13.0"
+firebase-gitlive-sdk = "2.1.0"
 build-konfig = "0.15.2"
+moko = "0.18.0"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingRuntime" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
+blue-falcon = { module = "dev.bluefalcon:blue-falcon", version.ref = "blueFalcon" }
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottieDot" }
 compottie-dot = { module = "io.github.alexzhirkevich:compottie-dot", version.ref = "compottieDot" }
 kmp-date-time-picker = { module = "network.chaintech:kmp-date-time-picker", version.ref = "kmpDateTimePicker" }
@@ -82,7 +85,9 @@ core-splashscreen = { group = "androidx.core", name = "core-splashscreen", versi
 firebase-android-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-android-bom" }
 firebase-android-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics" }
 gitlive-firebase-kotlin-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebase-gitlive-sdk" }
-gitlive-firebase-kotlin-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase-gitlive-sdk"}
+#gitlive-firebase-kotlin-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase-gitlive-sdk"}
+moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "moko" }
+moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

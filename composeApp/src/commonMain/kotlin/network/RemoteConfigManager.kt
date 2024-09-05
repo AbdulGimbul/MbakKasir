@@ -1,5 +1,5 @@
 package network
 
-expect class RemoteConfigManager {
-    fun fetchBaseUrl(): String
-}
+//expect class RemoteConfigManager {
+//    fun fetchBaseUrl(): String
+//}

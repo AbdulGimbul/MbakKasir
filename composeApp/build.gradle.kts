@@ -83,9 +83,14 @@ kotlin {
             implementation(libs.qrkit)
 
             api(libs.gitlive.firebase.kotlin.crashlytics)
-            api(libs.gitlive.firebase.kotlin.config)
+//            api(libs.gitlive.firebase.kotlin.config)
 
             implementation(libs.konnectivity)
+
+            implementation(libs.blue.falcon)
+
+            api(libs.moko.permissions)
+            api(libs.moko.permissions.compose)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
