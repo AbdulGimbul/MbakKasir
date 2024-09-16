@@ -13,6 +13,7 @@ This is a Kotlin Multiplatform project targeting Android, iOS.
   your project.
 
 ## Some features that already implemented on Android but still not yet implemented on ios part:
+
 - Splash screen
 - Firebase crashlytic and remote config
 

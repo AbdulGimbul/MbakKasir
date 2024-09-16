@@ -1,8 +1,5 @@
 package network
 
-import com.google.firebase.Firebase
-import dev.mbakasir.com.R
-
 //actual class RemoteConfigManager {
 //    private val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
 //

@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -12,6 +13,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -81,6 +83,7 @@ kotlin {
             implementation(libs.messagebarkmp)
 
             implementation(libs.qrkit)
+            implementation(libs.compose.multiplatform.screen.capture)
 
             api(libs.gitlive.firebase.kotlin.crashlytics)
 //            api(libs.gitlive.firebase.kotlin.config)
@@ -114,7 +117,7 @@ buildkonfig {
         }
     }
 
-    targetConfigs("dev"){
+    targetConfigs("dev") {
         create("android") {
             buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "dev.mbakasir.com")
         }
@@ -161,3 +164,12 @@ android {
     }
 }
 
+tasks.withType<Detekt>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        txt.required.set(true)
+        sarif.required.set(true)
+        md.required.set(true)
+    }
+}
