@@ -107,10 +107,10 @@ class MongoDB {
         }
     }
 
-    suspend fun deleteProductTrans(product: ProductTrans) {
+    suspend fun deleteProductTrans(productId: String) {
         realm?.write {
             try {
-                val queriedTask = query<ProductTrans>(query = "id_barang == $0", product.id_barang)
+                val queriedTask = query<ProductTrans>(query = "id_barang == $0", productId)
                     .first()
                     .find()
                 queriedTask?.let {

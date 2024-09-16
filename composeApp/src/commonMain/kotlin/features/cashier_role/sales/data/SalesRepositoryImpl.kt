@@ -41,8 +41,8 @@ class SalesRepositoryImpl(
         return mongoDB.updateProductTrans(product, qty)
     }
 
-    override suspend fun deleteProductTrans(product: ProductTrans) {
-        return mongoDB.deleteProductTrans(product)
+    override suspend fun deleteProductTrans(productId: String) {
+        return mongoDB.deleteProductTrans(productId)
     }
 
     override suspend fun getScannedProducts(): Flow<List<ProductTrans>> {

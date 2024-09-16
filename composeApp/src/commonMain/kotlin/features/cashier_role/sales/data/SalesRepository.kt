@@ -14,6 +14,6 @@ interface SalesRepository {
     suspend fun addProductTrans(productTrans: ProductTrans)
     suspend fun getScannedProducts(): Flow<List<ProductTrans>>
     suspend fun updateProductTrans(product: ProductTrans, qty: Int)
-    suspend fun deleteProductTrans(product: ProductTrans)
+    suspend fun deleteProductTrans(productId: String)
     suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkError>
 }

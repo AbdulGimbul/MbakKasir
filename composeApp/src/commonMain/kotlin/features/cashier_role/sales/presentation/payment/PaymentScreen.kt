@@ -51,14 +51,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import features.auth.domain.Toko
 import features.auth.presentation.EnhancedLoading
-import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
-import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.sales.domain.ProductTransSerializable
 import features.cashier_role.sales.domain.toDetailPayload
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
-import kotlinx.serialization.json.Json
 import network.NetworkError
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
@@ -77,7 +74,7 @@ import ui.theme.stroke
 import util.currencyFormat
 
 
-data class PaymentScreen(val products: List<ProductTrans>) : Screen {
+data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen {
 
     @Composable
     override fun Content() {
@@ -116,22 +113,18 @@ data class PaymentScreen(val products: List<ProductTrans>) : Screen {
 
         LaunchedEffect(paymentResponse) {
             paymentResponse?.let { response ->
-                val receiptJson = Json.encodeToString(CreatePaymentApiModel.serializer(), response)
-                val storeInfoJson =
-                    storeInfo?.let { Json.encodeToString(Toko.serializer(), it) } ?: ""
-
                 if (response.message == "Insert Succesful") {
                     products.forEach {
-                        viewModel.deleteScannedProducts(it)
+                        viewModel.deleteScannedProducts(it.id_barang)
                     }
 
                     navigator.popUntil { it is EntrySalesScreen }
                     navigator.replace(
                         ReceiptScreen(
-                            receiptJson,
+                            response,
                             totalHarga,
                             subtotal,
-                            storeInfoJson
+                            storeInfo
                         )
                     )
                 }

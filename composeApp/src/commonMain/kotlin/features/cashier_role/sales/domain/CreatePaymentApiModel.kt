@@ -1,13 +1,14 @@
 package features.cashier_role.sales.domain
 
 import kotlinx.serialization.Serializable
+import util.JavaSerializable
 
 @Serializable
 data class CreatePaymentApiModel(
     val message: String,
     val data: DataPayment,
     val code: String
-)
+) : JavaSerializable
 
 @Serializable
 data class DataPayment(
@@ -21,7 +22,7 @@ data class DataPayment(
     val device: String,
     val tanggal: String,
     val detil: List<DetailPayment>
-)
+) : JavaSerializable
 
 @Serializable
 data class DetailPayment(
@@ -32,4 +33,4 @@ data class DetailPayment(
     val harga_item: String,
     val subtotal: String,
     val diskon: String
-)
+) : JavaSerializable

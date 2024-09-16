@@ -43,7 +43,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import features.auth.domain.Toko
 import features.cashier_role.sales.domain.CreatePaymentApiModel
-import kotlinx.serialization.json.Json
 import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
 import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
 import ui.theme.dark
@@ -55,17 +54,15 @@ import util.currencyFormat
 
 
 data class ReceiptScreen(
-    val receiptJson: String,
+    val receipt: CreatePaymentApiModel,
     val totalHarga: Int,
     val totalTagihan: Int,
-    val toko: String
+    val toko: Toko?
 ) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val captureController = rememberScreenCaptureController()
-        val receipt = Json.decodeFromString<CreatePaymentApiModel>(receiptJson)
-        val toko = Json.decodeFromString<Toko>(toko)
 
         Column(
             modifier = Modifier

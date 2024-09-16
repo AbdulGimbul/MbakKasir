@@ -9,3 +9,5 @@ actual fun currencyFormat(
     }
     return formatter.stringFromNumber(amount) ?: "$amount"
 }
+
+actual interface JavaSerializable

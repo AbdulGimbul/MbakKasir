@@ -53,6 +53,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import features.cashier_role.sales.domain.toSerializable
 import features.cashier_role.sales.presentation.payment.PaymentScreen
 import qrscanner.QrScanner
 import rememberMessageBarState
@@ -290,7 +291,7 @@ class EntrySalesScreen : Screen {
                                         state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
                                         return@Button
                                     }
-                                    navigator.push(PaymentScreen(scannedProducts))
+                                    navigator.push(PaymentScreen(scannedProducts.map { it.toSerializable() }))
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = primary,

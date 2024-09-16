@@ -7,7 +7,6 @@ import features.auth.domain.Toko
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
-import features.cashier_role.sales.domain.ProductTrans
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,9 +59,9 @@ class PaymentViewModel(
         }
     }
 
-    fun deleteScannedProducts(productTrans: ProductTrans) {
+    fun deleteScannedProducts(productId: String) {
         screenModelScope.launch(Dispatchers.IO) {
-            salesRepository.deleteProductTrans(productTrans)
+            salesRepository.deleteProductTrans(productId)
         }
     }
 }
