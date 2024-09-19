@@ -29,103 +29,46 @@ import mbakkasir.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun PoppinsTypography(): Typography {
-    val poppinsFontFamily = FontFamily(
-        Font(Res.font.Poppins_Regular, FontWeight.Normal),
-        Font(Res.font.Poppins_Black, FontWeight.Black),
-        Font(Res.font.Poppins_BlackItalic, FontWeight.Black, FontStyle.Italic),
-        Font(Res.font.Poppins_Bold, FontWeight.Bold),
-        Font(Res.font.Poppins_BoldItalic, FontWeight.Bold, FontStyle.Italic),
-        Font(Res.font.Poppins_ExtraBold, FontWeight.ExtraBold),
-        Font(Res.font.Poppins_ExtraBoldItalic, FontWeight.ExtraBold, FontStyle.Italic),
-        Font(Res.font.Poppins_ExtraLight, FontWeight.ExtraLight),
-        Font(Res.font.Poppins_ExtraLightItalic, FontWeight.ExtraLight, FontStyle.Italic),
-        Font(Res.font.Poppins_Italic, FontWeight.Normal, FontStyle.Italic),
-        Font(Res.font.Poppins_Light, FontWeight.Light),
-        Font(Res.font.Poppins_LightItalic, FontWeight.Light, FontStyle.Italic),
-        Font(Res.font.Poppins_Medium, FontWeight.Medium),
-        Font(Res.font.Poppins_MediumItalic, FontWeight.Medium, FontStyle.Italic),
-        Font(Res.font.Poppins_SemiBold, FontWeight.SemiBold),
-        Font(Res.font.Poppins_SemiBoldItalic, FontWeight.SemiBold, FontStyle.Italic),
-        Font(Res.font.Poppins_Thin, FontWeight.Thin),
-        Font(Res.font.Poppins_ThinItalic, FontWeight.Thin, FontStyle.Italic)
-    )
+fun PoppinsFontFamily() = FontFamily(
+    Font(Res.font.Poppins_Regular, FontWeight.Normal),
+    Font(Res.font.Poppins_Black, FontWeight.Black),
+    Font(Res.font.Poppins_BlackItalic, FontWeight.Black, FontStyle.Italic),
+    Font(Res.font.Poppins_Bold, FontWeight.Bold),
+    Font(Res.font.Poppins_BoldItalic, FontWeight.Bold, FontStyle.Italic),
+    Font(Res.font.Poppins_ExtraBold, FontWeight.ExtraBold),
+    Font(Res.font.Poppins_ExtraBoldItalic, FontWeight.ExtraBold, FontStyle.Italic),
+    Font(Res.font.Poppins_ExtraLight, FontWeight.ExtraLight),
+    Font(Res.font.Poppins_ExtraLightItalic, FontWeight.ExtraLight, FontStyle.Italic),
+    Font(Res.font.Poppins_Italic, FontWeight.Normal, FontStyle.Italic),
+    Font(Res.font.Poppins_Light, FontWeight.Light),
+    Font(Res.font.Poppins_LightItalic, FontWeight.Light, FontStyle.Italic),
+    Font(Res.font.Poppins_Medium, FontWeight.Medium),
+    Font(Res.font.Poppins_MediumItalic, FontWeight.Medium, FontStyle.Italic),
+    Font(Res.font.Poppins_SemiBold, FontWeight.SemiBold),
+    Font(Res.font.Poppins_SemiBoldItalic, FontWeight.SemiBold, FontStyle.Italic),
+    Font(Res.font.Poppins_Thin, FontWeight.Thin),
+    Font(Res.font.Poppins_ThinItalic, FontWeight.Thin, FontStyle.Italic)
+)
 
-    return Typography(
-        displayLarge = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 57.sp,
-        ),
-        displayMedium = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 45.sp,
-        ),
-        displaySmall = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 36.sp,
-        ),
-        headlineLarge = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 32.sp,
-        ),
-        headlineMedium = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 28.sp,
-        ),
-        headlineSmall = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 24.sp,
-        ),
-        titleLarge = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 22.sp,
-        ),
-        titleMedium = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp,
-        ),
-        titleSmall = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-        ),
-        bodyLarge = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        ),
-        bodyMedium = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-        ),
-        bodySmall = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 12.sp,
-        ),
-        labelLarge = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-        ),
-        labelMedium = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
-        ),
-        labelSmall = TextStyle(
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 11.sp,
-        )
+@Composable
+fun PoppinsTypography() = Typography().run {
+
+    val fontFamily = PoppinsFontFamily()
+    copy(
+        displayLarge = displayLarge.copy(fontFamily = fontFamily),
+        displayMedium = displayMedium.copy(fontFamily = fontFamily),
+        displaySmall = displaySmall.copy(fontFamily = fontFamily),
+        headlineLarge = headlineLarge.copy(fontFamily = fontFamily),
+        headlineMedium = headlineMedium.copy(fontFamily = fontFamily),
+        headlineSmall = headlineSmall.copy(fontFamily = fontFamily),
+        titleLarge = titleLarge.copy(fontFamily = fontFamily),
+        titleMedium = titleMedium.copy(fontFamily = fontFamily),
+        titleSmall = titleSmall.copy(fontFamily = fontFamily),
+        bodyLarge = bodyLarge.copy(fontFamily =  fontFamily),
+        bodyMedium = bodyMedium.copy(fontFamily = fontFamily),
+        bodySmall = bodySmall.copy(fontFamily = fontFamily),
+        labelLarge = labelLarge.copy(fontFamily = fontFamily),
+        labelMedium = labelMedium.copy(fontFamily = fontFamily),
+        labelSmall = labelSmall.copy(fontFamily = fontFamily)
     )
 }
