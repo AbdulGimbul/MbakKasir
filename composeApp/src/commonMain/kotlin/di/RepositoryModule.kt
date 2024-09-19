@@ -3,6 +3,7 @@ package di
 import features.auth.data.AuthRepository
 import features.auth.data.AuthRepositoryImpl
 import features.auth.presentation.LoginViewModel
+import features.auth.presentation.ProfileViewModel
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.HomeRepositoryImpl
 import features.cashier_role.home.presentation.HomeViewModel
@@ -15,8 +16,14 @@ import org.koin.dsl.module
 import storage.MongoDB
 
 val provideAuthRepositoryModule = module {
-    single<AuthRepositoryImpl> { AuthRepositoryImpl(get()) }.bind<AuthRepository>()
+    single<AuthRepositoryImpl> {
+        AuthRepositoryImpl(
+            requestHandler = get(),
+            sessionHandler = get()
+        )
+    }.bind<AuthRepository>()
     factory { LoginViewModel(sessionHandler = get(), authRepository = get()) }
+    factory { ProfileViewModel(authRepository = get()) }
 }
 
 val provideHomeRepositoryModule = module {
