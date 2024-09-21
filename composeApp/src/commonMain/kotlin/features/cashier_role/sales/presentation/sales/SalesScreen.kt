@@ -50,7 +50,7 @@ class SalesScreen : Screen {
         ) {
             Text(
                 "Penjualan",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 color = dark,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
@@ -77,7 +77,7 @@ class SalesScreen : Screen {
                 )
                 Text(
                     "Data not available.",
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

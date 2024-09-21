@@ -48,7 +48,7 @@ import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCapture
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
-import ui.theme.primary_text
+import ui.theme.secondary_text
 import ui.theme.stroke
 import util.currencyFormat
 
@@ -101,16 +101,21 @@ data class ReceiptScreen(
                         ) {
                             Text(
                                 text = toko?.nama.toString(),
-                                style = MaterialTheme.typography.titleLarge,
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                                 color = dark,
                                 modifier = Modifier.padding(8.dp),
                             )
                             Text(
                                 text = toko?.alamat.toString(),
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = dark,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
-                            Text(text = toko?.telp.toString(), color = dark)
+                            Text(
+                                text = toko?.telp.toString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -119,18 +124,34 @@ data class ReceiptScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text(text = receipt.data.invoice, color = dark)
-                            Text(text = receipt.data.tanggal, color = dark)
+                            Text(
+                                text = receipt.data.invoice,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = receipt.data.tanggal,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text(text = receipt.data.method, color = dark)
-                            Text(text = receipt.data.kasir, color = dark)
+                            Text(
+                                text = receipt.data.method,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = receipt.data.kasir,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
                         }
                     }
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = stroke)
                     Text(
                         text = "Produk:",
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -171,16 +192,16 @@ data class ReceiptScreen(
                     Text(
                         text = "==TERIMA KASIH SUDAH BERBELANJA==",
                         textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        color = primary_text,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
                         textAlign = TextAlign.Center,
-                        fontSize = 12.sp,
-                        color = primary_text,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -241,24 +262,32 @@ data class ReceiptScreen(
     fun ItemRow(name: String, qty: String, price: String, discount: String) {
         Column {
             Row {
-                Text(text = name, color = primary_text, modifier = Modifier.weight(3f))
+                Text(
+                    text = name,
+                    color = secondary_text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(3f)
+                )
                 Text(
                     text = qty,
                     textAlign = TextAlign.Center,
-                    color = primary_text,
+                    color = secondary_text,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = price,
                     textAlign = TextAlign.End,
-                    color = primary_text,
+                    color = secondary_text,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(2f)
                 )
             }
             Text(
                 text = "Diskon: $discount",
                 textAlign = TextAlign.End,
-                color = primary_text,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
             )
         }
@@ -273,12 +302,12 @@ fun TotalRow(label: String, amount: String, isBold: Boolean = false) {
     ) {
         Text(
             text = label,
-            fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
+            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
             color = dark
         )
         Text(
             text = amount,
-            fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
+            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
             color = dark
         )
     }

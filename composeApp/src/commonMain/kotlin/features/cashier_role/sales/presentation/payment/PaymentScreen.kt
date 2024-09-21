@@ -1,7 +1,6 @@
 package features.cashier_role.sales.presentation.payment
 
 import ContentWithMessageBar
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,13 +20,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
@@ -41,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,11 +58,12 @@ import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import rememberMessageBarState
 import ui.component.DefaultTextField
 import ui.component.DisabledTextField
+import ui.component.FooterButton
+import ui.component.HeadlineText
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
-import ui.theme.red
 import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
@@ -158,15 +154,14 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                             .padding(16.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        Text(
-                            "Pembayaran",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = dark,
+                        HeadlineText(
+                            text = "Pembayaran",
                             modifier = Modifier.padding(bottom = 32.dp)
                         )
+
                         Text(
                             text = "Jenis Pembayaran",
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = dark,
                         )
                         Row(
@@ -190,7 +185,8 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                                     )
                                     Text(
                                         text = text,
-                                        color = dark,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = secondary_text,
                                     )
                                 }
                             }
@@ -198,13 +194,20 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                         if (selectedOption == "Kredit") {
                             Text(
                                 text = "Jatuh Tempo",
-                                style = MaterialTheme.typography.titleSmall,
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                                 color = dark,
                             )
                             OutlinedTextField(
                                 value = selectedDate,
                                 onValueChange = {},
-                                label = { Text("dd/mm/yyyy", color = secondary_text) },
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                                label = {
+                                    Text(
+                                        "dd/mm/yyyy",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = secondary_text
+                                    )
+                                },
                                 enabled = false,
                                 trailingIcon = {
                                     IconButton(onClick = { showDatePicker = true }) {
@@ -228,7 +231,7 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                         }
                         Text(
                             text = "Uang Diterima",
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = dark,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -244,7 +247,7 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                         )
                         Text(
                             text = "Kembalian",
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = dark,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -264,16 +267,32 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Total Harga: ")
-                                Text(currencyFormat(totalHarga.toDouble()))
+                                Text(
+                                    "Total Harga: ",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = secondary_text
+                                )
+                                Text(
+                                    currencyFormat(totalHarga.toDouble()),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = dark
+                                )
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Diskon: ")
-                                Text(currencyFormat(diskon.toDouble()))
+                                Text(
+                                    "Diskon: ",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = secondary_text
+                                )
+                                Text(
+                                    currencyFormat(diskon.toDouble()),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = dark
+                                )
                             }
                             HorizontalDivider(
                                 modifier = Modifier.fillMaxWidth().width(1.dp)
@@ -286,70 +305,43 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                             ) {
                                 Text(
                                     "Total Tagihan", color = dark,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                                 )
                                 Text(
                                     currencyFormat(subtotal.toDouble()), color = dark,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                                 )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                OutlinedButton(
-                                    onClick = { navigator.pop() },
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                                    border = BorderStroke(
-                                        width = 1.dp,
-                                        color = red
-                                    ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        "Batal",
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(4.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Button(
-                                    onClick = {
-                                        if (uangDiterima.isEmpty() || uangDiterima.toInt() < subtotal) {
-                                            state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
-                                            return@Button
-                                        }
-                                        val method =
-                                            if (selectedOption == "Tunai") "Cash" else "Kredit"
-                                        viewModel.createPayment(
-                                            CreatePaymentRequest(
-                                                kembali = kembalian.toString(),
-                                                bayar = uangDiterima,
-                                                metode = method,
-                                                kasir = "3",
-                                                cus = "1",
-                                                nominal_ppn = "0",
-                                                tempo = selectedDate,
-                                                detil = products.map { it.toDetailPayload() }
-                                            )
+                            FooterButton(
+                                onCancelClick = {
+                                    navigator.pop()
+                                },
+                                onConfirmClick = {
+                                    if (uangDiterima.isEmpty() || uangDiterima.toInt() < subtotal) {
+                                        state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
+                                        return@FooterButton
+                                    }
+                                    val method =
+                                        if (selectedOption == "Tunai") "Cash" else "Kredit"
+                                    viewModel.createPayment(
+                                        CreatePaymentRequest(
+                                            kembali = kembalian.toString(),
+                                            bayar = uangDiterima,
+                                            metode = method,
+                                            kasir = "3",
+                                            cus = "1",
+                                            nominal_ppn = "0",
+                                            tempo = selectedDate,
+                                            detil = products.map { it.toDetailPayload() }
                                         )
-                                    },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = primary,
-                                        contentColor = Color.White
-                                    ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        "Pembayaran",
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(4.dp)
                                     )
-                                }
-                            }
+                                },
+                                cancelText = "Kembali",
+                                confirmText = "Bayar",
+                                borderCancelColor = icon,
+                                contentCancelColor = icon
+                            )
                         }
                     }
                 }

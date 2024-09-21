@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -81,7 +82,7 @@ class LoginScreen : Screen {
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
                             text = "Welcome",
-                            style = MaterialTheme.typography.displaySmall,
+                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                             color = dark,
                         )
                         Row(
@@ -89,7 +90,7 @@ class LoginScreen : Screen {
                         ) {
                             Text(
                                 text = "Back",
-                                style = MaterialTheme.typography.displaySmall,
+                                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
                                 color = dark
                             )
@@ -100,6 +101,7 @@ class LoginScreen : Screen {
                         }
                         Text(
                             "Silahkan login ke akun yang sudah ada.",
+                            style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(bottom = 24.dp),
                             color = secondary_text
                         )

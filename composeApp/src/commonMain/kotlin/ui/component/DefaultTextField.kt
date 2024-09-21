@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ fun DefaultTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
+        textStyle = MaterialTheme.typography.bodyMedium,
         label = if (label != null) {
             {
                 Text(text = label, color = secondary_text)

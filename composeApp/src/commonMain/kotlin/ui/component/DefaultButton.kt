@@ -32,8 +32,7 @@ fun DefaultButton(
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontWeight = FontWeight.Bold
             ),
             modifier = Modifier.padding(vertical = 8.dp)
         )

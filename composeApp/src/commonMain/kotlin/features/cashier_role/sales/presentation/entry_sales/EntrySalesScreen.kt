@@ -1,7 +1,6 @@
 package features.cashier_role.sales.presentation.entry_sales
 
 import ContentWithMessageBar
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -30,7 +27,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -58,10 +54,11 @@ import features.cashier_role.sales.presentation.payment.PaymentScreen
 import qrscanner.QrScanner
 import rememberMessageBarState
 import ui.component.EntrySalesItem
+import ui.component.FooterButton
+import ui.component.HeadlineText
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
-import ui.theme.red
 import ui.theme.secondary_text
 import ui.theme.stroke
 import util.currencyFormat
@@ -110,18 +107,12 @@ class EntrySalesScreen : Screen {
                 Column(
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
                 ) {
-                    Text(
-                        "Entry:",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                        color = dark
-                    )
-                    Text(
-                        "Penjualan",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                    HeadlineText("Entry:")
+                    HeadlineText(
+                        text = "Penjualan",
                         color = secondary_text,
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
-
                     ExposedDropdownMenuBox(
                         expanded = expanded,
                         onExpandedChange = setExpanded
@@ -134,7 +125,14 @@ class EntrySalesScreen : Screen {
                                     viewModel.searchProductsByBarcode(newBarcode)
                                 }
                             },
-                            label = { Text("Scan Barcode", color = secondary_text) },
+                            textStyle = MaterialTheme.typography.bodyMedium,
+                            label = {
+                                Text(
+                                    "Scan Barcode",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = secondary_text
+                                )
+                            },
                             trailingIcon = {
                                 IconButton(onClick = {
                                     viewModel.onScanIconClick()
@@ -256,57 +254,28 @@ class EntrySalesScreen : Screen {
                         ) {
                             Text(
                                 "Total Tagihan", color = dark,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                             )
                             Text(
                                 currencyFormat(totalTagihan.toDouble()), color = dark,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            OutlinedButton(
-                                onClick = { navigator.pop() },
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                                border = BorderStroke(
-                                    width = 1.dp,
-                                    color = red
-                                ),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    "Batal",
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(4.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Button(
-                                onClick = {
-                                    if (scannedProducts.isEmpty()) {
-                                        state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
-                                        return@Button
-                                    }
-                                    navigator.push(PaymentScreen(scannedProducts.map { it.toSerializable() }))
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = primary,
-                                    contentColor = Color.White
-                                ),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    "Pembayaran",
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(4.dp)
-                                )
-                            }
-                        }
+                        FooterButton(
+                            onCancelClick = {
+                                navigator.pop()
+                            },
+                            onConfirmClick = {
+                                if (scannedProducts.isEmpty()) {
+                                    state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
+                                    return@FooterButton
+                                }
+                                navigator.push(PaymentScreen(scannedProducts.map { it.toSerializable() }))
+                            },
+                            cancelText = "Batal",
+                            confirmText = "Pembayaran"
+                        )
                     }
                 }
             }

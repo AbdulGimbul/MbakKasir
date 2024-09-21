@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,13 +61,13 @@ fun EntrySalesItem(
                 Text(
                     text = "[${product.kode_barang}] ${product.barcode}",
                     color = primary_text,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
                     text = product.nama_barang,
                     color = dark,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -77,7 +78,7 @@ fun EntrySalesItem(
             ) {
                 Text(
                     currencyFormat(product.harga_item.toDouble()), color = dark,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -99,7 +100,7 @@ fun EntrySalesItem(
                     }
                     Text(
                         product.qty_jual.toString(),
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = dark,
                         textAlign = TextAlign.Center
                     )

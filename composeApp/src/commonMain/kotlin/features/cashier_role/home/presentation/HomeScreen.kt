@@ -58,8 +58,8 @@ class HomeScreen : Screen {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
-                    Text("Role", fontSize = 14.sp, color = dark)
-                    Text("Penjualan", fontWeight = FontWeight.Bold, color = dark)
+                    Text("Role", style = MaterialTheme.typography.bodyMedium, color = dark)
+                    Text("Penjualan", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = dark)
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
@@ -91,15 +91,15 @@ class HomeScreen : Screen {
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Nominal penjualan", fontSize = 14.sp, color = secondary_text)
+                        Text("Nominal penjualan", style = MaterialTheme.typography.bodySmall, color = secondary_text)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             verticalAlignment = Alignment.Bottom
                         ) {
                             Text(
-                                "RP. 60.000.0000",
+                                "Rp. 60.000.0000",
                                 color = dark,
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
                             )
                         }
                     }
@@ -125,7 +125,7 @@ class HomeScreen : Screen {
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Jumlah penjualan", fontSize = 14.sp, color = secondary_text)
+                        Text("Jumlah penjualan", style = MaterialTheme.typography.bodySmall, color = secondary_text)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             verticalAlignment = Alignment.Bottom
@@ -133,12 +133,12 @@ class HomeScreen : Screen {
                             Text(
                                 "1.000",
                                 color = dark,
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
                             )
                             Text(
                                 "items",
                                 color = dark,
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.padding(start = 6.dp)
                             )
                         }
