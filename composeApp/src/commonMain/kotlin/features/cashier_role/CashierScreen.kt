@@ -47,11 +47,6 @@ class CashierScreen() : Screen {
         TabNavigator(HomeTab) {
             val currentTab = LocalTabNavigator.current
 
-            isBottomBarVisible = when (currentTab.current) {
-                is SalesTab -> true  // Show bottom bar when navigating to SalesTab
-                else -> showBottomBar(currentTab.current)
-            }
-
             Scaffold(
                 bottomBar = {
                     AnimatedVisibility(

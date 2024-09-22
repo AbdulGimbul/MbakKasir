@@ -12,7 +12,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             provideSessionHandlerModule,
             provideAuthRepositoryModule,
             provideHomeRepositoryModule,
-            provideSalesRepositoryModule
+            provideSalesRepositoryModule,
+            provideHistoryRepositoryModule
         )
     }
 }

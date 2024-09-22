@@ -4,6 +4,9 @@ import features.auth.data.AuthRepository
 import features.auth.data.AuthRepositoryImpl
 import features.auth.presentation.LoginViewModel
 import features.auth.presentation.ProfileViewModel
+import features.cashier_role.history.data.HistoryRepository
+import features.cashier_role.history.data.HistoryRepositoryImpl
+import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.HomeRepositoryImpl
 import features.cashier_role.home.presentation.HomeViewModel
@@ -43,4 +46,14 @@ val provideSalesRepositoryModule = module {
     factory { EntrySalesViewModel(salesRepository = get()) }
     factory { PaymentViewModel(salesRepository = get()) }
     factory { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
+}
+
+val provideHistoryRepositoryModule = module {
+    single<HistoryRepositoryImpl> {
+        HistoryRepositoryImpl(
+            requestHandler = get()
+        )
+    }.bind<HistoryRepository>()
+
+    factory { HistoryViewModel(historyRepository = get()) }
 }
