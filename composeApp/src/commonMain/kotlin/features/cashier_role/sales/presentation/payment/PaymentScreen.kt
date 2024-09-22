@@ -79,7 +79,6 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
         val errorMessage by viewModel.errorMessage.collectAsState()
         val paymentResponse by viewModel.paymentResponse.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
-        val storeInfo by viewModel.store.collectAsState()
         var uangDiterima by remember { mutableStateOf("") }
         val radioOptions = listOf("Tunai", "Kredit")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
@@ -109,19 +108,13 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
 
         LaunchedEffect(paymentResponse) {
             paymentResponse?.let { response ->
-                if (response.message == "Insert Succesful") {
+                if (response.code == "200") {
                     products.forEach {
                         viewModel.deleteScannedProducts(it.id_barang)
                     }
-
                     navigator.popUntil { it is EntrySalesScreen }
                     navigator.replace(
-                        ReceiptScreen(
-                            response,
-                            totalHarga,
-                            subtotal,
-                            storeInfo
-                        )
+                        InvoiceScreen(response)
                     )
                 }
             }

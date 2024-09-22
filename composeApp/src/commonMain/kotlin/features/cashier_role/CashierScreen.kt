@@ -24,16 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
-import mbakkasir.composeapp.generated.resources.Poppins_Regular
-import mbakkasir.composeapp.generated.resources.Res
-import org.jetbrains.compose.resources.Font
 import ui.navigation.tab.cashier_role.HistoryTab
 import ui.navigation.tab.cashier_role.HomeTab
 import ui.navigation.tab.cashier_role.ProfileTab

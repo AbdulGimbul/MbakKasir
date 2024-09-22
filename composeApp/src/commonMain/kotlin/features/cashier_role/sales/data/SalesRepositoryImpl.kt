@@ -3,6 +3,7 @@ package features.cashier_role.sales.data
 import features.cashier_role.home.domain.Product
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
+import features.cashier_role.sales.domain.InvoiceApiModel
 import features.cashier_role.sales.domain.ProductTrans
 import kotlinx.coroutines.flow.Flow
 import network.NetworkError
@@ -47,5 +48,12 @@ class SalesRepositoryImpl(
 
     override suspend fun getScannedProducts(): Flow<List<ProductTrans>> {
         return mongoDB.getProductsTrans()
+    }
+
+    override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkError> {
+        return requestHandler.get(
+            urlPathSegments = listOf("api", "penjualan", "getByInvoice"),
+            queryParams = mapOf("invoice" to invoice)
+        )
     }
 }

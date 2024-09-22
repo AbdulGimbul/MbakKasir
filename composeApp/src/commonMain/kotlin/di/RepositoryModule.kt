@@ -10,6 +10,7 @@ import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
+import features.cashier_role.sales.presentation.payment.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -40,5 +41,6 @@ val provideSalesRepositoryModule = module {
         )
     }.bind<SalesRepository>()
     factory { EntrySalesViewModel(salesRepository = get()) }
-    factory { PaymentViewModel(sessionHandler = get(), salesRepository = get()) }
+    factory { PaymentViewModel(salesRepository = get()) }
+    factory { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
 }

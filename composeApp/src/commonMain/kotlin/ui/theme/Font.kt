@@ -2,11 +2,9 @@ package ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import mbakkasir.composeapp.generated.resources.Poppins_Black
 import mbakkasir.composeapp.generated.resources.Poppins_BlackItalic
 import mbakkasir.composeapp.generated.resources.Poppins_Bold
@@ -64,7 +62,7 @@ fun PoppinsTypography() = Typography().run {
         titleLarge = titleLarge.copy(fontFamily = fontFamily),
         titleMedium = titleMedium.copy(fontFamily = fontFamily),
         titleSmall = titleSmall.copy(fontFamily = fontFamily),
-        bodyLarge = bodyLarge.copy(fontFamily =  fontFamily),
+        bodyLarge = bodyLarge.copy(fontFamily = fontFamily),
         bodyMedium = bodyMedium.copy(fontFamily = fontFamily),
         bodySmall = bodySmall.copy(fontFamily = fontFamily),
         labelLarge = labelLarge.copy(fontFamily = fontFamily),

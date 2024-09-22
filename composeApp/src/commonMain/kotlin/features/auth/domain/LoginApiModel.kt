@@ -1,7 +1,6 @@
 package features.auth.domain
 
 import kotlinx.serialization.Serializable
-import util.JavaSerializable
 
 @Serializable
 data class LoginApiModel(
@@ -24,4 +23,4 @@ data class Toko(
     val nama: String,
     val alamat: String,
     val telp: String
-) : JavaSerializable
+)

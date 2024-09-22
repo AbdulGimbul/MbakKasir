@@ -1,5 +1,6 @@
 package features.cashier_role.sales.domain
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import util.JavaSerializable
 
@@ -26,11 +27,15 @@ data class DataPayment(
 
 @Serializable
 data class DetailPayment(
-    val kode_detil_jual: String,
-    val nama_barang: String,
+    @SerialName("kode_detil_jual")
+    val kodeDetilJual: String,
+    @SerialName("nama_barang")
+    val namaBarang: String,
     val jenis: String,
-    val qty_jual: String,
-    val harga_item: String,
+    @SerialName("qty_jual")
+    val qtyJual: String,
+    @SerialName("harga_item")
+    val hargaItem: String,
     val subtotal: String,
     val diskon: String
 ) : JavaSerializable
