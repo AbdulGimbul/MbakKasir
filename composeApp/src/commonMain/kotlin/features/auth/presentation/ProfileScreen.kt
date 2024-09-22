@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import features.auth.domain.Toko
@@ -36,7 +35,7 @@ import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
 import ui.theme.dark
 import ui.theme.primary
-import ui.theme.secondary_text
+import ui.theme.primary_text
 
 class ProfileScreen : Screen {
 
@@ -94,18 +93,19 @@ fun UserInfoHeader(
             text = user.nama,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp
             ),
             color = dark,
             modifier = Modifier.padding(top = 8.dp)
         )
         Text(
             text = user.username,
+            style = MaterialTheme.typography.bodyMedium,
             color = dark
         )
         Text(
             text = user.role,
-            color = secondary_text
+            style = MaterialTheme.typography.bodyMedium,
+            color = primary_text
         )
     }
 }
@@ -126,8 +126,7 @@ fun StoreInformationCard(
             Text(
                 text = "Informasi Toko",
                 style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontWeight = FontWeight.SemiBold
                 ),
                 color = dark
             )
@@ -149,10 +148,12 @@ fun InfoRow(label: String, info: String) {
     ) {
         Text(
             text = label,
-            color = secondary_text
+            style = MaterialTheme.typography.bodyMedium,
+            color = primary_text
         )
         Text(
             text = info,
+            style = MaterialTheme.typography.bodyMedium,
             color = dark
         )
     }

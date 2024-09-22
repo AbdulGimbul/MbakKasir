@@ -158,39 +158,16 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                             text = "Pembayaran",
                             modifier = Modifier.padding(bottom = 32.dp)
                         )
-
                         Text(
                             text = "Jenis Pembayaran",
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = dark,
                         )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            radioOptions.forEach { text ->
-                                Row(
-                                    modifier = Modifier
-                                        .selectable(
-                                            selected = (text == selectedOption),
-                                            onClick = { onOptionSelected(text) },
-                                        ).padding(end = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = (text == selectedOption),
-                                        onClick = {
-                                            onOptionSelected(text)
-                                        }
-                                    )
-                                    Text(
-                                        text = text,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = secondary_text,
-                                    )
-                                }
-                            }
-                        }
+                        PaymentOptions(
+                            radioOptions = radioOptions,
+                            selectedOption = selectedOption,
+                            onOptionSelected
+                        )
                         if (selectedOption == "Kredit") {
                             Text(
                                 text = "Jatuh Tempo",
@@ -262,56 +239,23 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                         Column(
                             modifier = Modifier.fillMaxWidth().padding(16.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    "Total Harga: ",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = secondary_text
-                                )
-                                Text(
-                                    currencyFormat(totalHarga.toDouble()),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    "Diskon: ",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = secondary_text
-                                )
-                                Text(
-                                    currencyFormat(diskon.toDouble()),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                            }
+                            SummaryRow(
+                                label = "Total Harga:",
+                                value = currencyFormat(totalHarga.toDouble()),
+                            )
+                            SummaryRow(
+                                label = "Diskon:",
+                                value = currencyFormat(diskon.toDouble())
+                            )
                             HorizontalDivider(
                                 modifier = Modifier.fillMaxWidth().width(1.dp)
                                     .padding(vertical = 10.dp)
                             )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    "Total Tagihan", color = dark,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                                )
-                                Text(
-                                    currencyFormat(subtotal.toDouble()), color = dark,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                                )
-                            }
+                            SummaryRow(
+                                label = "Totlal Tagihan",
+                                value = currencyFormat(subtotal.toDouble()),
+                                isBold = true
+                            )
                             Spacer(modifier = Modifier.height(16.dp))
                             FooterButton(
                                 onCancelClick = {
@@ -377,6 +321,61 @@ data class PaymentScreen(val products: List<ProductTransSerializable>) : Screen 
                 onDismiss = {
                     showDatePicker = false
                 }
+            )
+        }
+    }
+
+    @Composable
+    fun PaymentOptions(
+        radioOptions: List<String>,
+        selectedOption: String,
+        onOptionSelected: (String) -> Unit
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            radioOptions.forEach { text ->
+                Row(
+                    modifier = Modifier
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) },
+                        ).padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (text == selectedOption),
+                        onClick = {
+                            onOptionSelected(text)
+                        }
+                    )
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = secondary_text,
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = label,
+                style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+                color = if (isBold) dark else secondary_text
+            )
+            Text(
+                text = value,
+                style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+                color = dark
             )
         }
     }
