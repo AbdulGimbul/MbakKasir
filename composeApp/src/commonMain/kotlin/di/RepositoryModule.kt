@@ -15,6 +15,7 @@ import features.cashier_role.sales.data.SalesRepositoryImpl
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.payment.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import storage.MongoDB
@@ -26,14 +27,14 @@ val provideAuthRepositoryModule = module {
             sessionHandler = get()
         )
     }.bind<AuthRepository>()
-    factory { LoginViewModel(sessionHandler = get(), authRepository = get()) }
-    factory { ProfileViewModel(authRepository = get()) }
+    viewModel { LoginViewModel(sessionHandler = get(), authRepository = get()) }
+    viewModel { ProfileViewModel(authRepository = get()) }
 }
 
 val provideHomeRepositoryModule = module {
     single { MongoDB() }
     single<HomeRepositoryImpl> { HomeRepositoryImpl(get()) }.bind<HomeRepository>()
-    factory { HomeViewModel(homeRepository = get(), mongoDB = get()) }
+    viewModel { HomeViewModel(homeRepository = get(), mongoDB = get()) }
 }
 
 val provideSalesRepositoryModule = module {
@@ -43,9 +44,9 @@ val provideSalesRepositoryModule = module {
             requestHandler = get()
         )
     }.bind<SalesRepository>()
-    factory { EntrySalesViewModel(salesRepository = get()) }
-    factory { PaymentViewModel(salesRepository = get()) }
-    factory { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
+    viewModel { EntrySalesViewModel(salesRepository = get()) }
+    viewModel { PaymentViewModel(salesRepository = get()) }
+    viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
 }
 
 val provideHistoryRepositoryModule = module {
@@ -55,5 +56,5 @@ val provideHistoryRepositoryModule = module {
         )
     }.bind<HistoryRepository>()
 
-    factory { HistoryViewModel(historyRepository = get()) }
+    viewModel { HistoryViewModel(historyRepository = get()) }
 }

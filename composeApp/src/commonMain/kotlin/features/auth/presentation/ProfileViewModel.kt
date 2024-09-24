@@ -1,7 +1,7 @@
 package features.auth.presentation
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.auth.data.AuthRepository
 import features.auth.domain.UserData
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val authRepository: AuthRepository
-) : ScreenModel {
+) : ViewModel() {
 
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user
@@ -24,7 +24,7 @@ class ProfileViewModel(
     }
 
     private fun getUserData() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 _user.value = authRepository.userInfo()
             } catch (e: Exception) {

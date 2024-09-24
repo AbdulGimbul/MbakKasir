@@ -1,7 +1,7 @@
 package features.cashier_role.sales.presentation.payment
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.plusmobileapps.konnectivity.Konnectivity
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.CreatePaymentApiModel
@@ -16,7 +16,7 @@ import network.NetworkError
 import network.onError
 import network.onSuccess
 
-class PaymentViewModel(private val salesRepository: SalesRepository) : ScreenModel {
+class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel() {
     private val _errorMessage = MutableStateFlow<NetworkError?>(null)
     val errorMessage: StateFlow<NetworkError?> = _errorMessage
     private val _isLoading = MutableStateFlow(false)
@@ -30,7 +30,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ScreenMod
         _isLoading.value = true
         _errorMessage.value = null
 
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val result = salesRepository.createPayment(paymentRequest)
             withContext(Dispatchers.Main) {
                 result.onSuccess {
@@ -47,7 +47,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ScreenMod
     }
 
     fun deleteScannedProducts(productId: String) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             salesRepository.deleteProductTrans(productId)
         }
     }

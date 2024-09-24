@@ -1,7 +1,7 @@
 package features.cashier_role.sales.presentation.payment
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.auth.domain.Toko
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.InvoiceApiModel
@@ -20,7 +20,7 @@ import storage.SessionHandler
 class InvoiceViewModel(
     private val sessionHandler: SessionHandler,
     private val salesRepository: SalesRepository
-) : ScreenModel {
+) : ViewModel() {
 
     private val _errorMessage = MutableStateFlow<NetworkError?>(null)
     val errorMessage: StateFlow<NetworkError?> = _errorMessage
@@ -39,7 +39,7 @@ class InvoiceViewModel(
         _isLoading.value = true
         _errorMessage.value = null
 
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val result = salesRepository.getInvoice(noInvoice)
             withContext(Dispatchers.Main) {
                 result.onSuccess {
@@ -56,7 +56,7 @@ class InvoiceViewModel(
     }
 
     private fun getStoreInfo() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             _store.value = Toko(
                 nama = sessionHandler.getStoreName().first(),
                 alamat = sessionHandler.getAddress().first(),

@@ -1,7 +1,7 @@
 package features.auth.presentation
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.auth.data.AuthRepository
 import features.auth.domain.LoginRequest
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import storage.SessionHandler
 class LoginViewModel(
     private val sessionHandler: SessionHandler,
     private val authRepository: AuthRepository,
-) : ScreenModel {
+) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -33,7 +33,7 @@ class LoginViewModel(
     }
 
     fun login(username: String, password: String) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             _errorMessage.value = null
 
@@ -62,7 +62,7 @@ class LoginViewModel(
     }
 
     private fun checkTokenValidity() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
 

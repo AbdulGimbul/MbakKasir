@@ -1,7 +1,7 @@
 package features.cashier_role.home.presentation
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.domain.toProduct
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ import storage.MongoDB
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val mongoDB: MongoDB
-) : ScreenModel {
+) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -32,7 +32,7 @@ class HomeViewModel(
     }
 
     private fun fetchProducts() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             _errorMessage.value = null
 

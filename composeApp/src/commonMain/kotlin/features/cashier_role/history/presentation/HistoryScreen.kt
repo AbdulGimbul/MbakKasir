@@ -25,12 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import features.auth.presentation.EnhancedLoading
-import features.cashier_role.sales.presentation.payment.InvoiceScreen
+import org.koin.compose.viewmodel.koinViewModel
 import ui.component.HeadlineText
 import ui.component.HistoryItem
 import ui.theme.primary
@@ -38,77 +34,73 @@ import ui.theme.primary_text
 import ui.theme.secondary_text
 import ui.theme.stroke
 
-class HistoryScreen : Screen {
+@Composable
+fun HistoryScreen(navigateToInvoice: (String) -> Unit) {
+    val viewModel = koinViewModel<HistoryViewModel>()
+    val history by viewModel.historyResponse.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<HistoryViewModel>()
-        val history by viewModel.historyResponse.collectAsState()
-        val errorMessage by viewModel.errorMessage.collectAsState()
-        val isLoading by viewModel.isLoading.collectAsState()
-
-        if (isLoading) {
-            EnhancedLoading()
-        } else {
-            Column(
+    if (isLoading) {
+        EnhancedLoading()
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .imePadding()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            HeadlineText("History", modifier = Modifier.padding(bottom = 32.dp))
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                textStyle = MaterialTheme.typography.bodyMedium,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search"
+                    )
+                },
+                placeholder = { Text(text = "Search ...", color = secondary_text) },
+                trailingIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            Icons.Outlined.FilterAlt,
+                            contentDescription = "Filter",
+                            tint = primary
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
+                shape = RoundedCornerShape(10.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = stroke,
+                    unfocusedBorderColor = stroke,
+                    cursorColor = primary_text,
+                    focusedLabelColor = primary,
+                    unfocusedLabelColor = secondary_text,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .imePadding()
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-            ) {
-                HeadlineText("History", modifier = Modifier.padding(bottom = 32.dp))
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search"
+                    .padding(bottom = 16.dp),
+            )
+            LazyColumn {
+                history?.let { hist ->
+                    items(hist.data) {
+                        HistoryItem(
+                            date = it.tanggal,
+                            method = it.method,
+                            total = it.bayar,
+                            invoiceNumber = it.invoice,
+                            cashier = it.kasir,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            onClick = {
+                                navigateToInvoice(it.invoice)
+                            }
                         )
-                    },
-                    placeholder = { Text(text = "Search ...", color = secondary_text) },
-                    trailingIcon = {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                Icons.Outlined.FilterAlt,
-                                contentDescription = "Filter",
-                                tint = primary
-                            )
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    singleLine = true,
-                    shape = RoundedCornerShape(10.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = stroke,
-                        unfocusedBorderColor = stroke,
-                        cursorColor = primary_text,
-                        focusedLabelColor = primary,
-                        unfocusedLabelColor = secondary_text,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                )
-                LazyColumn {
-                    history?.let { hist ->
-                        items(hist.data) {
-                            HistoryItem(
-                                date = it.tanggal,
-                                method = it.method,
-                                total = it.bayar,
-                                invoiceNumber = it.invoice,
-                                cashier = it.kasir,
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                onClick = {
-                                    navigator.push(InvoiceScreen(noInvoice = it.invoice))
-                                }
-                            )
-                        }
                     }
                 }
             }

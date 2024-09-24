@@ -44,15 +44,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import features.auth.presentation.EnhancedLoading
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.DetailPayment
 import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
 import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
+import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
@@ -60,324 +57,321 @@ import ui.theme.secondary_text
 import ui.theme.stroke
 import util.currencyFormat
 
+@Composable
+fun InvoiceScreen(
+    paymentResponse: CreatePaymentApiModel? = null,
+    noInvoice: String? = null,
+    navigateBack: () -> Unit
+) {
+    val viewModel = koinViewModel<InvoiceViewModel>()
+    val invoice by viewModel.invoiceResponse.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val toko by viewModel.store.collectAsState()
+    val captureController = rememberScreenCaptureController()
+    var totalHarga by remember { mutableStateOf(0.0) }
+    var diskon by remember { mutableStateOf(0.0) }
+    var subtotal by remember { mutableStateOf(0.0) }
+    var invoiceNumber by remember { mutableStateOf("") }
+    var tanggal by remember { mutableStateOf("") }
+    var method by remember { mutableStateOf("") }
+    var kasir by remember { mutableStateOf("") }
+    var ppn by remember { mutableStateOf(0.0) }
+    var bayar by remember { mutableStateOf(0.0) }
+    var kembali by remember { mutableStateOf(0.0) }
+    var detil by remember { mutableStateOf(emptyList<DetailPayment>()) }
 
-data class InvoiceScreen(
-    val paymentResponse: CreatePaymentApiModel? = null,
-    val noInvoice: String? = null
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<InvoiceViewModel>()
-        val invoice by viewModel.invoiceResponse.collectAsState()
-        val isLoading by viewModel.isLoading.collectAsState()
-        val toko by viewModel.store.collectAsState()
-        val captureController = rememberScreenCaptureController()
-        var totalHarga by remember { mutableStateOf(0.0) }
-        var diskon by remember { mutableStateOf(0.0) }
-        var subtotal by remember { mutableStateOf(0.0) }
-        var invoiceNumber by remember { mutableStateOf("") }
-        var tanggal by remember { mutableStateOf("") }
-        var method by remember { mutableStateOf("") }
-        var kasir by remember { mutableStateOf("") }
-        var ppn by remember { mutableStateOf(0.0) }
-        var bayar by remember { mutableStateOf(0.0) }
-        var kembali by remember { mutableStateOf(0.0) }
-        var detil by remember { mutableStateOf(emptyList<DetailPayment>()) }
-
-        LaunchedEffect(paymentResponse, noInvoice) {
-            when {
-                paymentResponse != null -> {
-                    totalHarga = paymentResponse.data.detil.sumOf { it.subtotal.toInt() }.toString()
-                        .toDoubleOrNull() ?: 0.0
-                    diskon = paymentResponse.data.detil.sumOf { it.diskon.toInt() }.toString()
-                        .toDoubleOrNull() ?: 0.0
-                    subtotal = totalHarga - diskon
-                    invoiceNumber = paymentResponse.data.invoice
-                    tanggal = paymentResponse.data.tanggal
-                    method = paymentResponse.data.method
-                    kasir = paymentResponse.data.kasir
-                    ppn = paymentResponse.data.ppn.toDoubleOrNull() ?: 0.0
-                    bayar = paymentResponse.data.bayar.toDoubleOrNull() ?: 0.0
-                    kembali = paymentResponse.data.kembali.toDoubleOrNull() ?: 0.0
-                    detil = paymentResponse.data.detil
-                }
-
-                noInvoice != null -> {
-                    viewModel.getInvoice(noInvoice)
-                }
-            }
-        }
-
-        LaunchedEffect(invoice) {
-            invoice?.let { invoiceData ->
-                totalHarga =
-                    invoiceData.data.detil.sumOf { it.subtotal.toInt() }.toString().toDoubleOrNull()
-                        ?: 0.0
-                diskon =
-                    invoiceData.data.detil.sumOf { it.diskon.toInt() }.toString().toDoubleOrNull()
-                        ?: 0.0
+    LaunchedEffect(paymentResponse, noInvoice) {
+        when {
+            paymentResponse != null -> {
+                totalHarga = paymentResponse.data.detil.sumOf { it.subtotal.toInt() }.toString()
+                    .toDoubleOrNull() ?: 0.0
+                diskon = paymentResponse.data.detil.sumOf { it.diskon.toInt() }.toString()
+                    .toDoubleOrNull() ?: 0.0
                 subtotal = totalHarga - diskon
-                invoiceNumber = invoiceData.data.invoice
-                tanggal = invoiceData.data.tanggal
-                method = invoiceData.data.method
-                kasir = invoiceData.data.kasir
-                ppn = invoiceData.data.ppn.toDoubleOrNull() ?: 0.0
-                bayar = invoiceData.data.bayar.toDoubleOrNull() ?: 0.0
-                kembali = invoiceData.data.kembali.toDoubleOrNull() ?: 0.0
-                detil = invoiceData.data.detil
+                invoiceNumber = paymentResponse.data.invoice
+                tanggal = paymentResponse.data.tanggal
+                method = paymentResponse.data.method
+                kasir = paymentResponse.data.kasir
+                ppn = paymentResponse.data.ppn.toDoubleOrNull() ?: 0.0
+                bayar = paymentResponse.data.bayar.toDoubleOrNull() ?: 0.0
+                kembali = paymentResponse.data.kembali.toDoubleOrNull() ?: 0.0
+                detil = paymentResponse.data.detil
+            }
+
+            noInvoice != null -> {
+                viewModel.getInvoice(noInvoice)
             }
         }
+    }
 
-        if (isLoading) {
-            EnhancedLoading()
-        } else {
-            Column(
+    LaunchedEffect(invoice) {
+        invoice?.let { invoiceData ->
+            totalHarga =
+                invoiceData.data.detil.sumOf { it.subtotal.toInt() }.toString().toDoubleOrNull()
+                    ?: 0.0
+            diskon =
+                invoiceData.data.detil.sumOf { it.diskon.toInt() }.toString().toDoubleOrNull()
+                    ?: 0.0
+            subtotal = totalHarga - diskon
+            invoiceNumber = invoiceData.data.invoice
+            tanggal = invoiceData.data.tanggal
+            method = invoiceData.data.method
+            kasir = invoiceData.data.kasir
+            ppn = invoiceData.data.ppn.toDoubleOrNull() ?: 0.0
+            bayar = invoiceData.data.bayar.toDoubleOrNull() ?: 0.0
+            kembali = invoiceData.data.kembali.toDoubleOrNull() ?: 0.0
+            detil = invoiceData.data.detil
+        }
+    }
+
+    if (isLoading) {
+        EnhancedLoading()
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .imePadding()
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+        ) {
+            ScreenCaptureComposable(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-                    .imePadding()
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                screenCaptureController = captureController,
+                shareImage = true,
+                onCaptured = { img, throwable ->
+
+                }
             ) {
-                ScreenCaptureComposable(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                    screenCaptureController = captureController,
-                    shareImage = true,
-                    onCaptured = { img, throwable ->
-
-                    }
+                        .background(Color.White)
+                        .padding(16.dp)
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White)
-                            .padding(16.dp)
+                            .background(Color(0XFFDBFFF6), RoundedCornerShape(10.dp))
+                            .padding(16.dp),
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color(0XFFDBFFF6), RoundedCornerShape(10.dp))
-                                .padding(16.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = toko?.nama.toString(),
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = dark,
-                                    modifier = Modifier.padding(8.dp),
-                                )
-                                Text(
-                                    text = toko?.alamat.toString(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Text(
-                                    text = toko?.telp.toString(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Column {
-                                Text(
-                                    text = invoiceNumber,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                                Text(
-                                    text = tanggal,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    text = method,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                                Text(
-                                    text = kasir,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = dark
-                                )
-                            }
+                            Text(
+                                text = toko?.nama.toString(),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = dark,
+                                modifier = Modifier.padding(8.dp),
+                            )
+                            Text(
+                                text = toko?.alamat.toString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = toko?.telp.toString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
                         }
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 16.dp),
-                            color = stroke
-                        )
-                        Text(
-                            text = "Produk:",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = dark,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        detil.forEach {
-                            ItemRow(
-                                name = it.namaBarang,
-                                qty = it.qtyJual,
-                                price = currencyFormat(it.subtotal.toDoubleOrNull() ?: 0.0),
-                                discount = currencyFormat(it.diskon.toDoubleOrNull() ?: 0.0)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        DashedDivider(color = dark, thickness = 1.dp)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        TotalRow(
-                            label = "TOTAL HARGA:",
-                            amount = currencyFormat(totalHarga)
-                        )
-                        TotalRow(
-                            label = "PPN:",
-                            amount = currencyFormat(
-                                ppn
-                            )
-                        )
-                        TotalRow(
-                            label = "DISKON:",
-                            amount = "- ${currencyFormat(diskon)}"
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TotalRow(
-                            label = "TOTAL TAGIHAN:",
-                            amount = currencyFormat(subtotal),
-                            isBold = true
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 16.dp),
-                            color = stroke
-                        )
-                        TotalRow(
-                            label = "TUNAI:",
-                            amount = currencyFormat(
-                                bayar
-                            )
-                        )
-                        TotalRow(
-                            label = "KEMBALIAN:",
-                            amount = currencyFormat(
-                                kembali
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            text = "==TERIMA KASIH SUDAH BERBELANJA==",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = secondary_text,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = secondary_text,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                Column {
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceAround
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TextButton(onClick = { captureController.capture() }) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Print,
-                                    contentDescription = "Cetak",
-                                    tint = primary
-                                )
-                                Text(
-                                    "Cetak",
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 18.sp,
-                                    color = primary,
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-                            }
+                        Column {
+                            Text(
+                                text = invoiceNumber,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = tanggal,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
                         }
-                        TextButton(onClick = { navigator.pop() }) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.CheckCircle,
-                                    contentDescription = "Selesai",
-                                    tint = icon
-                                )
-                                Text(
-                                    "Kembali",
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 18.sp,
-                                    color = icon,
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-                            }
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = method,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = kasir,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = dark
+                            )
+                        }
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = stroke
+                    )
+                    Text(
+                        text = "Produk:",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = dark,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    detil.forEach {
+                        ItemRow(
+                            name = it.namaBarang,
+                            qty = it.qtyJual,
+                            price = currencyFormat(it.subtotal.toDoubleOrNull() ?: 0.0),
+                            discount = currencyFormat(it.diskon.toDoubleOrNull() ?: 0.0)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DashedDivider(color = dark, thickness = 1.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TotalRow(
+                        label = "TOTAL HARGA:",
+                        amount = currencyFormat(totalHarga)
+                    )
+                    TotalRow(
+                        label = "PPN:",
+                        amount = currencyFormat(
+                            ppn
+                        )
+                    )
+                    TotalRow(
+                        label = "DISKON:",
+                        amount = "- ${currencyFormat(diskon)}"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TotalRow(
+                        label = "TOTAL TAGIHAN:",
+                        amount = currencyFormat(subtotal),
+                        isBold = true
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = stroke
+                    )
+                    TotalRow(
+                        label = "TUNAI:",
+                        amount = currencyFormat(
+                            bayar
+                        )
+                    )
+                    TotalRow(
+                        label = "KEMBALIAN:",
+                        amount = currencyFormat(
+                            kembali
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "==TERIMA KASIH SUDAH BERBELANJA==",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Column {
+                HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    TextButton(onClick = { captureController.capture() }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Print,
+                                contentDescription = "Cetak",
+                                tint = primary
+                            )
+                            Text(
+                                "Cetak",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 18.sp,
+                                color = primary,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                    }
+                    TextButton(onClick = { navigateBack() }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = "Selesai",
+                                tint = icon
+                            )
+                            Text(
+                                "Kembali",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 18.sp,
+                                color = icon,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
 
-                        }
                     }
                 }
             }
         }
     }
+}
 
 
-    @Composable
-    fun ItemRow(name: String, qty: String, price: String, discount: String) {
-        Column {
-            Row {
-                Text(
-                    text = name,
-                    color = secondary_text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(3f)
-                )
-                Text(
-                    text = qty,
-                    textAlign = TextAlign.Center,
-                    color = secondary_text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = price,
-                    textAlign = TextAlign.End,
-                    color = secondary_text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(2f)
-                )
-            }
+@Composable
+fun ItemRow(name: String, qty: String, price: String, discount: String) {
+    Column {
+        Row {
             Text(
-                text = "Diskon: $discount",
+                text = name,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(3f)
+            )
+            Text(
+                text = qty,
+                textAlign = TextAlign.Center,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = price,
                 textAlign = TextAlign.End,
                 color = secondary_text,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
+                modifier = Modifier.weight(2f)
             )
         }
+        Text(
+            text = "Diskon: $discount",
+            textAlign = TextAlign.End,
+            color = secondary_text,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
+        )
     }
 }
 

@@ -26,50 +26,46 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.getScreenModel
 import features.auth.domain.Toko
 import features.auth.domain.User
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
 
-class ProfileScreen : Screen {
+@Composable
+fun ProfileScreen() {
+    val viewModel = koinViewModel<ProfileViewModel>()
 
-    @Composable
-    override fun Content() {
-        val viewModel = getScreenModel<ProfileViewModel>()
+    val user by viewModel.user.collectAsState()
 
-        val user by viewModel.user.collectAsState()
-
-        Column(
-            modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .padding(bottom = 24.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = 24.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
-                        .background(Color.White),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .background(primary)
-                )
-                user?.let { UserInfoHeader(it.userInfo) }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            user?.let { StoreInformationCard(it.storeInfo) }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
+                    .background(Color.White),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .background(primary)
+            )
+            user?.let { UserInfoHeader(it.userInfo) }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        user?.let { StoreInformationCard(it.storeInfo) }
     }
 }
 

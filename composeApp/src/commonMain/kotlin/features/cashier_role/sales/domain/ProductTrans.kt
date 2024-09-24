@@ -2,7 +2,7 @@ package features.cashier_role.sales.domain
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import util.JavaSerializable
+import kotlinx.serialization.Serializable
 
 class ProductTrans : RealmObject {
     @PrimaryKey
@@ -19,6 +19,7 @@ class ProductTrans : RealmObject {
         get() = qty_jual * harga_item - diskon
 }
 
+@Serializable
 data class ProductTransSerializable(
     val id_barang: String,
     val kode_barang: String,
@@ -30,7 +31,7 @@ data class ProductTransSerializable(
     val harga_item: Int,
     val diskon: Int,
     val subtotal: Int
-) : JavaSerializable
+)
 
 fun ProductTrans.toSerializable(): ProductTransSerializable {
     return ProductTransSerializable(

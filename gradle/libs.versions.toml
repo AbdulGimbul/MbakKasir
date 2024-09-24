@@ -1,4 +1,5 @@
 [versions]
+adaptive = "1.0.0-alpha03"
 agp = "8.2.2"
 android-compileSdk = "34"
 android-minSdk = "24"
@@ -19,15 +20,18 @@ junit = "4.13.2"
 kmpDateTimePicker = "1.0.3"
 konnectivity = "0.1-alpha01"
 kotlin = "2.0.0"
-compose-navigation = "2.8.0-alpha08"
+lifecycleViewmodelCompose = "2.8.2"
+material3WindowSizeClass = "1.7.0-beta02"
+materialNavigation = "1.7.0-beta02"
 messagebarkmp = "1.0.5"
+navigationCompose = "2.8.0-alpha09"
 pagingRuntime = "3.3.2"
 qrkit = "2.0.0"
 sdp-ssp = "1.0.4"
 voyager = "1.0.0"
 ktor = "2.3.12"
-koin = "3.5.6"
-koinCompose = "1.1.5"
+koin = "4.0.0"
+koinCompose = "4.0.0"
 realm = "2.2.0"
 coroutines = "1.9.0"
 stately = "2.0.7"
@@ -41,6 +45,9 @@ moko = "0.18.0"
 detekt = "1.23.7"
 
 [libraries]
+adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
+adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
+adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingRuntime" }
@@ -61,19 +68,19 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
+lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+material-navigation = { module = "org.jetbrains.compose.material:material-navigation", version.ref = "materialNavigation" }
+material-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
 messagebarkmp = { module = "com.stevdza-san:messagebarkmp", version.ref = "messagebarkmp" }
+navigation-compose-v280alpha09 = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 qrkit = { module = "network.chaintech:qr-kit", version.ref = "qrkit" }
 sdp-ssp = { module = "network.chaintech:sdp-ssp-compose-multiplatform", version.ref = "sdp-ssp" }
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-screen-model = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCompose" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koinCompose" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose" }
 mongodb-realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }

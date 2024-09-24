@@ -1,7 +1,7 @@
 package features.cashier_role.sales.presentation.entry_sales
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.cashier_role.home.domain.Product
 import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 class EntrySalesViewModel(
     private val salesRepository: SalesRepository
-) : ScreenModel {
+) : ViewModel() {
 
     private val _searchResults = MutableStateFlow<List<Product>>(emptyList())
     val searchResults: StateFlow<List<Product>> = _searchResults
@@ -39,7 +39,7 @@ class EntrySalesViewModel(
     }
 
     fun scanProductByBarcode(inputBarcode: String) {
-        screenModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
             salesRepository.getProductByBarcode(inputBarcode).collectLatest { product ->
                 product?.let { newProduct ->
                     val currentList = _scannedProducts.value
@@ -57,7 +57,7 @@ class EntrySalesViewModel(
 
     fun searchProductsByBarcode(query: String) {
         searchJob?.cancel()
-        searchJob = screenModelScope.launch(Dispatchers.IO) {
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(300)
             salesRepository.searchProductsByBarcode(query).collectLatest { products ->
                 withContext(Dispatchers.Main) {
@@ -68,7 +68,7 @@ class EntrySalesViewModel(
     }
 
     fun increaseProductQty(product: ProductTrans) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual + 1
             salesRepository.updateProductTrans(product, newQty)
             loadScannedProducts()
@@ -76,14 +76,14 @@ class EntrySalesViewModel(
     }
 
     fun decreaseProductQty(product: ProductTrans) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual - 1
             salesRepository.updateProductTrans(product, newQty)
         }
     }
 
     private fun loadScannedProducts() {
-        screenModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
             salesRepository.getScannedProducts().collectLatest { scannedProductsList ->
                 _scannedProducts.value = scannedProductsList
             }

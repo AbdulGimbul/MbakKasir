@@ -55,45 +55,37 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(compose.materialIconsExtended)
 
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.tabNavigator)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.screen.model)
-            implementation(libs.voyager.koin)
             api(libs.koin.core)
             implementation(libs.koin.compose)
-
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
             implementation(libs.mongodb.realm)
             implementation(libs.kotlin.coroutines)
             implementation(libs.stately.common)
-
             implementation(libs.kmp.date.time.picker)
-
             implementation(libs.compottie)
             implementation(libs.compottie.dot)
-
             api(libs.androidx.datastore)
             api(libs.androidx.datastore.preferences)
-            implementation(libs.compose.navigation)
             implementation(libs.androidx.paging.runtime)
             implementation(libs.androidx.paging.compose)
-
             implementation(libs.bundles.ktor)
-
             implementation(libs.messagebarkmp)
-
             implementation(libs.qrkit)
             implementation(libs.compose.multiplatform.screen.capture)
-
             api(libs.gitlive.firebase.kotlin.crashlytics)
 //            api(libs.gitlive.firebase.kotlin.config)
-
             implementation(libs.konnectivity)
-
             implementation(libs.blue.falcon)
-
             api(libs.moko.permissions)
             api(libs.moko.permissions.compose)
+            implementation(libs.navigation.compose.v280alpha09)
+            implementation(libs.material.navigation)
+            implementation(libs.material.window.size)
+            implementation(libs.adaptive)
+            implementation(libs.adaptive.layout)
+            implementation(libs.adaptive.navigation)
+            implementation(libs.lifecycle.viewmodel.compose)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

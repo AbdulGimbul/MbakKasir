@@ -1,7 +1,7 @@
 package features.cashier_role.history.presentation
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import features.cashier_role.history.data.HistoryRepository
 import features.cashier_role.history.domain.HistoryApiModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import network.onSuccess
 
 class HistoryViewModel(
     private val historyRepository: HistoryRepository
-) : ScreenModel {
+) : ViewModel() {
 
     private val _errorMessage = MutableStateFlow<NetworkError?>(null)
     val errorMessage: StateFlow<NetworkError?> = _errorMessage
@@ -35,7 +35,7 @@ class HistoryViewModel(
         page: String = "1",
         perPage: String = "5"
     ) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             _errorMessage.value = null
 

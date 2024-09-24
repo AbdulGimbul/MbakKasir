@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import io.github.alexzhirkevich.compottie.Compottie
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
@@ -31,54 +30,51 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import ui.component.DefaultTextField
 import ui.theme.dark
 
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun SalesScreen() {
+    var search by remember { mutableStateOf("") }
+    val composition by rememberLottieComposition {
+        LottieCompositionSpec.JsonString(
+            Res.readBytes("files/nodata.json").decodeToString()
+        )
+    }
 
-class SalesScreen : Screen {
-    @OptIn(ExperimentalResourceApi::class)
-    @Composable
-    override fun Content() {
-        var search by remember { mutableStateOf("") }
-        val composition by rememberLottieComposition {
-            LottieCompositionSpec.JsonString(
-                Res.readBytes("files/nodata.json").decodeToString()
-            )
-        }
-
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            "Penjualan",
+            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+            color = dark,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+        DefaultTextField(
+            value = search,
+            onValueChange = { search = it },
+            placehoder = "Search ...",
+            leadingIcon = Icons.Default.Search,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            Image(
+                painter = rememberLottiePainter(
+                    composition = composition,
+                    iterations = Compottie.IterateForever
+                ),
+                contentDescription = "Lottie animation",
+                modifier = Modifier.size(170.dp)
+            )
             Text(
-                "Penjualan",
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                color = dark,
-                modifier = Modifier.padding(bottom = 32.dp)
+                "Data not available.",
+                style = MaterialTheme.typography.bodyMedium,
             )
-            DefaultTextField(
-                value = search,
-                onValueChange = { search = it },
-                placehoder = "Search ...",
-                leadingIcon = Icons.Default.Search,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = rememberLottiePainter(
-                        composition = composition,
-                        iterations = Compottie.IterateForever
-                    ),
-                    contentDescription = "Lottie animation",
-                    modifier = Modifier.size(170.dp)
-                )
-                Text(
-                    "Data not available.",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
         }
     }
 }
