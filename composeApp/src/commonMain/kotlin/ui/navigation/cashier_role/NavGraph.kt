@@ -194,11 +194,13 @@ private fun BototmBar(
                 selected = currentRoute == item.screen.route,
                 onClick = {
                     navController.navigate(item.screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(Screen.Home.route) {
+                                saveState = true
+                            }
+                            restoreState = true
+                            launchSingleTop = true
                         }
-                        restoreState = true
-                        launchSingleTop = true
                     }
                 },
                 icon = {
