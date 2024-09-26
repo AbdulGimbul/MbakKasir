@@ -1,9 +1,8 @@
-package features.auth.presentation
+package features.auth.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.auth.data.AuthRepository
-import features.auth.domain.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,11 +13,11 @@ class ProfileViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _user = MutableStateFlow<UserData?>(null)
-    val user: StateFlow<UserData?> = _user
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    val uiState: StateFlow<ProfileUiState> = _uiState
 
     init {
-        if (_user.value == null) {
+        if (_uiState.value.user == null) {
             getUserData()
         }
     }
@@ -26,7 +25,9 @@ class ProfileViewModel(
     private fun getUserData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _user.value = authRepository.userInfo()
+                authRepository.userInfo().let {
+                    _uiState.value = _uiState.value.copy(user = it)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -2,8 +2,8 @@ package di
 
 import features.auth.data.AuthRepository
 import features.auth.data.AuthRepositoryImpl
-import features.auth.presentation.LoginViewModel
-import features.auth.presentation.ProfileViewModel
+import features.auth.presentation.login.LoginViewModel
+import features.auth.presentation.profile.ProfileViewModel
 import features.cashier_role.history.data.HistoryRepository
 import features.cashier_role.history.data.HistoryRepositoryImpl
 import features.cashier_role.history.presentation.HistoryViewModel
@@ -13,7 +13,7 @@ import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
-import features.cashier_role.sales.presentation.payment.InvoiceViewModel
+import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind

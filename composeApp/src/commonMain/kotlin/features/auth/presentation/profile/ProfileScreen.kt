@@ -1,4 +1,4 @@
-package features.auth.presentation
+package features.auth.presentation.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +18,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,21 +25,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import features.auth.domain.Toko
 import features.auth.domain.User
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
 
 @Composable
-fun ProfileScreen() {
-    val viewModel = koinViewModel<ProfileViewModel>()
+fun ProfileScreen(viewModel: ProfileViewModel) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val user by viewModel.user.collectAsState()
+    Profile(uiState)
+}
+
+@Composable
+fun Profile(uiState: ProfileUiState) {
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -62,10 +65,10 @@ fun ProfileScreen() {
                     .height(150.dp)
                     .background(primary)
             )
-            user?.let { UserInfoHeader(it.userInfo) }
+            uiState.user?.userInfo?.let { UserInfoHeader(it) }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        user?.let { StoreInformationCard(it.storeInfo) }
+        uiState.user?.storeInfo?.let { StoreInformationCard(it) }
     }
 }
 

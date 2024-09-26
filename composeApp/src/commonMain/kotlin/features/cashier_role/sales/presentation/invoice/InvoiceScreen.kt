@@ -1,4 +1,4 @@
-package features.cashier_role.sales.presentation.payment
+package features.cashier_role.sales.presentation.invoice
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -28,11 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -44,12 +40,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import features.auth.presentation.EnhancedLoading
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import features.auth.presentation.login.EnhancedLoading
 import features.cashier_role.sales.domain.CreatePaymentApiModel
-import features.cashier_role.sales.domain.DetailPayment
 import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
 import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
-import org.koin.compose.viewmodel.koinViewModel
+import ui.navigation.cashier_role.Screen
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
@@ -59,72 +56,53 @@ import util.currencyFormat
 
 @Composable
 fun InvoiceScreen(
+    viewModel: InvoiceViewModel,
+    navController: NavController,
+    paymentResponse: CreatePaymentApiModel? = null,
+    noInvoice: String? = null
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Invoice(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        paymentResponse = paymentResponse,
+        noInvoice = noInvoice,
+        navigateBack = {
+            navController.navigate(Screen.Sales.route) {
+                popUpTo(Screen.Sales.route) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun Invoice(
+    uiState: InvoiceUiState,
+    onEvent: (InvoiceUiEvent) -> Unit,
     paymentResponse: CreatePaymentApiModel? = null,
     noInvoice: String? = null,
     navigateBack: () -> Unit
 ) {
-    val viewModel = koinViewModel<InvoiceViewModel>()
-    val invoice by viewModel.invoiceResponse.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val toko by viewModel.store.collectAsState()
     val captureController = rememberScreenCaptureController()
-    var totalHarga by remember { mutableStateOf(0.0) }
-    var diskon by remember { mutableStateOf(0.0) }
-    var subtotal by remember { mutableStateOf(0.0) }
-    var invoiceNumber by remember { mutableStateOf("") }
-    var tanggal by remember { mutableStateOf("") }
-    var method by remember { mutableStateOf("") }
-    var kasir by remember { mutableStateOf("") }
-    var ppn by remember { mutableStateOf(0.0) }
-    var bayar by remember { mutableStateOf(0.0) }
-    var kembali by remember { mutableStateOf(0.0) }
-    var detil by remember { mutableStateOf(emptyList<DetailPayment>()) }
 
     LaunchedEffect(paymentResponse, noInvoice) {
         when {
             paymentResponse != null -> {
-                totalHarga = paymentResponse.data.detil.sumOf { it.subtotal.toInt() }.toString()
-                    .toDoubleOrNull() ?: 0.0
-                diskon = paymentResponse.data.detil.sumOf { it.diskon.toInt() }.toString()
-                    .toDoubleOrNull() ?: 0.0
-                subtotal = totalHarga - diskon
-                invoiceNumber = paymentResponse.data.invoice
-                tanggal = paymentResponse.data.tanggal
-                method = paymentResponse.data.method
-                kasir = paymentResponse.data.kasir
-                ppn = paymentResponse.data.ppn.toDoubleOrNull() ?: 0.0
-                bayar = paymentResponse.data.bayar.toDoubleOrNull() ?: 0.0
-                kembali = paymentResponse.data.kembali.toDoubleOrNull() ?: 0.0
-                detil = paymentResponse.data.detil
+                println("cek: $paymentResponse")
+                onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentResponse))
             }
 
             noInvoice != null -> {
-                viewModel.getInvoice(noInvoice)
+                println("cek 2: $noInvoice")
+                onEvent(InvoiceUiEvent.ArgumentNoInvoiceLoaded(noInvoice))
             }
         }
     }
 
-    LaunchedEffect(invoice) {
-        invoice?.let { invoiceData ->
-            totalHarga =
-                invoiceData.data.detil.sumOf { it.subtotal.toInt() }.toString().toDoubleOrNull()
-                    ?: 0.0
-            diskon =
-                invoiceData.data.detil.sumOf { it.diskon.toInt() }.toString().toDoubleOrNull()
-                    ?: 0.0
-            subtotal = totalHarga - diskon
-            invoiceNumber = invoiceData.data.invoice
-            tanggal = invoiceData.data.tanggal
-            method = invoiceData.data.method
-            kasir = invoiceData.data.kasir
-            ppn = invoiceData.data.ppn.toDoubleOrNull() ?: 0.0
-            bayar = invoiceData.data.bayar.toDoubleOrNull() ?: 0.0
-            kembali = invoiceData.data.kembali.toDoubleOrNull() ?: 0.0
-            detil = invoiceData.data.detil
-        }
-    }
-
-    if (isLoading) {
+    if (uiState.isLoading) {
         EnhancedLoading()
     } else {
         Column(
@@ -163,19 +141,19 @@ fun InvoiceScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = toko?.nama.toString(),
+                                text = uiState.store?.nama.toString(),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                                 color = dark,
                                 modifier = Modifier.padding(8.dp),
                             )
                             Text(
-                                text = toko?.alamat.toString(),
+                                text = uiState.store?.alamat.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
-                                text = toko?.telp.toString(),
+                                text = uiState.store?.telp.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
@@ -188,24 +166,24 @@ fun InvoiceScreen(
                     ) {
                         Column {
                             Text(
-                                text = invoiceNumber,
+                                text = uiState.invoiceNumber,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
                             Text(
-                                text = tanggal,
+                                text = uiState.tanggal,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
-                                text = method,
+                                text = uiState.method,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
                             Text(
-                                text = kasir,
+                                text = uiState.kasir,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
@@ -221,7 +199,7 @@ fun InvoiceScreen(
                         color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    detil.forEach {
+                    uiState.detil.forEach {
                         ItemRow(
                             name = it.namaBarang,
                             qty = it.qtyJual,
@@ -235,22 +213,20 @@ fun InvoiceScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     TotalRow(
                         label = "TOTAL HARGA:",
-                        amount = currencyFormat(totalHarga)
+                        amount = currencyFormat(uiState.totalHarga)
                     )
                     TotalRow(
                         label = "PPN:",
-                        amount = currencyFormat(
-                            ppn
-                        )
+                        amount = currencyFormat(uiState.ppn)
                     )
                     TotalRow(
                         label = "DISKON:",
-                        amount = "- ${currencyFormat(diskon)}"
+                        amount = "- ${currencyFormat(uiState.diskon)}"
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     TotalRow(
                         label = "TOTAL TAGIHAN:",
-                        amount = currencyFormat(subtotal),
+                        amount = currencyFormat(uiState.subtotal),
                         isBold = true
                     )
                     HorizontalDivider(
@@ -259,15 +235,11 @@ fun InvoiceScreen(
                     )
                     TotalRow(
                         label = "TUNAI:",
-                        amount = currencyFormat(
-                            bayar
-                        )
+                        amount = currencyFormat(uiState.bayar)
                     )
                     TotalRow(
                         label = "KEMBALIAN:",
-                        amount = currencyFormat(
-                            kembali
-                        )
+                        amount = currencyFormat(uiState.kembali)
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(

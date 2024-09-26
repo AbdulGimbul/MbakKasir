@@ -7,7 +7,6 @@ import features.cashier_role.home.domain.toProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,11 +20,7 @@ class HomeViewModel(
     private val mongoDB: MongoDB
 ) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _errorMessage = MutableStateFlow<NetworkError?>(null)
-    val errorMessage: StateFlow<NetworkError?> = _errorMessage
+    private val _uiState = MutableStateFlow(HomeUiState())
 
     init {
         fetchProducts()
@@ -33,8 +28,7 @@ class HomeViewModel(
 
     private fun fetchProducts() {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.value = true
-            _errorMessage.value = null
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             try {
                 val isCacheAvailable = mongoDB.isProductCacheAvailable().first()
@@ -47,14 +41,14 @@ class HomeViewModel(
                                 mongoDB.addProduct(barang.toProduct())
                             }
                         }.onError { error ->
-                            _errorMessage.value = error
+                            _uiState.value = _uiState.value.copy(errorMessage = error)
                         }
                     }
                 }
             } catch (e: Exception) {
-                _errorMessage.value = NetworkError.UNKNOWN
+                _uiState.value = _uiState.value.copy(errorMessage = NetworkError.UNKNOWN)
             } finally {
-                _isLoading.value = false
+                _uiState.value = _uiState.value.copy(isLoading = false)
             }
         }
     }

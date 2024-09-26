@@ -18,23 +18,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import features.auth.presentation.LoginScreen
-import features.auth.presentation.ProfileScreen
+import features.auth.presentation.login.LoginScreen
+import features.auth.presentation.login.LoginViewModel
+import features.auth.presentation.profile.ProfileScreen
+import features.auth.presentation.profile.ProfileViewModel
 import features.cashier_role.history.presentation.HistoryScreen
+import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.presentation.HomeScreen
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.ProductTransSerializable
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
-import features.cashier_role.sales.presentation.payment.InvoiceScreen
+import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
+import features.cashier_role.sales.presentation.invoice.InvoiceScreen
+import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentScreen
+import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import features.cashier_role.sales.presentation.sales.SalesScreen
 import kotlinx.serialization.json.Json
+import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.primary
 
 @Composable
@@ -79,13 +85,8 @@ fun SetupNavHost(navController: NavHostController) {
         ) {
             composable(Screen.Login.route) {
                 LoginScreen(
-                    navigateToHome = {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
+                    viewModel = koinViewModel<LoginViewModel>(),
+                    navController = navController
                 )
             }
             composable(Screen.Home.route) {
@@ -96,22 +97,17 @@ fun SetupNavHost(navController: NavHostController) {
             }
             composable(Screen.History.route) {
                 HistoryScreen(
-                    navigateToInvoice = {
-                        navController.navigate("${Screen.Invoice.route}?noInvoice=$it")
-                    }
+                    viewModel = koinViewModel<HistoryViewModel>(),
+                    navController = navController
                 )
             }
             composable(Screen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(viewModel = koinViewModel<ProfileViewModel>())
             }
             composable(Screen.EntrySales.route) {
                 EntrySalesScreen(
-                    navigateBack = {
-                        navController.navigateUp()
-                    },
-                    navigateToPayment = {
-                        navController.navigate("${Screen.Payment.route}/$it")
-                    }
+                    viewModel = koinViewModel<EntrySalesViewModel>(),
+                    navController = navController,
                 )
             }
             composable("${Screen.Payment.route}/{scannedProducts}") { backStackEntry ->
@@ -119,13 +115,9 @@ fun SetupNavHost(navController: NavHostController) {
                 val scannedProducts =
                     jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
                 PaymentScreen(
-                    products = scannedProducts ?: emptyList(),
-                    navigateToInvoice = {
-                        navController.navigate("${Screen.Invoice.route}?paymentData=$it")
-                    },
-                    navigateBack = {
-                        navController.navigateUp()
-                    }
+                    viewModel = koinViewModel<PaymentViewModel>(),
+                    navController = navController,
+                    products = scannedProducts ?: emptyList()
                 )
             }
             composable(
@@ -140,15 +132,10 @@ fun SetupNavHost(navController: NavHostController) {
                 val paymentData =
                     jsonResponse?.let { Json.decodeFromString<CreatePaymentApiModel>(it) }
                 InvoiceScreen(
+                    viewModel = koinViewModel<InvoiceViewModel>(),
                     paymentResponse = paymentData,
                     noInvoice = noInvoice,
-                    navigateBack = {
-                        navController.navigate(Screen.Sales.route) {
-                            popUpTo(Screen.Sales.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
+                    navController = navController
                 )
             }
         }

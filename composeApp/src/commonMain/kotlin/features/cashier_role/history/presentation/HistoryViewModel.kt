@@ -3,14 +3,12 @@ package features.cashier_role.history.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.cashier_role.history.data.HistoryRepository
-import features.cashier_role.history.domain.HistoryApiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import network.NetworkError
 import network.onError
 import network.onSuccess
 
@@ -18,38 +16,33 @@ class HistoryViewModel(
     private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
-    private val _errorMessage = MutableStateFlow<NetworkError?>(null)
-    val errorMessage: StateFlow<NetworkError?> = _errorMessage
-    private val _historyResponse = MutableStateFlow<HistoryApiModel?>(null)
-    val historyResponse: StateFlow<HistoryApiModel?> = _historyResponse
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _uiState = MutableStateFlow(HistoryUiState())
+    val uiState: StateFlow<HistoryUiState> = _uiState
 
     init {
         getHistory()
     }
 
-    fun getHistory(
+    private fun getHistory(
         startDate: String = "18-08-2024",
         endDate: String = "20-08-2024",
         page: String = "1",
         perPage: String = "5"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.value = true
-            _errorMessage.value = null
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             val result = historyRepository.getHistory(startDate, endDate, page, perPage)
             withContext(Dispatchers.Main) {
-                result.onSuccess {
-                    if (it.code == "200") {
-                        _historyResponse.value = it
+                result.onSuccess { response ->
+                    if (response.code == "200") {
+                        _uiState.value = _uiState.value.copy(history = response)
                     }
                 }.onError {
-                    _errorMessage.value = it
+                    _uiState.value = _uiState.value.copy(errorMessage = it)
                 }
 
-                _isLoading.value = false
+                _uiState.value = _uiState.value.copy(isLoading = false)
             }
         }
     }

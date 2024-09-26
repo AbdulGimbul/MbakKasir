@@ -32,11 +32,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,15 +43,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import features.cashier_role.sales.domain.toSerializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.koin.compose.viewmodel.koinViewModel
 import qrscanner.QrScanner
 import rememberMessageBarState
 import ui.component.EntrySalesItem
 import ui.component.FooterButton
 import ui.component.HeadlineText
+import ui.navigation.cashier_role.Screen
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
@@ -61,31 +61,43 @@ import ui.theme.secondary_text
 import ui.theme.stroke
 import util.currencyFormat
 
+@Composable
+fun EntrySalesScreen(viewModel: EntrySalesViewModel, navController: NavController) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    EntrySales(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        moveToPayment = {
+            navController.navigate("${Screen.Payment.route}/$it")
+        },
+        navigateBack = {
+            navController.navigateUp()
+        }
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Unit) {
+fun EntrySales(
+    uiState: EntrySalesUiState,
+    onEvent: (EntrySalesUiEvent) -> Unit,
+    moveToPayment: (String) -> Unit,
+    navigateBack: () -> Unit,
+) {
 
-    val viewModel = koinViewModel<EntrySalesViewModel>()
-    val searchResults by viewModel.searchResults.collectAsState()
-    val scannedProducts by viewModel.scannedProducts.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val startBarCodeScan by viewModel.startBarCodeScan.collectAsState()
-    var inputUser by remember { mutableStateOf("") }
     val state = rememberMessageBarState()
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && searchResults.isNotEmpty()
-    var flashlightOn by remember { mutableStateOf(false) }
-    var launchGallery by remember { mutableStateOf(false) }
-    var totalTagihan by remember { mutableStateOf(0) }
+    val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
 
-    LaunchedEffect(scannedProducts) {
-        totalTagihan = scannedProducts.sumOf { it.harga_item * it.qty_jual }
+    LaunchedEffect(uiState.scannedProducts) {
+        val totalTagihan = uiState.scannedProducts.sumOf { it.harga_item * it.qty_jual }
+        onEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
     }
 
-    LaunchedEffect(errorMessage) {
-        if (errorMessage.isNotEmpty()) {
-            state.addError(Exception(errorMessage))
-            viewModel.resetErrorMessage()
+    LaunchedEffect(uiState.errorMessage) {
+        if (uiState.errorMessage.isNotEmpty()) {
+            state.addError(Exception(uiState.errorMessage))
         }
     }
 
@@ -115,11 +127,11 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                     onExpandedChange = setExpanded
                 ) {
                     OutlinedTextField(
-                        value = inputUser,
+                        value = uiState.inputUser,
                         onValueChange = { newBarcode ->
-                            inputUser = newBarcode
+                            onEvent(EntrySalesUiEvent.OnInputUserChanged(newBarcode))
                             if (newBarcode.length >= 5) {
-                                viewModel.searchProductsByBarcode(newBarcode)
+                                onEvent(EntrySalesUiEvent.SearchProduct)
                             }
                         },
                         textStyle = MaterialTheme.typography.bodyMedium,
@@ -132,7 +144,7 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                         },
                         trailingIcon = {
                             IconButton(onClick = {
-                                viewModel.onScanIconClick()
+                                onEvent(EntrySalesUiEvent.ScanIconClick)
                             }) {
                                 Icon(
                                     Icons.Default.QrCodeScanner,
@@ -166,20 +178,20 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                             .fillMaxWidth()
                             .heightIn(max = 200.dp)
                     ) {
-                        searchResults.forEach { product ->
+                        uiState.searchResults.forEach { product ->
                             val displayText = when {
                                 product.barcode.contains(
-                                    inputUser,
+                                    uiState.inputUser,
                                     ignoreCase = true
                                 ) -> product.barcode
 
                                 product.nama_barang.contains(
-                                    inputUser,
+                                    uiState.inputUser,
                                     ignoreCase = true
                                 ) -> product.nama_barang
 
                                 product.kode_barang.contains(
-                                    inputUser,
+                                    uiState.inputUser,
                                     ignoreCase = true
                                 ) -> product.kode_barang
 
@@ -189,8 +201,8 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                             if (displayText.isNotEmpty()) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        inputUser = product.barcode
-                                        viewModel.scanProductByBarcode(product.barcode)
+                                        onEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
+                                        onEvent(EntrySalesUiEvent.ScanProduct(product.barcode))
                                         setExpanded(false)
                                     },
                                     text = {
@@ -205,27 +217,27 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
 
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn {
-                    items(scannedProducts) { product ->
+                    items(uiState.scannedProducts) { product ->
                         EntrySalesItem(
                             product = product,
-                            onIncreaseQty = { viewModel.increaseProductQty(it) },
-                            onDecreaseQty = { viewModel.decreaseProductQty(it) },
+                            onIncreaseQty = { onEvent(EntrySalesUiEvent.IncreaseProductQty(it)) },
+                            onDecreaseQty = { onEvent(EntrySalesUiEvent.DecreaseProductQty(it)) },
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
                 }
             }
 
-            if (startBarCodeScan) {
+            if (uiState.startBarCodeScan) {
                 QrScanner(
                     modifier = Modifier
                         .clipToBounds()
                         .clip(shape = RoundedCornerShape(size = 14.dp)),
-                    flashlightOn = flashlightOn,
+                    flashlightOn = uiState.flashlightOn,
                     onCompletion = {
-                        inputUser = it
-                        viewModel.onScanIconClick()
-                        viewModel.scanProductByBarcode(it)
+                        onEvent(EntrySalesUiEvent.OnInputUserChanged(it))
+                        onEvent(EntrySalesUiEvent.ScanIconClick)
+                        onEvent(EntrySalesUiEvent.ScanProduct(it))
                     },
                     onFailure = {
                         if (it.isEmpty()) {
@@ -235,7 +247,7 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                         }
                     },
                     openImagePicker = false,
-                    imagePickerHandler = { launchGallery = it },
+                    imagePickerHandler = { onEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
                 )
             }
 
@@ -254,7 +266,7 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                         Text(
-                            currencyFormat(totalTagihan.toDouble()), color = dark,
+                            currencyFormat(uiState.totalTagihan.toDouble()), color = dark,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
@@ -264,13 +276,13 @@ fun EntrySalesScreen(navigateBack: () -> Unit, navigateToPayment: (String) -> Un
                             navigateBack()
                         },
                         onConfirmClick = {
-                            if (scannedProducts.isEmpty()) {
+                            if (uiState.scannedProducts.isEmpty()) {
                                 state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
                                 return@FooterButton
                             }
                             val scannedProductsJson =
-                                Json.encodeToString(scannedProducts.map { it.toSerializable() })
-                            navigateToPayment(scannedProductsJson)
+                                Json.encodeToString(uiState.scannedProducts.map { it.toSerializable() })
+                            moveToPayment(scannedProductsJson)
                         },
                         cancelText = "Batal",
                         confirmText = "Pembayaran"

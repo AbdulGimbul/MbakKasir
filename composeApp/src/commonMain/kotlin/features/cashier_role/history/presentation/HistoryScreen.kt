@@ -20,28 +20,34 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import features.auth.presentation.EnhancedLoading
-import org.koin.compose.viewmodel.koinViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import features.auth.presentation.login.EnhancedLoading
 import ui.component.HeadlineText
 import ui.component.HistoryItem
+import ui.navigation.cashier_role.Screen
 import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.secondary_text
 import ui.theme.stroke
 
 @Composable
-fun HistoryScreen(navigateToInvoice: (String) -> Unit) {
-    val viewModel = koinViewModel<HistoryViewModel>()
-    val history by viewModel.historyResponse.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    if (isLoading) {
+    History(uiState = uiState, moveToInvoice = {
+        navController.navigate("${Screen.Invoice.route}?noInvoice=$it")
+    })
+}
+
+@Composable
+fun History(uiState: HistoryUiState, moveToInvoice: (String) -> Unit) {
+
+    if (uiState.isLoading) {
         EnhancedLoading()
     } else {
         Column(
@@ -88,7 +94,7 @@ fun HistoryScreen(navigateToInvoice: (String) -> Unit) {
                     .padding(bottom = 16.dp),
             )
             LazyColumn {
-                history?.let { hist ->
+                uiState.history?.let { hist ->
                     items(hist.data) {
                         HistoryItem(
                             date = it.tanggal,
@@ -98,7 +104,7 @@ fun HistoryScreen(navigateToInvoice: (String) -> Unit) {
                             cashier = it.kasir,
                             modifier = Modifier.padding(vertical = 4.dp),
                             onClick = {
-                                navigateToInvoice(it.invoice)
+                                moveToInvoice(it.invoice)
                             }
                         )
                     }

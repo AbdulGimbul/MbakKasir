@@ -4,49 +4,100 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plusmobileapps.konnectivity.Konnectivity
 import features.cashier_role.sales.data.SalesRepository
-import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
+import features.cashier_role.sales.domain.toDetailPayload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import network.NetworkError
 import network.onError
 import network.onSuccess
 
 class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel() {
-    private val _errorMessage = MutableStateFlow<NetworkError?>(null)
-    val errorMessage: StateFlow<NetworkError?> = _errorMessage
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-    private val _paymentResponse = MutableStateFlow<CreatePaymentApiModel?>(null)
-    val paymentResponse: StateFlow<CreatePaymentApiModel?> = _paymentResponse
+
+    private val _uiState = MutableStateFlow(PaymentUiState())
+    val uiState: StateFlow<PaymentUiState> = _uiState
     private val _connectivity = MutableStateFlow(Konnectivity())
     val connectivity: StateFlow<Konnectivity> = _connectivity
 
-    fun createPayment(paymentRequest: CreatePaymentRequest) {
-        _isLoading.value = true
-        _errorMessage.value = null
+    fun onEvent(event: PaymentUiEvent) {
+        when (event) {
+            is PaymentUiEvent.UangDiterimaChanged -> {
+                _uiState.value = _uiState.value.copy(uangDiterima = event.uangDiterima)
+                val kembalian =
+                    (_uiState.value.uangDiterima.toIntOrNull() ?: 0) - _uiState.value.subtotal
+                _uiState.value = _uiState.value.copy(kembalian = kembalian)
+            }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = salesRepository.createPayment(paymentRequest)
-            withContext(Dispatchers.Main) {
-                result.onSuccess {
-                    if (it.code == "200") {
-                        _paymentResponse.value = it
-                    }
-                }.onError {
-                    _errorMessage.value = it
-                }
+            is PaymentUiEvent.DateIconClicked -> {
+                _uiState.value = _uiState.value.copy(showDatePicker = true)
+            }
 
-                _isLoading.value = false
+            is PaymentUiEvent.DeleteScannedProducts -> {
+                deleteScannedProducts(event.idBarang)
+            }
+
+            is PaymentUiEvent.ConfirmButtonClicked -> {
+                createPayment(event.method)
+            }
+
+            is PaymentUiEvent.SelectedDateChanged -> {
+                _uiState.value =
+                    _uiState.value.copy(selectedDate = event.date, showDatePicker = false)
+            }
+
+            is PaymentUiEvent.DismissDialog -> {
+                _uiState.value = _uiState.value.copy(showDatePicker = false)
+            }
+
+            is PaymentUiEvent.ArgumentProductsLoaded -> {
+                _uiState.value = _uiState.value.copy(products = event.products)
+                val totalHarga = _uiState.value.products.sumOf { it.subtotal }
+                val diskon = _uiState.value.products.sumOf { it.diskon }
+                val subtotal = totalHarga - diskon
+                _uiState.value =
+                    _uiState.value.copy(
+                        totalHarga = totalHarga,
+                        diskon = diskon,
+                        subtotal = subtotal
+                    )
             }
         }
     }
 
-    fun deleteScannedProducts(productId: String) {
+    private fun createPayment(method: String) {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = salesRepository.createPayment(
+                CreatePaymentRequest(
+                    kembali = _uiState.value.kembalian.toString(),
+                    bayar = _uiState.value.uangDiterima,
+                    metode = method,
+                    kasir = "3",
+                    cus = "1",
+                    nominal_ppn = "0",
+                    tempo = _uiState.value.selectedDate,
+                    detil = _uiState.value.products.map { it.toDetailPayload() }
+                )
+            )
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
+                    if (it.code == "200") {
+                        _uiState.value = _uiState.value.copy(paymentResponse = it)
+                    }
+                }.onError {
+                    _uiState.value = _uiState.value.copy(errorMessage = it)
+                }
+
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun deleteScannedProducts(productId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             salesRepository.deleteProductTrans(productId)
         }

@@ -30,11 +30,9 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -42,22 +40,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import features.auth.presentation.EnhancedLoading
-import features.cashier_role.sales.domain.CreatePaymentRequest
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import features.auth.presentation.login.EnhancedLoading
 import features.cashier_role.sales.domain.ProductTransSerializable
-import features.cashier_role.sales.domain.toDetailPayload
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import network.NetworkError
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
-import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 import ui.component.DefaultTextField
 import ui.component.DisabledTextField
 import ui.component.FooterButton
 import ui.component.HeadlineText
+import ui.navigation.cashier_role.Screen
 import ui.theme.dark
 import ui.theme.icon
 import ui.theme.primary
@@ -69,55 +67,61 @@ import util.currencyFormat
 
 @Composable
 fun PaymentScreen(
-    products: List<ProductTransSerializable>,
-    navigateToInvoice: (String) -> Unit,
-    navigateBack: () -> Unit
+    viewModel: PaymentViewModel,
+    navController: NavController,
+    products: List<ProductTransSerializable>
 ) {
-    val viewModel = koinViewModel<PaymentViewModel>()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val paymentResponse by viewModel.paymentResponse.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    var uangDiterima by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Payment(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        moveToInvoice = {
+            navController.navigate("${Screen.Invoice.route}?paymentData=$it")
+        },
+        navigateBack = {
+            navController.navigateUp()
+        },
+        products = products
+    )
+}
+
+@Composable
+fun Payment(
+    uiState: PaymentUiState,
+    onEvent: (PaymentUiEvent) -> Unit,
+    moveToInvoice: (String) -> Unit,
+    navigateBack: () -> Unit,
+    products: List<ProductTransSerializable>,
+) {
     val radioOptions = listOf("Tunai", "Kredit")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf("") }
-    var totalHarga by remember { mutableStateOf(0) }
-    var diskon by remember { mutableStateOf(0) }
-    var subtotal by remember { mutableStateOf(0) }
-    var kembalian by remember { mutableStateOf(0) }
     val state = rememberMessageBarState()
-    val isConnented by viewModel.connectivity.value.isConnectedState.collectAsState()
 
     LaunchedEffect(products) {
-        products.forEach { productTrans ->
-            println("Products cek: ${productTrans.subtotal}")
-            totalHarga = products.sumOf { it.subtotal }
-            diskon = products.sumOf { it.diskon }
-            subtotal = totalHarga - diskon
-        }
+        onEvent(PaymentUiEvent.ArgumentProductsLoaded(products))
     }
 
-    LaunchedEffect(errorMessage) {
-        if (errorMessage == NetworkError.UNAUTHORIZED) {
+    LaunchedEffect(uiState.errorMessage) {
+        if (uiState.errorMessage == NetworkError.UNAUTHORIZED) {
             state.addError(Exception("Ups, terjadi kesalahan!"))
         }
     }
 
-    LaunchedEffect(paymentResponse) {
-        paymentResponse?.let { response ->
+    LaunchedEffect(uiState.paymentResponse) {
+        uiState.paymentResponse?.let { response ->
             if (response.code == "200") {
-                products.forEach {
-                    viewModel.deleteScannedProducts(it.id_barang)
+                uiState.products.forEach {
+                    onEvent(PaymentUiEvent.DeleteScannedProducts(it.id_barang))
                 }
                 val jsonResponse = Json.encodeToString(response)
-                navigateToInvoice(jsonResponse)
+                moveToInvoice(jsonResponse)
             }
         }
     }
 
-    LaunchedEffect(isConnented) {
-        if (!isConnented) {
+    LaunchedEffect(uiState.isConnected) {
+        if (!uiState.isConnected) {
             state.addError(Exception("Awas, internetmu mati!"))
         }
     }
@@ -127,7 +131,7 @@ fun PaymentScreen(
         visibilityDuration = 3000L,
         modifier = Modifier.statusBarsPadding()
     ) {
-        if (isLoading) {
+        if (uiState.isLoading) {
             EnhancedLoading()
         } else {
             Column(
@@ -164,7 +168,7 @@ fun PaymentScreen(
                             color = dark,
                         )
                         OutlinedTextField(
-                            value = selectedDate,
+                            value = uiState.selectedDate,
                             onValueChange = {},
                             textStyle = MaterialTheme.typography.bodyMedium,
                             label = {
@@ -176,7 +180,7 @@ fun PaymentScreen(
                             },
                             enabled = false,
                             trailingIcon = {
-                                IconButton(onClick = { showDatePicker = true }) {
+                                IconButton(onClick = { onEvent(PaymentUiEvent.DateIconClicked) }) {
                                     Icon(
                                         Icons.Default.DateRange,
                                         contentDescription = "Date",
@@ -202,10 +206,9 @@ fun PaymentScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     DefaultTextField(
-                        value = uangDiterima,
+                        value = uiState.uangDiterima,
                         onValueChange = {
-                            uangDiterima = it
-                            kembalian = (uangDiterima.toIntOrNull() ?: 0) - subtotal
+                            onEvent(PaymentUiEvent.UangDiterimaChanged(it))
                         },
                         placehoder = "Nominal Uang",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -218,7 +221,7 @@ fun PaymentScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     DisabledTextField(
-                        value = kembalian.toString(),
+                        value = uiState.kembalian.toString(),
                         onValueChange = {},
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                     )
@@ -230,11 +233,11 @@ fun PaymentScreen(
                     ) {
                         SummaryRow(
                             label = "Total Harga:",
-                            value = currencyFormat(totalHarga.toDouble()),
+                            value = currencyFormat(uiState.totalHarga.toDouble()),
                         )
                         SummaryRow(
                             label = "Diskon:",
-                            value = currencyFormat(diskon.toDouble())
+                            value = currencyFormat(uiState.diskon.toDouble())
                         )
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth().width(1.dp)
@@ -242,33 +245,20 @@ fun PaymentScreen(
                         )
                         SummaryRow(
                             label = "Totlal Tagihan",
-                            value = currencyFormat(subtotal.toDouble()),
+                            value = currencyFormat(uiState.subtotal.toDouble()),
                             isBold = true
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         FooterButton(
-                            onCancelClick = {
-                                navigateBack()
-                            },
+                            onCancelClick = navigateBack,
                             onConfirmClick = {
-                                if (uangDiterima.isEmpty() || uangDiterima.toInt() < subtotal) {
+                                if (uiState.uangDiterima.isEmpty() || uiState.uangDiterima.toInt() < uiState.subtotal) {
                                     state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
                                     return@FooterButton
                                 }
                                 val method =
                                     if (selectedOption == "Tunai") "Cash" else "Kredit"
-                                viewModel.createPayment(
-                                    CreatePaymentRequest(
-                                        kembali = kembalian.toString(),
-                                        bayar = uangDiterima,
-                                        metode = method,
-                                        kasir = "3",
-                                        cus = "1",
-                                        nominal_ppn = "0",
-                                        tempo = selectedDate,
-                                        detil = products.map { it.toDetailPayload() }
-                                    )
-                                )
+                                onEvent(PaymentUiEvent.ConfirmButtonClicked(method))
                             },
                             cancelText = "Kembali",
                             confirmText = "Bayar",
@@ -281,10 +271,10 @@ fun PaymentScreen(
         }
     }
 
-    if (showDatePicker) {
+    if (uiState.showDatePicker) {
         WheelDatePickerView(
             modifier = Modifier.padding(top = 18.dp, bottom = 10.dp).fillMaxWidth(),
-            showDatePicker = showDatePicker,
+            showDatePicker = uiState.showDatePicker,
             title = "Pilih Tanggal",
             titleStyle = TextStyle(
                 fontWeight = FontWeight.Bold,
@@ -303,12 +293,11 @@ fun PaymentScreen(
             height = 170.dp,
             onDoneClick = { date ->
                 val formattedDate = "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
-                selectedDate = formattedDate
-                showDatePicker = false
+                onEvent(PaymentUiEvent.SelectedDateChanged(formattedDate))
             },
             dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
             onDismiss = {
-                showDatePicker = false
+                onEvent(PaymentUiEvent.DismissDialog)
             }
         )
     }

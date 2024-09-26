@@ -2,7 +2,6 @@ package features.cashier_role.sales.presentation.entry_sales
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import features.cashier_role.home.domain.Product
 import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.ProductTrans
@@ -20,54 +19,89 @@ class EntrySalesViewModel(
     private val salesRepository: SalesRepository
 ) : ViewModel() {
 
-    private val _searchResults = MutableStateFlow<List<Product>>(emptyList())
-    val searchResults: StateFlow<List<Product>> = _searchResults
-    private val _scannedProducts = MutableStateFlow<List<ProductTrans>>(emptyList())
-    val scannedProducts: StateFlow<List<ProductTrans>> = _scannedProducts
-    private val _errorMessage = MutableStateFlow("")
-    val errorMessage: StateFlow<String> = _errorMessage
-    private val _startBarCodeScan = MutableStateFlow(false)
-    val startBarCodeScan: StateFlow<Boolean> = _startBarCodeScan
+    private val _uiState = MutableStateFlow(EntrySalesUiState())
+    val uiState: StateFlow<EntrySalesUiState> = _uiState
     private var searchJob: Job? = null
 
     init {
         loadScannedProducts()
     }
 
-    fun onScanIconClick() {
-        _startBarCodeScan.value = !_startBarCodeScan.value
+    fun onEvent(event: EntrySalesUiEvent) {
+        when (event) {
+            is EntrySalesUiEvent.FlashLightClick -> {
+                _uiState.value =
+                    _uiState.value.copy(flashlightOn = !_uiState.value.flashlightOn)
+            }
+
+            is EntrySalesUiEvent.OnLaunchGallery -> {
+                _uiState.value = _uiState.value.copy(launchGallery = event.launchGallery)
+            }
+
+            is EntrySalesUiEvent.OnTotalTagihanChanged -> {
+                _uiState.value = _uiState.value.copy(totalTagihan = event.totalTagihan)
+            }
+
+            is EntrySalesUiEvent.OnInputUserChanged -> {
+                _uiState.value = _uiState.value.copy(inputUser = event.inputUser)
+            }
+
+            is EntrySalesUiEvent.ScanProduct -> {
+                scanProductByBarcode(event.barcode)
+            }
+
+            is EntrySalesUiEvent.SearchProduct -> {
+                searchProduct()
+            }
+
+            is EntrySalesUiEvent.ScanIconClick -> {
+                _uiState.value =
+                    _uiState.value.copy(startBarCodeScan = !_uiState.value.startBarCodeScan)
+            }
+
+            is EntrySalesUiEvent.IncreaseProductQty -> {
+                increaseProductQty(event.product)
+            }
+
+            is EntrySalesUiEvent.DecreaseProductQty -> {
+                decreaseProductQty(event.product)
+            }
+        }
     }
 
-    fun scanProductByBarcode(inputBarcode: String) {
+    private fun scanProductByBarcode(barcode: String) {
         viewModelScope.launch(Dispatchers.Main) {
-            salesRepository.getProductByBarcode(inputBarcode).collectLatest { product ->
+            _uiState.value = _uiState.value.copy(errorMessage = "")
+            salesRepository.getProductByBarcode(barcode).collectLatest { product ->
                 product?.let { newProduct ->
-                    val currentList = _scannedProducts.value
+                    val currentList = _uiState.value.scannedProducts
                     if (!currentList.any { it.barcode == product.barcode }) {
                         val scannedProduct = newProduct.toProductTrans()
                         salesRepository.addProductTrans(scannedProduct)
                         loadScannedProducts()
                     } else {
-                        _errorMessage.value = "Ups, barang ini sudah ditambahkan ya!"
+                        _uiState.value =
+                            _uiState.value.copy(errorMessage = "Ups, barang ini sudah ditambahkan ya!")
                     }
                 }
             }
         }
     }
 
-    fun searchProductsByBarcode(query: String) {
+    private fun searchProduct() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(300)
-            salesRepository.searchProductsByBarcode(query).collectLatest { products ->
-                withContext(Dispatchers.Main) {
-                    _searchResults.value = products
+            salesRepository.searchProductsByBarcode(_uiState.value.inputUser)
+                .collectLatest { products ->
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(searchResults = products)
+                    }
                 }
-            }
         }
     }
 
-    fun increaseProductQty(product: ProductTrans) {
+    private fun increaseProductQty(product: ProductTrans) {
         viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual + 1
             salesRepository.updateProductTrans(product, newQty)
@@ -75,7 +109,7 @@ class EntrySalesViewModel(
         }
     }
 
-    fun decreaseProductQty(product: ProductTrans) {
+    private fun decreaseProductQty(product: ProductTrans) {
         viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual - 1
             salesRepository.updateProductTrans(product, newQty)
@@ -85,12 +119,8 @@ class EntrySalesViewModel(
     private fun loadScannedProducts() {
         viewModelScope.launch(Dispatchers.Main) {
             salesRepository.getScannedProducts().collectLatest { scannedProductsList ->
-                _scannedProducts.value = scannedProductsList
+                _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
             }
         }
-    }
-
-    fun resetErrorMessage() {
-        _errorMessage.value = ""
     }
 }
