@@ -32,7 +32,7 @@ import features.cashier_role.sales.domain.ProductTrans
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
-import util.currencyFormat
+import utils.currencyFormat
 
 @Composable
 fun EntrySalesItem(

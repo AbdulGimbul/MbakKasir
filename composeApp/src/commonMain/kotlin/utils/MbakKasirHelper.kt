@@ -1,4 +1,4 @@
-package util
+package utils
 
 
 expect fun currencyFormat(amount: Double): String

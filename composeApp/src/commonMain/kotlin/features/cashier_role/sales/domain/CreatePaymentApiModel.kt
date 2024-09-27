@@ -2,7 +2,7 @@ package features.cashier_role.sales.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import util.JavaSerializable
+import utils.JavaSerializable
 
 @Serializable
 data class CreatePaymentApiModel(

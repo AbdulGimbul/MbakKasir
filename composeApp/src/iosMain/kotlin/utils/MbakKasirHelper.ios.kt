@@ -1,4 +1,4 @@
-package util
+package utils
 
 actual fun currencyFormat(
     amount: Double

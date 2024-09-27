@@ -63,7 +63,7 @@ import ui.theme.primary_text
 import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
-import util.currencyFormat
+import utils.currencyFormat
 
 @Composable
 fun PaymentScreen(

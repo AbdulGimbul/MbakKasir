@@ -59,7 +59,7 @@ import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.secondary_text
 import ui.theme.stroke
-import util.currencyFormat
+import utils.currencyFormat
 
 @Composable
 fun EntrySalesScreen(viewModel: EntrySalesViewModel, navController: NavController) {

@@ -40,8 +40,14 @@ import ui.theme.secondary_text
 import ui.theme.stroke
 
 @Composable
-fun HomeScreen() {
-    val viewModel = koinViewModel<HomeViewModel>()
+fun HomeScreen(viewModel: HomeViewModel) {
+
+    Home()
+
+}
+
+@Composable
+fun Home() {
 
     Column(modifier = Modifier.padding(16.dp).statusBarsPadding()) {
         HeaderSection()

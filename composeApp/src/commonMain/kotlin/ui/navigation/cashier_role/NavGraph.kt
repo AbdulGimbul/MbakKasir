@@ -30,6 +30,7 @@ import features.auth.presentation.profile.ProfileViewModel
 import features.cashier_role.history.presentation.HistoryScreen
 import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.presentation.HomeScreen
+import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.ProductTransSerializable
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
@@ -90,7 +91,7 @@ fun SetupNavHost(navController: NavHostController) {
                 )
             }
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(viewModel = koinViewModel<HomeViewModel>())
             }
             composable(Screen.Sales.route) {
                 SalesScreen()

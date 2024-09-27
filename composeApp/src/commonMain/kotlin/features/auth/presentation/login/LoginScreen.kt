@@ -133,6 +133,10 @@ fun Login(
                 DefaultButton(
                     text = "Login",
                     onClick = {
+                        if (uiState.username.isBlank() || uiState.password.isBlank()) {
+                            state.addError(Exception("Username dan passwordnya diisi dulu yaa!"))
+                            return@DefaultButton
+                        }
                         onEvent.invoke(LoginUiEvent.Login)
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 32.dp)

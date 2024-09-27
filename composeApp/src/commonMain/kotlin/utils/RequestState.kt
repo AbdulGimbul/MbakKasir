@@ -1,4 +1,4 @@
-package util
+package utils
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
