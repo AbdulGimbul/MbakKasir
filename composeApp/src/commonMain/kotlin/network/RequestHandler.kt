@@ -26,7 +26,7 @@ class RequestHandler(val httpClient: HttpClient) {
         urlPathSegments: List<Any>,
         body: B? = null,
         queryParams: Map<String, Any>? = null
-    ): NetworkResult<R, NetworkError> {
+    ): NetworkResult<R, NetworkException> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = httpClient.prepareRequest {
@@ -50,26 +50,38 @@ class RequestHandler(val httpClient: HttpClient) {
 
                 NetworkResult.Success(response)
             } catch (e: ResponseException) {
-                when (e.response.status) {
-                    HttpStatusCode.Unauthorized -> NetworkResult.Error(NetworkError.UNAUTHORIZED)
-                    HttpStatusCode.Forbidden -> NetworkResult.Error(NetworkError.UNAUTHORIZED)
-                    HttpStatusCode.NotFound -> NetworkResult.Error(NetworkError.UNKNOWN)
-                    HttpStatusCode.BadRequest -> NetworkResult.Error(NetworkError.UNKNOWN)
-                    HttpStatusCode.RequestTimeout -> NetworkResult.Error(NetworkError.REQUEST_TIMEOUT)
-                    HttpStatusCode.TooManyRequests -> NetworkResult.Error(NetworkError.TOO_MANY_REQUESTS)
-                    HttpStatusCode.PayloadTooLarge -> NetworkResult.Error(NetworkError.PAYLOAD_TOO_LARGE)
-                    in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout -> NetworkResult.Error(
-                        NetworkError.SERVER_ERROR
+                val contentType = e.response.headers["Content-Type"]
+                val errorBody: DefaultError? =
+                    if (contentType?.contains("application/json") == true) {
+                        e.response.body<DefaultError>()
+                    } else {
+                        null
+                    }
+                val networkException = when (e.response.status) {
+                    HttpStatusCode.Unauthorized -> NetworkException.UnauthorizedException(
+                        errorBody?.message ?: "Unauthorized",
+                        e
                     )
 
-                    else -> NetworkResult.Error(NetworkError.UNKNOWN)
+                    HttpStatusCode.NotFound -> NetworkException.NotFoundException(
+                        errorBody?.message ?: "Not Found",
+                        e
+                    )
+
+                    else -> NetworkException.UnknownException("Error: ${e.response.status}", e)
                 }
+                NetworkResult.Error(networkException)
             } catch (e: UnresolvedAddressException) {
-                NetworkResult.Error(NetworkError.NO_INTERNET)
+                NetworkResult.Error(NetworkException.NoInternetException("no internet", e))
             } catch (e: SerializationException) {
-                NetworkResult.Error(NetworkError.SERIALIZATION)
+                NetworkResult.Error(
+                    NetworkException.SerializationException(
+                        "serialization error",
+                        e
+                    )
+                )
             } catch (e: Exception) {
-                NetworkResult.Error(NetworkError.UNKNOWN)
+                NetworkResult.Error(NetworkException.UnknownException("unknown error", e))
             }
         }
     }
@@ -77,7 +89,7 @@ class RequestHandler(val httpClient: HttpClient) {
     suspend inline fun <reified R> get(
         urlPathSegments: List<Any>,
         queryParams: Map<String, Any>? = null
-    ): NetworkResult<R, NetworkError> = executeRequest<Any, R>(
+    ): NetworkResult<R, NetworkException> = executeRequest<Any, R>(
         method = HttpMethod.Get,
         urlPathSegments = urlPathSegments.toList(),
         queryParams = queryParams
@@ -86,7 +98,7 @@ class RequestHandler(val httpClient: HttpClient) {
     suspend inline fun <reified B, reified R> post(
         urlPathSegments: List<Any>,
         body: B? = null
-    ): NetworkResult<R, NetworkError> = executeRequest(
+    ): NetworkResult<R, NetworkException> = executeRequest(
         method = HttpMethod.Post,
         urlPathSegments = urlPathSegments.toList(),
         body = body
@@ -95,7 +107,7 @@ class RequestHandler(val httpClient: HttpClient) {
     suspend inline fun <reified B, reified R> put(
         urlPathSegments: List<Any>,
         body: B? = null
-    ): NetworkResult<R, NetworkError> = executeRequest(
+    ): NetworkResult<R, NetworkException> = executeRequest(
         method = HttpMethod.Put,
         urlPathSegments = urlPathSegments.toList(),
         body = body

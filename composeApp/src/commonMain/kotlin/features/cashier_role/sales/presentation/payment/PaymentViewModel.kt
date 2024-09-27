@@ -20,7 +20,11 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     private val _uiState = MutableStateFlow(PaymentUiState())
     val uiState: StateFlow<PaymentUiState> = _uiState
     private val _connectivity = MutableStateFlow(Konnectivity())
-    val connectivity: StateFlow<Konnectivity> = _connectivity
+
+    init {
+        val isConnected = _connectivity.value.isConnected
+        _uiState.value = _uiState.value.copy(isConnected = isConnected)
+    }
 
     fun onEvent(event: PaymentUiEvent) {
         when (event) {
@@ -89,7 +93,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                         _uiState.value = _uiState.value.copy(paymentResponse = it)
                     }
                 }.onError {
-                    _uiState.value = _uiState.value.copy(errorMessage = it)
+                    _uiState.value = _uiState.value.copy(errorMessage = it.message)
                 }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)

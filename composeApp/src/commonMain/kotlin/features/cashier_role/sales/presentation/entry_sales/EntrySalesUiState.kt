@@ -13,5 +13,5 @@ data class EntrySalesUiState(
     val searchResults: List<Product> = emptyList(),
     val scannedProducts: List<ProductTrans> = emptyList(),
     val startBarCodeScan: Boolean = false,
-    val errorMessage: String = "",
+    val errorMessage: String? = null,
 )

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import network.NetworkError
 import network.onError
 import network.onSuccess
 import storage.MongoDB
@@ -41,12 +40,12 @@ class HomeViewModel(
                                 mongoDB.addProduct(barang.toProduct())
                             }
                         }.onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error)
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
                         }
                     }
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(errorMessage = NetworkError.UNKNOWN)
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }

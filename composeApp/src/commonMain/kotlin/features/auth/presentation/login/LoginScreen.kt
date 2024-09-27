@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import network.NetworkError
 import rememberMessageBarState
 import ui.component.DefaultButton
 import ui.component.DefaultTextField
@@ -71,9 +70,8 @@ fun Login(
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
-            if (it == NetworkError.UNAUTHORIZED) {
+            if (it == "Invalid username or password.")
                 state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
-            }
         }
     }
 

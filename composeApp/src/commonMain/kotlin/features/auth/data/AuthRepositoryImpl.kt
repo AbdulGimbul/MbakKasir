@@ -7,7 +7,7 @@ import features.auth.domain.Toko
 import features.auth.domain.User
 import features.auth.domain.UserData
 import kotlinx.coroutines.flow.first
-import network.NetworkError
+import network.NetworkException
 import network.NetworkResult
 import network.RequestHandler
 import storage.SessionHandler
@@ -16,7 +16,7 @@ class AuthRepositoryImpl(
     private val requestHandler: RequestHandler,
     private val sessionHandler: SessionHandler
 ) : AuthRepository {
-    override suspend fun login(request: LoginRequest): NetworkResult<LoginApiModel, NetworkError> {
+    override suspend fun login(request: LoginRequest): NetworkResult<LoginApiModel, NetworkException> {
         return requestHandler.post(
             urlPathSegments = listOf("api", "login"),
             body = request
@@ -28,7 +28,7 @@ class AuthRepositoryImpl(
         endDate: String,
         page: String,
         perPage: String
-    ): NetworkResult<SalesHistoryApiModel, NetworkError> {
+    ): NetworkResult<SalesHistoryApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "get"),
             queryParams = mapOf(

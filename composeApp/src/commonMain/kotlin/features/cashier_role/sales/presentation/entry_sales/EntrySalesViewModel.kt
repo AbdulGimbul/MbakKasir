@@ -71,7 +71,7 @@ class EntrySalesViewModel(
 
     private fun scanProductByBarcode(barcode: String) {
         viewModelScope.launch(Dispatchers.Main) {
-            _uiState.value = _uiState.value.copy(errorMessage = "")
+            _uiState.value = _uiState.value.copy(errorMessage = null)
             salesRepository.getProductByBarcode(barcode).collectLatest { product ->
                 product?.let { newProduct ->
                     val currentList = _uiState.value.scannedProducts

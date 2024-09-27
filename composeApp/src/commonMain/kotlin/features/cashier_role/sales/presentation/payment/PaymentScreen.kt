@@ -46,7 +46,6 @@ import features.auth.presentation.login.EnhancedLoading
 import features.cashier_role.sales.domain.ProductTransSerializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import network.NetworkError
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
@@ -103,7 +102,7 @@ fun Payment(
     }
 
     LaunchedEffect(uiState.errorMessage) {
-        if (uiState.errorMessage == NetworkError.UNAUTHORIZED) {
+        uiState.errorMessage?.let {
             state.addError(Exception("Ups, terjadi kesalahan!"))
         }
     }

@@ -1,7 +1,7 @@
 package features.cashier_role.history.data
 
 import features.cashier_role.history.domain.HistoryApiModel
-import network.NetworkError
+import network.NetworkException
 import network.NetworkResult
 import network.RequestHandler
 
@@ -13,7 +13,7 @@ class HistoryRepositoryImpl(
         endDate: String,
         page: String,
         perPage: String
-    ): NetworkResult<HistoryApiModel, NetworkError> {
+    ): NetworkResult<HistoryApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "get"),
             queryParams = mapOf(

@@ -2,7 +2,6 @@ package features.cashier_role.sales.presentation.payment
 
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.ProductTransSerializable
-import network.NetworkError
 
 data class PaymentUiState(
     val products: List<ProductTransSerializable> = emptyList(),
@@ -16,5 +15,5 @@ data class PaymentUiState(
     val isConnected: Boolean = true,
     val paymentResponse: CreatePaymentApiModel? = null,
     val isLoading: Boolean = false,
-    val errorMessage: NetworkError? = null,
+    val errorMessage: String? = null,
 )

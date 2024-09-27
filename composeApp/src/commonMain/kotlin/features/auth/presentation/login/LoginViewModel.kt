@@ -63,7 +63,7 @@ class LoginViewModel(
                     }
                 }.onError { error ->
                     updateState {
-                        it.copy(errorMessage = error)
+                        it.copy(errorMessage = error.message)
                     }
 
                     updateState { it.copy(isLoading = false) }
@@ -81,7 +81,7 @@ class LoginViewModel(
                     _uiState.value = LoginUiState.Authenticated
                 }.onError { error ->
                     updateState {
-                        it.copy(errorMessage = error)
+                        it.copy(errorMessage = error.message)
                     }
                 }
 

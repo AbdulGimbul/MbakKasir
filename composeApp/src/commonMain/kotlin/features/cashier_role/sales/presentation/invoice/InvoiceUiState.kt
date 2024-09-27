@@ -2,7 +2,6 @@ package features.cashier_role.sales.presentation.invoice
 
 import features.auth.domain.Toko
 import features.cashier_role.sales.domain.DetailPayment
-import network.NetworkError
 
 data class InvoiceUiState(
     val store: Toko? = null,
@@ -18,5 +17,5 @@ data class InvoiceUiState(
     val kembali: Double = 0.0,
     val detil: List<DetailPayment> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: NetworkError? = null,
+    val errorMessage: String? = null,
 )

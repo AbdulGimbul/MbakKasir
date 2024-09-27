@@ -1,7 +1,7 @@
 package features.cashier_role.history.data
 
 import features.cashier_role.history.domain.HistoryApiModel
-import network.NetworkError
+import network.NetworkException
 import network.NetworkResult
 
 interface HistoryRepository {
@@ -10,5 +10,5 @@ interface HistoryRepository {
         endDate: String,
         page: String,
         perPage: String
-    ): NetworkResult<HistoryApiModel, NetworkError>
+    ): NetworkResult<HistoryApiModel, NetworkException>
 }

@@ -1,3 +1,0 @@
-package network
-
-interface Error

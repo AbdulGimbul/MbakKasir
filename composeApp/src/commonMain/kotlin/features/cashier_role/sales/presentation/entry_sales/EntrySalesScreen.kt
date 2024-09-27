@@ -96,7 +96,7 @@ fun EntrySales(
     }
 
     LaunchedEffect(uiState.errorMessage) {
-        if (uiState.errorMessage.isNotEmpty()) {
+        uiState.errorMessage?.let {
             state.addError(Exception(uiState.errorMessage))
         }
     }
@@ -277,7 +277,7 @@ fun EntrySales(
                         },
                         onConfirmClick = {
                             if (uiState.scannedProducts.isEmpty()) {
-                                state.addError(Exception("EKhm, barangnya ditambahkan dulu ya!"))
+                                state.addError(Exception("Ekhm, barangnya ditambahkan dulu ya!"))
                                 return@FooterButton
                             }
                             val scannedProductsJson =

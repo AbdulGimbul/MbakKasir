@@ -32,7 +32,6 @@ import mbakkasir.composeapp.generated.resources.img_nom_sales
 import mbakkasir.composeapp.generated.resources.profile
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.cyanLight3
 import ui.theme.dark
 import ui.theme.pinkLight3

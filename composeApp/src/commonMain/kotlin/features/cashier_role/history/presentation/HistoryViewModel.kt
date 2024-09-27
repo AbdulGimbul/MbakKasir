@@ -39,7 +39,7 @@ class HistoryViewModel(
                         _uiState.value = _uiState.value.copy(history = response)
                     }
                 }.onError {
-                    _uiState.value = _uiState.value.copy(errorMessage = it)
+                    _uiState.value = _uiState.value.copy(errorMessage = it.message)
                 }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)

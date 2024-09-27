@@ -6,7 +6,7 @@ import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
 import features.cashier_role.sales.domain.ProductTrans
 import kotlinx.coroutines.flow.Flow
-import network.NetworkError
+import network.NetworkException
 import network.NetworkResult
 import network.RequestHandler
 import storage.MongoDB
@@ -20,7 +20,7 @@ class SalesRepositoryImpl(
         return mongoDB.getProductByBarcode(barcode)
     }
 
-    override suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkError> {
+    override suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException> {
         return requestHandler.post(
             urlPathSegments = listOf("api", "penjualan", "create"),
             body = paymentRequest
@@ -50,7 +50,7 @@ class SalesRepositoryImpl(
         return mongoDB.getProductsTrans()
     }
 
-    override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkError> {
+    override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "getByInvoice"),
             queryParams = mapOf("invoice" to invoice)
