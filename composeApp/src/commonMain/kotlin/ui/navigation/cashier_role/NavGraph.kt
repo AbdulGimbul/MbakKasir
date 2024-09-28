@@ -3,15 +3,16 @@ package ui.navigation.cashier_role
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -156,23 +157,23 @@ private fun BototmBar(
 
         val navigationItems = listOf(
             BottomRailNavItem(
-                title = "Beransda",
-                icon = Icons.Default.Home,
+                title = "Beranda",
+                icon = Icons.Outlined.Home,
                 screen = Screen.Home
             ),
             BottomRailNavItem(
                 title = "Penjualan",
-                icon = Icons.Default.ShoppingCart,
+                icon = Icons.Outlined.ShoppingCart,
                 screen = Screen.Sales
             ),
             BottomRailNavItem(
                 title = "Histori",
-                icon = Icons.Default.BarChart,
+                icon = Icons.Outlined.BarChart,
                 screen = Screen.History
             ),
             BottomRailNavItem(
-                title = "Profil",
-                icon = Icons.Default.AccountCircle,
+                title = "Akun",
+                icon = Icons.Outlined.AccountCircle,
                 screen = Screen.Profile
             )
         )
@@ -199,7 +200,12 @@ private fun BototmBar(
                 },
                 label = {
                     Text(text = item.title)
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = primary,
+                    selectedTextColor = primary,
+                    indicatorColor = Color.Transparent
+                )
             )
         }
     }
