@@ -79,7 +79,7 @@ kotlin {
             implementation(libs.blue.falcon)
             api(libs.moko.permissions)
             api(libs.moko.permissions.compose)
-            implementation(libs.navigation.compose.v280alpha09)
+            implementation(libs.navigation.compose)
             implementation(libs.material.navigation)
             implementation(libs.material.window.size)
             implementation(libs.adaptive)
