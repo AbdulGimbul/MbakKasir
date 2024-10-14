@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -134,10 +133,7 @@ fun Payment(
             EnhancedLoading()
         } else {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .imePadding()
-                    .navigationBarsPadding()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
@@ -225,7 +221,9 @@ fun Payment(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                     )
                 }
-                Column {
+                Column(
+                    modifier = Modifier.imePadding()
+                ) {
                     HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
                     Column(
                         modifier = Modifier.fillMaxWidth().padding(16.dp)

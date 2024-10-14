@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,10 +16,14 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -40,41 +45,69 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import features.auth.presentation.login.EnhancedLoading
 import features.cashier_role.sales.domain.toSerializable
+import features.cashier_role.sales.presentation.payment.PaymentOptions
+import features.cashier_role.sales.presentation.payment.PaymentUiEvent
+import features.cashier_role.sales.presentation.payment.PaymentUiState
+import features.cashier_role.sales.presentation.payment.PaymentViewModel
+import features.cashier_role.sales.presentation.payment.SummaryRow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
+import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
+import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import qrscanner.QrScanner
 import rememberMessageBarState
+import ui.component.DefaultTextField
+import ui.component.DisabledTextField
 import ui.component.EntrySalesItem
 import ui.component.FooterButton
 import ui.component.HeadlineText
+import ui.navigation.cashier_role.MbakKasirNavigationType
 import ui.navigation.cashier_role.Screen
 import ui.theme.dark
+import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
+import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
 import utils.currencyFormat
 
 @Composable
-fun EntrySalesScreen(viewModel: EntrySalesViewModel, navController: NavController) {
+fun EntrySalesScreen(viewModel: EntrySalesViewModel, paymentViewModel: PaymentViewModel, navController: NavController, navigationType: MbakKasirNavigationType) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val paymentUiState by paymentViewModel.uiState.collectAsStateWithLifecycle()
 
-    EntrySales(
-        uiState = uiState,
-        onEvent = { viewModel.onEvent(it) },
-        moveToPayment = {
-            navController.navigate("${Screen.Payment.route}/$it")
-        },
-        navigateBack = {
-            navController.navigateUp()
-        }
-    )
+    if (navigationType == MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER){
+        EntrySalesAndPayment(
+            entryUiState = uiState,
+            paymentUiState = paymentUiState,
+            entryOnEvent = { viewModel.onEvent(it) },
+            paymentOnEvent = { paymentViewModel.onEvent(it) },
+            navigateBack = { navController.navigateUp() }
+        )
+    } else {
+        EntrySales(
+            uiState = uiState,
+            onEvent = { viewModel.onEvent(it) },
+            moveToPayment = {
+                navController.navigate("${Screen.Payment.route}/$it")
+            },
+            navigateBack = {
+                navController.navigateUp()
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,7 +116,7 @@ fun EntrySales(
     uiState: EntrySalesUiState,
     onEvent: (EntrySalesUiEvent) -> Unit,
     moveToPayment: (String) -> Unit,
-    navigateBack: () -> Unit,
+    navigateBack: () -> Unit
 ) {
 
     val state = rememberMessageBarState()
@@ -111,7 +144,6 @@ fun EntrySales(
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
-                .imePadding()
         ) {
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
@@ -287,6 +319,262 @@ fun EntrySales(
                         cancelText = "Batal",
                         confirmText = "Pembayaran"
                     )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EntrySalesAndPayment(
+    entryUiState: EntrySalesUiState,
+    paymentUiState: PaymentUiState,
+    entryOnEvent: (EntrySalesUiEvent) -> Unit,
+    paymentOnEvent: (PaymentUiEvent) -> Unit,
+    navigateBack: () -> Unit
+) {
+    val messageBarState = rememberMessageBarState()
+    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
+    val expanded = allowExpanded && entryUiState.searchResults.isNotEmpty()
+
+    LaunchedEffect(entryUiState.scannedProducts) {
+        val totalTagihan = entryUiState.scannedProducts.sumOf { it.harga_item * it.qty_jual }
+        entryOnEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
+    }
+
+    LaunchedEffect(entryUiState.errorMessage) {
+        entryUiState.errorMessage?.let {
+            messageBarState.addError(Exception(entryUiState.errorMessage))
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxSize().padding(16.dp) // Row to place EntrySales and Payment side by side
+    ) {
+        // Left Side: Entry Sales
+        ContentWithMessageBar(
+            messageBarState = messageBarState,
+            modifier = Modifier
+                .weight(1f)  // Takes 50% of the screen width
+                .fillMaxHeight()
+                .padding(end = 8.dp)  // Padding to separate from Payment
+        ) {
+            Column(modifier = Modifier.fillMaxHeight()) {
+                // Entry Sales Section
+                Column(modifier = Modifier.weight(1f)) {
+                    HeadlineText("Entry:")
+                    HeadlineText(
+                        text = "Penjualan",
+                        color = secondary_text,
+                        modifier = Modifier.padding(bottom = 32.dp)
+                    )
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = setExpanded
+                    ) {
+                        OutlinedTextField(
+                            value = entryUiState.inputUser,
+                            onValueChange = { newBarcode ->
+                                entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(newBarcode))
+                                if (newBarcode.length >= 5) {
+                                    entryOnEvent(EntrySalesUiEvent.SearchProduct)
+                                }
+                            },
+                            label = { Text("Scan Barcode") },
+                            trailingIcon = {
+                                IconButton(onClick = { entryOnEvent(EntrySalesUiEvent.ScanIconClick) }) {
+                                    Icon(Icons.Default.QrCodeScanner, contentDescription = "QR")
+                                }
+                            },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { setExpanded(false) }
+                        ) {
+                            entryUiState.searchResults.forEach { product ->
+                                val displayText = when {
+                                    product.barcode.contains(entryUiState.inputUser, ignoreCase = true) -> product.barcode
+                                    product.nama_barang.contains(entryUiState.inputUser, ignoreCase = true) -> product.nama_barang
+                                    product.kode_barang.contains(entryUiState.inputUser, ignoreCase = true) -> product.kode_barang
+                                    else -> ""
+                                }
+
+                                if (displayText.isNotEmpty()) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
+                                            entryOnEvent(EntrySalesUiEvent.ScanProduct(product.barcode))
+                                            setExpanded(false)
+                                        },
+                                        text = { Text(displayText) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    LazyColumn {
+                        items(entryUiState.scannedProducts) { product ->
+                            EntrySalesItem(
+                                product = product,
+                                onIncreaseQty = { entryOnEvent(EntrySalesUiEvent.IncreaseProductQty(it)) },
+                                onDecreaseQty = { entryOnEvent(EntrySalesUiEvent.DecreaseProductQty(it)) },
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                    }
+
+                    if (entryUiState.startBarCodeScan) {
+                        QrScanner(
+                            modifier = Modifier
+                                .clipToBounds()
+                                .clip(shape = RoundedCornerShape(size = 14.dp)),
+                            flashlightOn = entryUiState.flashlightOn,
+                            onCompletion = {
+                                entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(it))
+                                entryOnEvent(EntrySalesUiEvent.ScanIconClick)
+                                entryOnEvent(EntrySalesUiEvent.ScanProduct(it))
+                            },
+                            onFailure = {
+                                if (it.isEmpty()) {
+                                    messageBarState.addError(Exception("Invalid qr code"))
+                                } else {
+                                    messageBarState.addError(Exception(it))
+                                }
+                            },
+                            openImagePicker = false,
+                            imagePickerHandler = { entryOnEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
+                        )
+                    }
+                }
+            }
+        }
+
+        // Right Side: Payment Section
+        val radioOptions = listOf("Tunai", "Kredit")
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+        val paymentMessageBarState = rememberMessageBarState()
+
+        LaunchedEffect(paymentUiState.errorMessage) {
+            paymentUiState.errorMessage?.let {
+                paymentMessageBarState.addError(Exception("Ups, terjadi kesalahan!"))
+            }
+        }
+
+        LaunchedEffect(paymentUiState.isConnected) {
+            if (!paymentUiState.isConnected) {
+                paymentMessageBarState.addError(Exception("Awas, internetmu mati!"))
+            }
+        }
+
+        ContentWithMessageBar(
+            messageBarState = paymentMessageBarState,
+            modifier = Modifier
+                .weight(1f)  // Takes 50% of the screen width
+                .fillMaxHeight()
+                .padding(start = 8.dp)  // Padding to separate from Entry Sales
+        ) {
+            if (paymentUiState.isLoading) {
+                EnhancedLoading()
+            } else {
+                Column(modifier = Modifier.fillMaxHeight()) {
+                    // Payment Section
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        HeadlineText(
+                            text = "Pembayaran",
+                            modifier = Modifier.padding(bottom = 32.dp)
+                        )
+
+                        Text("Jenis Pembayaran")
+                        PaymentOptions(
+                            radioOptions = radioOptions,
+                            selectedOption = selectedOption,
+                            onOptionSelected = onOptionSelected
+                        )
+
+                        if (selectedOption == "Kredit") {
+                            OutlinedTextField(
+                                value = paymentUiState.selectedDate,
+                                onValueChange = {},
+                                label = { Text("Jatuh Tempo") },
+                                trailingIcon = {
+                                    IconButton(onClick = { paymentOnEvent(PaymentUiEvent.DateIconClicked) }) {
+                                        Icon(Icons.Default.DateRange, contentDescription = "Date")
+                                    }
+                                },
+                                enabled = false,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                            )
+                        }
+
+                        DefaultTextField(
+                            value = paymentUiState.uangDiterima,
+                            onValueChange = { paymentOnEvent(PaymentUiEvent.UangDiterimaChanged(it)) },
+                            placehoder = "Nominal Uang",
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        )
+
+                        DisabledTextField(
+                            value = paymentUiState.kembalian.toString(),
+                            onValueChange = {},
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        )
+                    }
+
+                    // Payment Summary
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+                    Column(
+                        modifier = Modifier.imePadding()
+                    ) {
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp)
+                        ) {
+                            SummaryRow(
+                                label = "Total Harga:",
+                                value = currencyFormat(paymentUiState.totalHarga.toDouble()),
+                            )
+                            SummaryRow(
+                                label = "Diskon:",
+                                value = currencyFormat(paymentUiState.diskon.toDouble())
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth().width(1.dp)
+                                    .padding(vertical = 10.dp)
+                            )
+                            SummaryRow(
+                                label = "Totlal Tagihan",
+                                value = currencyFormat(paymentUiState.subtotal.toDouble()),
+                                isBold = true
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            FooterButton(
+                                onCancelClick = navigateBack,
+                                onConfirmClick = {
+                                    if (paymentUiState.uangDiterima.isEmpty() || paymentUiState.uangDiterima.toInt() < paymentUiState.subtotal) {
+                                        paymentMessageBarState.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
+                                        return@FooterButton
+                                    }
+                                    val method = if (selectedOption == "Tunai") "Cash" else "Kredit"
+                                    paymentOnEvent(PaymentUiEvent.ConfirmButtonClicked(method))
+                                },
+                                cancelText = "Kembali",
+                                confirmText = "Bayar"
+                            )
+                        }
+                    }
                 }
             }
         }
