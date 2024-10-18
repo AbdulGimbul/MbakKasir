@@ -23,7 +23,6 @@ import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -34,6 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.window.core.layout.WindowWidthSizeClass
 import features.auth.presentation.login.LoginScreen
 import features.auth.presentation.login.LoginViewModel
 import features.auth.presentation.profile.ProfileScreen
@@ -61,8 +61,8 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
     val currentRoute = navBackStackEntry?.destination?.route
 
     val navigationType: MbakKasirNavigationType = when (windowSize) {
-        WindowWidthSizeClass.Compact -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        WindowWidthSizeClass.Expanded -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
         else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
     }
 
@@ -98,7 +98,11 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                     }
                 }
             ) { innerPadding ->
-                NavHostContent(navController = navController, innerPadding = innerPadding, navigationType = navigationType)
+                NavHostContent(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    navigationType = navigationType
+                )
             }
         }
 
@@ -125,7 +129,11 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                             }
                         }
                     ) { innerPadding ->
-                        NavHostContent(navController = navController, innerPadding = innerPadding, navigationType = navigationType)
+                        NavHostContent(
+                            navController = navController,
+                            innerPadding = innerPadding,
+                            navigationType = navigationType
+                        )
                     }
                 }
             )
@@ -134,7 +142,11 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
 }
 
 @Composable
-fun NavHostContent(navController: NavHostController, innerPadding: PaddingValues, navigationType: MbakKasirNavigationType) {
+fun NavHostContent(
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    navigationType: MbakKasirNavigationType
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Login.route,

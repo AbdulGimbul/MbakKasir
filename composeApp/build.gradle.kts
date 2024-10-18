@@ -81,12 +81,11 @@ kotlin {
             api(libs.moko.permissions.compose)
             implementation(libs.navigation.compose)
             implementation(libs.material.navigation)
-//            implementation(libs.material.window.size)
+            implementation(libs.material.window.size)
             implementation(libs.adaptive)
             implementation(libs.adaptive.layout)
             implementation(libs.adaptive.navigation)
             implementation(libs.lifecycle.viewmodel.compose)
-            implementation(libs.material3.window.size.multiplatform)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

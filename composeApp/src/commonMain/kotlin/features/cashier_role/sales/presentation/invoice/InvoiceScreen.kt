@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -91,12 +92,10 @@ fun Invoice(
     LaunchedEffect(paymentResponse, noInvoice) {
         when {
             paymentResponse != null -> {
-                println("cek: $paymentResponse")
                 onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentResponse))
             }
 
             noInvoice != null -> {
-                println("cek 2: $noInvoice")
                 onEvent(InvoiceUiEvent.ArgumentNoInvoiceLoaded(noInvoice))
             }
         }
@@ -290,20 +289,34 @@ fun Invoice(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.CheckCircle,
-                                contentDescription = "Selesai",
-                                tint = icon
-                            )
-                            Text(
-                                "Kembali",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp,
-                                color = icon,
-                                modifier = Modifier.padding(start = 4.dp)
-                            )
+                            if (noInvoice != null) {
+                                Icon(
+                                    imageVector = Icons.Outlined.ArrowBackIosNew,
+                                    contentDescription = "Kembali",
+                                    tint = icon
+                                )
+                                Text(
+                                    "Kembali",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 18.sp,
+                                    color = icon,
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Outlined.CheckCircle,
+                                    contentDescription = "Selesai",
+                                    tint = icon
+                                )
+                                Text(
+                                    "Selesai",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 18.sp,
+                                    color = icon,
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            }
                         }
-
                     }
                 }
             }

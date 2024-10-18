@@ -29,12 +29,14 @@ import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_bell
 import mbakkasir.composeapp.generated.resources.img_jml_sales
 import mbakkasir.composeapp.generated.resources.img_nom_sales
+import mbakkasir.composeapp.generated.resources.img_users_sales
 import mbakkasir.composeapp.generated.resources.profile
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import ui.theme.cyanLight3
 import ui.theme.dark
 import ui.theme.pinkLight3
+import ui.theme.purpleLight3
 import ui.theme.secondary_text
 import ui.theme.stroke
 
@@ -52,18 +54,26 @@ fun Home() {
         HeaderSection()
         Spacer(modifier = Modifier.height(24.dp))
         StatCard(
-            title = "Nominal penjualan",
+            title = "Nominal Penjualan",
             value = "Rp. 60.000.000",
             imageRes = Res.drawable.img_jml_sales,
             cardColor = cyanLight3
         )
         Spacer(modifier = Modifier.height(16.dp))
         StatCard(
-            title = "Jumlah penjualan",
+            title = "Jumlah Penjualan",
             value = "1.000",
             suffix = "items",
             imageRes = Res.drawable.img_nom_sales,
             cardColor = pinkLight3
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        StatCard(
+            title = "Jumlah Pembeli",
+            value = "99",
+            suffix = "orang",
+            imageRes = Res.drawable.img_users_sales,
+            cardColor = purpleLight3
         )
     }
 }

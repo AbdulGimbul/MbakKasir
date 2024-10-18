@@ -12,7 +12,7 @@ androidx-espresso-core = "3.6.1"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 blueFalcon = "1.2.1"
-compose-plugin = "1.7.0-rc01"
+compose-plugin = "1.7.0"
 composeMultiplatformScreenCapture = "1.0.2"
 compottieDot = "2.0.0-beta02"
 datastorePreferences = "1.1.1"
@@ -21,8 +21,7 @@ kmpDateTimePicker = "1.0.3"
 konnectivity = "0.1-alpha01"
 kotlin = "2.0.20"
 lifecycleViewmodelCompose = "2.8.2"
-material3WindowSizeClass = "1.7.0-rc01"
-material3WindowSizeClassMultiplatform = "0.5.0"
+material3WindowSizeClass = "1.7.0"
 materialNavigation = "1.7.0-beta02"
 messagebarkmp = "1.0.5"
 navigationCompose = "2.8.0-alpha10"
@@ -36,7 +35,7 @@ realm = "3.0.0"
 coroutines = "1.9.0"
 stately = "2.0.7"
 core-splashscreen = "1.0.1"
-firebase-android-bom = "33.3.0"
+firebase-android-bom = "33.4.0"
 gradlePlugins-crashlytics = "3.0.2"
 gradlePlugins-google-services = "4.4.2"
 firebase-gitlive-sdk = "2.1.0"
@@ -71,7 +70,6 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 material-navigation = { module = "org.jetbrains.compose.material:material-navigation", version.ref = "materialNavigation" }
 material-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
-material3-window-size-multiplatform = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "material3WindowSizeClassMultiplatform" }
 messagebarkmp = { module = "com.stevdza-san:messagebarkmp", version.ref = "messagebarkmp" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 qrkit = { module = "network.chaintech:qr-kit", version.ref = "qrkit" }
