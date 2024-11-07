@@ -2,6 +2,8 @@ package storage
 
 import features.cashier_role.home.domain.Product
 import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.sales.domain.ProductTransDraft
+import features.cashier_role.sales.domain.copyWithNewId
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -9,6 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class MongoDB {
     private var realm: Realm? = null
@@ -20,7 +28,7 @@ class MongoDB {
     private fun configureTheRealm() {
         if (realm == null || realm!!.isClosed()) {
             val config = RealmConfiguration.Builder(
-                schema = setOf(Product::class, ProductTrans::class)
+                schema = setOf(Product::class, ProductTrans::class, ProductTransDraft::class)
             )
                 .compactOnLaunch()
                 .build()
@@ -75,30 +83,79 @@ class MongoDB {
         } ?: flowOf(false)
     }
 
-    suspend fun addProductTrans(productTrans: ProductTrans) {
-        realm?.write {
-            copyToRealm(productTrans)
-        }
-    }
-
-    fun getProductsTrans(): Flow<List<ProductTrans>> {
-        return realm?.query<ProductTrans>()
+    fun getDrafts(): Flow<List<ProductTransDraft>> {
+        return realm?.query<ProductTransDraft>()
             ?.asFlow()
-            ?.map { trans -> trans.list.sortedByDescending { it.id_barang } }
+            ?.map { draft -> draft.list.sortedByDescending { it.draftId } }
             ?: flow { emit(emptyList()) }
     }
 
-    suspend fun updateProductTrans(product: ProductTrans, qty: Int) {
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun addProductTransToDraft(
+        draftId: String,
+        cashierName: String,
+        productTrans: ProductTrans
+    ) {
         realm?.write {
-            try {
-                val queriedTask = query<ProductTrans>("id_barang == $0", product.id_barang)
-                    .find()
-                    .first()
-                queriedTask.apply {
+            val draft = query<ProductTransDraft>("draftId == $0", draftId).first().find()
+
+            val clonedProduct = productTrans.copyWithNewId(Uuid.random().toString())
+
+            draft?.apply {
+                detail.add(clonedProduct)
+            } ?: run {
+                copyToRealm(ProductTransDraft().apply {
+                    this.draftId = draftId
+                    this.datetime = currentTimeCustom()
+                    this.kasir = cashierName
+                    this.detail.add(clonedProduct)
+                })
+            }
+        }
+    }
+
+    fun getProductsFromDraft(draftId: String): Flow<List<ProductTrans>> {
+        return realm?.query<ProductTransDraft>("draftId == $0", draftId)
+            ?.asFlow()
+            ?.map { draft ->
+                draft.list.firstOrNull()?.detail?.sortedByDescending { it.id_barang } ?: emptyList()
+            }
+            ?: flow { emit(emptyList()) }
+    }
+
+    suspend fun updateProductTransInDraft(draftId: String, productId: String, qty: Int) {
+        realm?.write {
+            val draft = query<ProductTransDraft>("draftId == $0", draftId).first().find()
+
+            draft?.let { existingDraft ->
+                val product = existingDraft.detail.firstOrNull { it.id_barang == productId }
+
+                product?.apply {
                     qty_jual = qty
 
                     if (qty_jual < 1) {
-                        delete(this)
+                        existingDraft.detail.remove(this)
+                    }
+
+                    if (existingDraft.detail.isEmpty()) {
+                        findLatest(existingDraft)?.let { latestDraft ->
+                            delete(latestDraft)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun deleteDraft(draftId: String) {
+        realm?.write {
+            try {
+                val queriedDraft = query<ProductTransDraft>(query = "draftId == $0", draftId)
+                    .first()
+                    .find()
+                queriedDraft?.let {
+                    findLatest(it)?.let { currentDraft ->
+                        delete(currentDraft)
                     }
                 }
             } catch (e: Exception) {
@@ -107,20 +164,14 @@ class MongoDB {
         }
     }
 
-    suspend fun deleteProductTrans(productId: String) {
-        realm?.write {
-            try {
-                val queriedTask = query<ProductTrans>(query = "id_barang == $0", productId)
-                    .first()
-                    .find()
-                queriedTask?.let {
-                    findLatest(it)?.let { currentTask ->
-                        delete(currentTask)
-                    }
-                }
-            } catch (e: Exception) {
-                println(e)
-            }
-        }
+    fun currentTimeCustom(): String {
+        val currentMoment: Instant = Clock.System.now()
+        val localDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
+
+        return "${localDateTime.date} ${
+            localDateTime.hour.toString().padStart(2, '0')
+        }:${localDateTime.minute.toString().padStart(2, '0')}:${
+            localDateTime.second.toString().padStart(2, '0')
+        }"
     }
 }

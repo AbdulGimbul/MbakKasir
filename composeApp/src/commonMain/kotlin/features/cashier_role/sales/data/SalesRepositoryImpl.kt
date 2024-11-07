@@ -5,6 +5,7 @@ import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
 import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.sales.domain.ProductTransDraft
 import kotlinx.coroutines.flow.Flow
 import network.NetworkException
 import network.NetworkResult
@@ -31,23 +32,28 @@ class SalesRepositoryImpl(
         return mongoDB.searchProductsByBarcode(barcode)
     }
 
-    override suspend fun addProductTrans(productTrans: ProductTrans) {
-        return mongoDB.addProductTrans(productTrans)
+    override suspend fun addProductTransToDraft(
+        draftId: String,
+        cashierName: String,
+        productTrans: ProductTrans
+    ) {
+        return mongoDB.addProductTransToDraft(draftId, cashierName, productTrans)
     }
 
-    override suspend fun updateProductTrans(
-        product: ProductTrans,
+    override suspend fun updateProductTransInDraft(
+        draftId: String,
+        productId: String,
         qty: Int,
     ) {
-        return mongoDB.updateProductTrans(product, qty)
+        return mongoDB.updateProductTransInDraft(draftId, productId, qty)
     }
 
-    override suspend fun deleteProductTrans(productId: String) {
-        return mongoDB.deleteProductTrans(productId)
+    override suspend fun deleteDraft(draftId: String) {
+        return mongoDB.deleteDraft(draftId)
     }
 
-    override suspend fun getScannedProducts(): Flow<List<ProductTrans>> {
-        return mongoDB.getProductsTrans()
+    override suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTrans>> {
+        return mongoDB.getProductsFromDraft(draftId)
     }
 
     override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException> {
@@ -55,5 +61,9 @@ class SalesRepositoryImpl(
             urlPathSegments = listOf("api", "penjualan", "getByInvoice"),
             queryParams = mapOf("invoice" to invoice)
         )
+    }
+
+    override suspend fun getDrafts(): Flow<List<ProductTransDraft>> {
+        return mongoDB.getDrafts()
     }
 }

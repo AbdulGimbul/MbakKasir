@@ -86,6 +86,7 @@ kotlin {
             implementation(libs.adaptive.layout)
             implementation(libs.adaptive.navigation)
             implementation(libs.lifecycle.viewmodel.compose)
+            implementation(libs.datetime)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

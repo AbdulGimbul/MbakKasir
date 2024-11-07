@@ -1,8 +1,20 @@
 package features.cashier_role.sales.domain
 
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlinx.serialization.Serializable
+
+class ProductTransDraft : RealmObject {
+    @PrimaryKey
+    var draftId: String = ""
+    var datetime: String = ""
+    var kasir: String = ""
+    var detail: RealmList<ProductTrans> = realmListOf()
+    val totalTagihan: Int
+        get() = detail.sumOf { it.subtotal }
+}
 
 class ProductTrans : RealmObject {
     @PrimaryKey
@@ -58,4 +70,18 @@ fun ProductTransSerializable.toDetailPayload(): DetailPayload {
         subtotal = this.subtotal.toString(),
         diskon = this.diskon
     )
+}
+
+fun ProductTrans.copyWithNewId(newId: String): ProductTrans {
+    return ProductTrans().apply {
+        id_barang = newId
+        kode_barang = this@copyWithNewId.kode_barang
+        barcode = this@copyWithNewId.barcode
+        nama_barang = this@copyWithNewId.nama_barang
+        id_karyawan = this@copyWithNewId.id_karyawan
+        jenis = this@copyWithNewId.jenis
+        qty_jual = this@copyWithNewId.qty_jual
+        harga_item = this@copyWithNewId.harga_item
+        diskon = this@copyWithNewId.diskon
+    }
 }

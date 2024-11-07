@@ -12,6 +12,7 @@ import features.cashier_role.home.data.HomeRepositoryImpl
 import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
+import features.cashier_role.sales.presentation.SalesViewModel
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
@@ -44,9 +45,10 @@ val provideSalesRepositoryModule = module {
             requestHandler = get()
         )
     }.bind<SalesRepository>()
-    viewModel { EntrySalesViewModel(salesRepository = get()) }
+    viewModel { EntrySalesViewModel(salesRepository = get(), authRepository = get()) }
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
+    viewModel { SalesViewModel(salesRepository = get()) }
 }
 
 val provideHistoryRepositoryModule = module {

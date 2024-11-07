@@ -5,5 +5,6 @@ import features.auth.domain.UserData
 data class ProfileUiState(
     val user: UserData? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isLogout: Boolean = false
 )

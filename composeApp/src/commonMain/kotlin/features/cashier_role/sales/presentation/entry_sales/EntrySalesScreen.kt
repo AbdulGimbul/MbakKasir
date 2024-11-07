@@ -16,14 +16,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.Divider
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -32,9 +30,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,12 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import features.auth.presentation.login.EnhancedLoading
@@ -62,9 +61,6 @@ import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import features.cashier_role.sales.presentation.payment.SummaryRow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
-import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
-import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import qrscanner.QrScanner
 import rememberMessageBarState
 import ui.component.DefaultTextField
@@ -75,20 +71,24 @@ import ui.component.HeadlineText
 import ui.navigation.cashier_role.MbakKasirNavigationType
 import ui.navigation.cashier_role.Screen
 import ui.theme.dark
-import ui.theme.icon
 import ui.theme.primary
 import ui.theme.primary_text
-import ui.theme.secondary
 import ui.theme.secondary_text
 import ui.theme.stroke
 import utils.currencyFormat
 
 @Composable
-fun EntrySalesScreen(viewModel: EntrySalesViewModel, paymentViewModel: PaymentViewModel, navController: NavController, navigationType: MbakKasirNavigationType) {
+fun EntrySalesScreen(
+    viewModel: EntrySalesViewModel,
+    paymentViewModel: PaymentViewModel,
+    navController: NavController,
+    navigationType: MbakKasirNavigationType,
+    draftId: String? = null,
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paymentUiState by paymentViewModel.uiState.collectAsStateWithLifecycle()
 
-    if (navigationType == MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER){
+    if (navigationType == MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER) {
         EntrySalesAndPayment(
             entryUiState = uiState,
             paymentUiState = paymentUiState,
@@ -101,11 +101,14 @@ fun EntrySalesScreen(viewModel: EntrySalesViewModel, paymentViewModel: PaymentVi
             uiState = uiState,
             onEvent = { viewModel.onEvent(it) },
             moveToPayment = {
-                navController.navigate("${Screen.Payment.route}/$it")
+                navController.navigate("${Screen.Payment.route}/$it"){
+                    restoreState = true
+                }
             },
             navigateBack = {
                 navController.navigateUp()
-            }
+            },
+            draftId = draftId
         )
     }
 }
@@ -116,12 +119,20 @@ fun EntrySales(
     uiState: EntrySalesUiState,
     onEvent: (EntrySalesUiEvent) -> Unit,
     moveToPayment: (String) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    draftId: String? = null
 ) {
 
+    val showDialog = remember { mutableStateOf(false) }
     val state = rememberMessageBarState()
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
     val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
+
+    LaunchedEffect(draftId) {
+        if (draftId != null) {
+            onEvent(EntrySalesUiEvent.LoadScannedProducts(draftId))
+        }
+    }
 
     LaunchedEffect(uiState.scannedProducts) {
         val totalTagihan = uiState.scannedProducts.sumOf { it.harga_item * it.qty_jual }
@@ -148,12 +159,16 @@ fun EntrySales(
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)
             ) {
-                HeadlineText("Entry:")
-                HeadlineText(
-                    text = "Penjualan",
-                    color = secondary_text,
+                Row(
                     modifier = Modifier.padding(bottom = 32.dp)
-                )
+                ) {
+                    HeadlineText("Tambah")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    HeadlineText(
+                        text = "Penjualan",
+                        color = primary_text
+                    )
+                }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = setExpanded
@@ -198,7 +213,7 @@ fun EntrySales(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp)
-                            .menuAnchor(),
+                            .menuAnchor(type = MenuAnchorType.PrimaryEditable)
                     )
 
                     ExposedDropdownMenu(
@@ -234,7 +249,7 @@ fun EntrySales(
                                 DropdownMenuItem(
                                     onClick = {
                                         onEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
-                                        onEvent(EntrySalesUiEvent.ScanProduct(product.barcode))
+                                        onEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), product.barcode))
                                         setExpanded(false)
                                     },
                                     text = {
@@ -252,8 +267,22 @@ fun EntrySales(
                     items(uiState.scannedProducts) { product ->
                         EntrySalesItem(
                             product = product,
-                            onIncreaseQty = { onEvent(EntrySalesUiEvent.IncreaseProductQty(it)) },
-                            onDecreaseQty = { onEvent(EntrySalesUiEvent.DecreaseProductQty(it)) },
+                            onIncreaseQty = {
+                                onEvent(
+                                    EntrySalesUiEvent.IncreaseProductQty(
+                                        draftId.toString(),
+                                        it
+                                    )
+                                )
+                            },
+                            onDecreaseQty = {
+                                onEvent(
+                                    EntrySalesUiEvent.DecreaseProductQty(
+                                        draftId.toString(),
+                                        it
+                                    )
+                                )
+                            },
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
@@ -269,7 +298,7 @@ fun EntrySales(
                     onCompletion = {
                         onEvent(EntrySalesUiEvent.OnInputUserChanged(it))
                         onEvent(EntrySalesUiEvent.ScanIconClick)
-                        onEvent(EntrySalesUiEvent.ScanProduct(it))
+                        onEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), it))
                     },
                     onFailure = {
                         if (it.isEmpty()) {
@@ -305,7 +334,7 @@ fun EntrySales(
                     Spacer(modifier = Modifier.height(16.dp))
                     FooterButton(
                         onCancelClick = {
-                            navigateBack()
+                            showDialog.value = true
                         },
                         onConfirmClick = {
                             if (uiState.scannedProducts.isEmpty()) {
@@ -322,6 +351,49 @@ fun EntrySales(
                 }
             }
         }
+    }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog.value = false
+            },
+            confirmButton = {
+                println("cek draftId : $draftId")
+                TextButton(
+                    onClick = {
+                        showDialog.value = false
+                        onEvent(EntrySalesUiEvent.DeleteProduct(draftId.toString()))
+                        navigateBack()
+                    }
+                ) {
+                    Text("Ya")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDialog.value = false
+                    }
+                ) {
+                    Text("Tidak")
+                }
+            },
+            title = {
+                Text(
+                    text = "Batalkan Transaksi",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Text(
+                    "Apakah anda yakini? Data yang sudah ditambahkan akan hilang!",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+        )
     }
 }
 
@@ -350,7 +422,8 @@ fun EntrySalesAndPayment(
     }
 
     Row(
-        modifier = Modifier.fillMaxSize().padding(16.dp) // Row to place EntrySales and Payment side by side
+        modifier = Modifier.fillMaxSize()
+            .padding(16.dp) // Row to place EntrySales and Payment side by side
     ) {
         // Left Side: Entry Sales
         ContentWithMessageBar(
@@ -398,17 +471,33 @@ fun EntrySalesAndPayment(
                         ) {
                             entryUiState.searchResults.forEach { product ->
                                 val displayText = when {
-                                    product.barcode.contains(entryUiState.inputUser, ignoreCase = true) -> product.barcode
-                                    product.nama_barang.contains(entryUiState.inputUser, ignoreCase = true) -> product.nama_barang
-                                    product.kode_barang.contains(entryUiState.inputUser, ignoreCase = true) -> product.kode_barang
+                                    product.barcode.contains(
+                                        entryUiState.inputUser,
+                                        ignoreCase = true
+                                    ) -> product.barcode
+
+                                    product.nama_barang.contains(
+                                        entryUiState.inputUser,
+                                        ignoreCase = true
+                                    ) -> product.nama_barang
+
+                                    product.kode_barang.contains(
+                                        entryUiState.inputUser,
+                                        ignoreCase = true
+                                    ) -> product.kode_barang
+
                                     else -> ""
                                 }
 
                                 if (displayText.isNotEmpty()) {
                                     DropdownMenuItem(
                                         onClick = {
-                                            entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
-                                            entryOnEvent(EntrySalesUiEvent.ScanProduct(product.barcode))
+                                            entryOnEvent(
+                                                EntrySalesUiEvent.OnInputUserChanged(
+                                                    product.barcode
+                                                )
+                                            )
+//                                            entryOnEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), product.barcode))
                                             setExpanded(false)
                                         },
                                         text = { Text(displayText) }
@@ -419,14 +508,26 @@ fun EntrySalesAndPayment(
                     }
 
                     LazyColumn {
-                        items(entryUiState.scannedProducts) { product ->
-                            EntrySalesItem(
-                                product = product,
-                                onIncreaseQty = { entryOnEvent(EntrySalesUiEvent.IncreaseProductQty(it)) },
-                                onDecreaseQty = { entryOnEvent(EntrySalesUiEvent.DecreaseProductQty(it)) },
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
+//                        items(entryUiState.scannedProducts) { product ->
+//                            EntrySalesItem(
+//                                product = product,
+//                                onIncreaseQty = {
+//                                    entryOnEvent(
+//                                        EntrySalesUiEvent.IncreaseProductQty(
+//                                            it
+//                                        )
+//                                    )
+//                                },
+//                                onDecreaseQty = {
+//                                    entryOnEvent(
+//                                        EntrySalesUiEvent.DecreaseProductQty(
+//                                            it
+//                                        )
+//                                    )
+//                                },
+//                                modifier = Modifier.padding(vertical = 4.dp)
+//                            )
+//                        }
                     }
 
                     if (entryUiState.startBarCodeScan) {
@@ -438,7 +539,7 @@ fun EntrySalesAndPayment(
                             onCompletion = {
                                 entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(it))
                                 entryOnEvent(EntrySalesUiEvent.ScanIconClick)
-                                entryOnEvent(EntrySalesUiEvent.ScanProduct(it))
+//                                entryOnEvent(EntrySalesUiEvent.ScanProduct(it))
                             },
                             onFailure = {
                                 if (it.isEmpty()) {

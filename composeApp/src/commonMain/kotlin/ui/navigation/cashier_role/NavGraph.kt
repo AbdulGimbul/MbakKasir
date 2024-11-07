@@ -45,12 +45,16 @@ import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.SalesScreen
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.ProductTransSerializable
+import features.cashier_role.sales.presentation.SalesViewModel
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.invoice.InvoiceScreen
 import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentScreen
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.primary
@@ -82,9 +86,10 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 },
                 floatingActionButton = {
                     if (currentRoute == Screen.Sales.route) {
+                        val draftId = generateKodeInvoice()
                         FloatingActionButton(
                             onClick = {
-                                navController.navigate(Screen.EntrySales.route)
+                                navController.navigate("${Screen.EntrySales.route}/$draftId")
                             },
                             shape = CircleShape,
                             containerColor = primary
@@ -162,7 +167,10 @@ fun NavHostContent(
             HomeScreen(viewModel = koinViewModel<HomeViewModel>())
         }
         composable(Screen.Sales.route) {
-            SalesScreen()
+            SalesScreen(
+                viewModel = koinViewModel<SalesViewModel>(),
+                navController = navController
+            )
         }
         composable(Screen.History.route) {
             HistoryScreen(
@@ -171,14 +179,22 @@ fun NavHostContent(
             )
         }
         composable(Screen.Profile.route) {
-            ProfileScreen(viewModel = koinViewModel<ProfileViewModel>())
+            ProfileScreen(
+                viewModel = koinViewModel<ProfileViewModel>(),
+                navController = navController
+            )
         }
-        composable(Screen.EntrySales.route) {
+        composable(
+            route = "${Screen.EntrySales.route}/{draftId}",
+            arguments = listOf(navArgument("draftId") { nullable = true })
+        ) { backStackEntry ->
+            val draftId = backStackEntry.arguments?.getString("draftId")
             EntrySalesScreen(
                 viewModel = koinViewModel<EntrySalesViewModel>(),
                 navController = navController,
                 paymentViewModel = koinViewModel<PaymentViewModel>(),
-                navigationType = navigationType
+                navigationType = navigationType,
+                draftId = draftId
             )
         }
         composable("${Screen.Payment.route}/{scannedProducts}") { backStackEntry ->
@@ -326,3 +342,19 @@ val navigationItems = listOf(
         screen = Screen.Profile
     )
 )
+
+private fun generateKodeInvoice(): String {
+    val currentMoment = Clock.System.now()
+    val currentDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    val formattedDateTime = currentDateTime.run {
+        "${dayOfMonth.toString().padStart(2, '0')}${
+            monthNumber.toString().padStart(2, '0')
+        }${year.toString().takeLast(2)}" +
+                "${hour.toString().padStart(2, '0')}${
+                    minute.toString().padStart(2, '0')
+                }${second.toString().padStart(2, '0')}"
+    }
+
+    return "POS$formattedDateTime"
+}

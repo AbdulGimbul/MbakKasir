@@ -17,4 +17,5 @@ interface AuthRepository {
     ): NetworkResult<SalesHistoryApiModel, NetworkException>
 
     suspend fun userInfo(): UserData
+    suspend fun logout()
 }

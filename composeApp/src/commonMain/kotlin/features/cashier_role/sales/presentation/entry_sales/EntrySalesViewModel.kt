@@ -2,6 +2,7 @@ package features.cashier_role.sales.presentation.entry_sales
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import features.auth.data.AuthRepository
 import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.domain.ProductTrans
@@ -16,19 +17,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EntrySalesViewModel(
-    private val salesRepository: SalesRepository
+    private val salesRepository: SalesRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EntrySalesUiState())
     val uiState: StateFlow<EntrySalesUiState> = _uiState
     private var searchJob: Job? = null
 
-    init {
-        loadScannedProducts()
-    }
-
     fun onEvent(event: EntrySalesUiEvent) {
         when (event) {
+            is EntrySalesUiEvent.LoadScannedProducts -> {
+                loadScannedProducts(event.draftId)
+            }
+
             is EntrySalesUiEvent.FlashLightClick -> {
                 _uiState.value =
                     _uiState.value.copy(flashlightOn = !_uiState.value.flashlightOn)
@@ -47,7 +49,7 @@ class EntrySalesViewModel(
             }
 
             is EntrySalesUiEvent.ScanProduct -> {
-                scanProductByBarcode(event.barcode)
+                scanProductByBarcode(event.draftId, event.barcode)
             }
 
             is EntrySalesUiEvent.SearchProduct -> {
@@ -60,25 +62,38 @@ class EntrySalesViewModel(
             }
 
             is EntrySalesUiEvent.IncreaseProductQty -> {
-                increaseProductQty(event.product)
+                increaseProductQty(event.draftId, event.product)
             }
 
             is EntrySalesUiEvent.DecreaseProductQty -> {
-                decreaseProductQty(event.product)
+                decreaseProductQty(event.draftId, event.product)
+            }
+
+            is EntrySalesUiEvent.DeleteProduct -> {
+                if (_uiState.value.scannedProducts.isNotEmpty()) {
+                    _uiState.value.scannedProducts.forEach {
+                        deleteScannedProducts(event.draftId)
+                    }
+                }
             }
         }
     }
 
-    private fun scanProductByBarcode(barcode: String) {
+    private fun scanProductByBarcode(draftId: String, barcode: String) {
         viewModelScope.launch(Dispatchers.Main) {
+            val cashier = authRepository.userInfo().userInfo.nama
             _uiState.value = _uiState.value.copy(errorMessage = null)
             salesRepository.getProductByBarcode(barcode).collectLatest { product ->
                 product?.let { newProduct ->
                     val currentList = _uiState.value.scannedProducts
                     if (!currentList.any { it.barcode == product.barcode }) {
                         val scannedProduct = newProduct.toProductTrans()
-                        salesRepository.addProductTrans(scannedProduct)
-                        loadScannedProducts()
+                        salesRepository.addProductTransToDraft(
+                            draftId,
+                            cashier,
+                            scannedProduct
+                        )
+                        loadScannedProducts(draftId)
                     } else {
                         _uiState.value =
                             _uiState.value.copy(errorMessage = "Ups, barang ini sudah ditambahkan ya!")
@@ -101,26 +116,34 @@ class EntrySalesViewModel(
         }
     }
 
-    private fun increaseProductQty(product: ProductTrans) {
+    private fun increaseProductQty(draftId: String, product: ProductTrans) {
         viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual + 1
-            salesRepository.updateProductTrans(product, newQty)
-            loadScannedProducts()
+            salesRepository.updateProductTransInDraft(draftId, product.id_barang, newQty)
+            loadScannedProducts(draftId)
         }
     }
 
-    private fun decreaseProductQty(product: ProductTrans) {
+    private fun decreaseProductQty(draftId: String, product: ProductTrans) {
         viewModelScope.launch(Dispatchers.IO) {
             val newQty = product.qty_jual - 1
-            salesRepository.updateProductTrans(product, newQty)
+            salesRepository.updateProductTransInDraft(draftId, product.id_barang, newQty)
+            loadScannedProducts(draftId)
         }
     }
 
-    private fun loadScannedProducts() {
+    private fun loadScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.Main) {
-            salesRepository.getScannedProducts().collectLatest { scannedProductsList ->
-                _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
-            }
+            salesRepository.getProductsFromDraft(draftId.toString())
+                .collectLatest { scannedProductsList ->
+                    _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
+                }
+        }
+    }
+
+    private fun deleteScannedProducts(draftId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            salesRepository.deleteDraft(draftId.toString())
         }
     }
 }

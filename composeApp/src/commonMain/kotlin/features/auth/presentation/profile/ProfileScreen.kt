@@ -1,5 +1,6 @@
 package features.auth.presentation.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,24 +33,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import features.auth.domain.Toko
 import features.auth.domain.User
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
+import ui.navigation.cashier_role.Screen
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
+import ui.theme.red
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Profile(uiState)
+    if (uiState.isLogout) {
+        LaunchedEffect(Unit) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+    }
+
+    Profile(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) }
+    )
 }
 
 @Composable
-fun Profile(uiState: ProfileUiState) {
+fun Profile(
+    uiState: ProfileUiState,
+    onEvent: (ProfileUiEvent) -> Unit
+) {
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -69,6 +96,28 @@ fun Profile(uiState: ProfileUiState) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         uiState.user?.storeInfo?.let { StoreInformationCard(it) }
+        Spacer(modifier = Modifier.height(32.dp))
+        OutlinedButton(
+            onClick = { onEvent(ProfileUiEvent.Logout) },
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
+            border = BorderStroke(
+                width = 1.dp,
+                color = red
+            ),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Default.Logout,
+                contentDescription = "Logout",
+                modifier = Modifier.padding(4.dp)
+            )
+            Text(
+                "Logout",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
     }
 }
 
