@@ -67,7 +67,8 @@ import utils.currencyFormat
 fun PaymentScreen(
     viewModel: PaymentViewModel,
     navController: NavController,
-    products: List<ProductTransSerializable>
+    products: List<ProductTransSerializable>,
+    draftId: String
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -80,7 +81,8 @@ fun PaymentScreen(
         navigateBack = {
             navController.navigateUp()
         },
-        products = products
+        products = products,
+        draftId = draftId
     )
 }
 
@@ -91,6 +93,7 @@ fun Payment(
     moveToInvoice: (String) -> Unit,
     navigateBack: () -> Unit,
     products: List<ProductTransSerializable>,
+    draftId: String
 ) {
     val radioOptions = listOf("Tunai", "Kredit")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
@@ -110,7 +113,7 @@ fun Payment(
         uiState.paymentResponse?.let { response ->
             if (response.code == "200") {
                 uiState.products.forEach {
-                    onEvent(PaymentUiEvent.DeleteScannedProducts(it.id_barang))
+                    onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
                 }
                 val jsonResponse = Json.encodeToString(response)
                 moveToInvoice(jsonResponse)

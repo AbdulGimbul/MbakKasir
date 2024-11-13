@@ -83,7 +83,7 @@ fun EntrySalesScreen(
     paymentViewModel: PaymentViewModel,
     navController: NavController,
     navigationType: MbakKasirNavigationType,
-    draftId: String? = null,
+    draftId: String,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paymentUiState by paymentViewModel.uiState.collectAsStateWithLifecycle()
@@ -100,8 +100,8 @@ fun EntrySalesScreen(
         EntrySales(
             uiState = uiState,
             onEvent = { viewModel.onEvent(it) },
-            moveToPayment = {
-                navController.navigate("${Screen.Payment.route}/$it"){
+            moveToPayment = { scannedProducts, draftId ->
+                navController.navigate("${Screen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId") {
                     restoreState = true
                 }
             },
@@ -118,9 +118,9 @@ fun EntrySalesScreen(
 fun EntrySales(
     uiState: EntrySalesUiState,
     onEvent: (EntrySalesUiEvent) -> Unit,
-    moveToPayment: (String) -> Unit,
+    moveToPayment: (String, String) -> Unit,
     navigateBack: () -> Unit,
-    draftId: String? = null
+    draftId: String
 ) {
 
     val showDialog = remember { mutableStateOf(false) }
@@ -249,7 +249,12 @@ fun EntrySales(
                                 DropdownMenuItem(
                                     onClick = {
                                         onEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
-                                        onEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), product.barcode))
+                                        onEvent(
+                                            EntrySalesUiEvent.ScanProduct(
+                                                draftId.toString(),
+                                                product.barcode
+                                            )
+                                        )
                                         setExpanded(false)
                                     },
                                     text = {
@@ -343,7 +348,7 @@ fun EntrySales(
                             }
                             val scannedProductsJson =
                                 Json.encodeToString(uiState.scannedProducts.map { it.toSerializable() })
-                            moveToPayment(scannedProductsJson)
+                            moveToPayment(scannedProductsJson, draftId)
                         },
                         cancelText = "Batal",
                         confirmText = "Pembayaran"
@@ -359,7 +364,6 @@ fun EntrySales(
                 showDialog.value = false
             },
             confirmButton = {
-                println("cek draftId : $draftId")
                 TextButton(
                     onClick = {
                         showDialog.value = false

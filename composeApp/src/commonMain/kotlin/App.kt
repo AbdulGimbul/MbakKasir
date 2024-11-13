@@ -16,6 +16,9 @@ fun App() {
     ) {
         val navController = rememberNavController()
         val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-        SetupNavHost(navController = navController, windowSize = windowSizeClass.windowWidthSizeClass)
+        SetupNavHost(
+            navController = navController,
+            windowSize = windowSizeClass.windowWidthSizeClass
+        )
     }
 }

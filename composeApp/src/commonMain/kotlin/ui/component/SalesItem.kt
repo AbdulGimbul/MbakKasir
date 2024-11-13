@@ -66,7 +66,11 @@ fun SalesItem(
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
-            ItemRowSales(label = "Draft", value = currencyFormat(product.totalTagihan.toDouble()), color = red)
+            ItemRowSales(
+                label = "Draft",
+                value = currencyFormat(product.totalTagihan.toDouble()),
+                color = red
+            )
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(label = product.kasir, value = product.draftId, color = dark)
             Spacer(modifier = Modifier.height(16.dp))

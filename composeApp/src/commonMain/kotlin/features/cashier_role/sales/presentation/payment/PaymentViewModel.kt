@@ -40,7 +40,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             }
 
             is PaymentUiEvent.DeleteScannedProducts -> {
-//                deleteScannedProducts(event.idBarang)
+                deleteScannedProducts(event.draftId)
             }
 
             is PaymentUiEvent.ConfirmButtonClicked -> {
@@ -101,9 +101,9 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
         }
     }
 
-//    private fun deleteScannedProducts(productId: String) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            salesRepository.deleteProductFromDraft(productId)
-//        }
-//    }
+    private fun deleteScannedProducts(draftId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            salesRepository.deleteDraft(draftId)
+        }
+    }
 }

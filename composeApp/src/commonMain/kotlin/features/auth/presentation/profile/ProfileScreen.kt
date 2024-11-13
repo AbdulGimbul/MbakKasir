@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -72,50 +71,69 @@ fun Profile(
     onEvent: (ProfileUiEvent) -> Unit
 ) {
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
+    Column {
+        Column(
             modifier = Modifier.fillMaxWidth()
-                .padding(bottom = 24.dp)
+                .weight(1f)
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
-                    .background(Color.White),
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .background(primary)
-            )
-            uiState.user?.userInfo?.let { UserInfoHeader(it) }
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 24.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
+                        .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
+                        .background(Color.White),
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .background(primary)
+                )
+                uiState.user?.userInfo?.let { UserInfoHeader(it) }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            uiState.user?.storeInfo?.let { StoreInformationCard(it) }
+            Spacer(modifier = Modifier.height(32.dp))
+            OutlinedButton(
+                onClick = { onEvent(ProfileUiEvent.Logout) },
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = red
+                ),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.Logout,
+                    contentDescription = "Logout",
+                    modifier = Modifier.padding(4.dp)
+                )
+                Text(
+                    "Logout",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        uiState.user?.storeInfo?.let { StoreInformationCard(it) }
-        Spacer(modifier = Modifier.height(32.dp))
-        OutlinedButton(
-            onClick = { onEvent(ProfileUiEvent.Logout) },
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-            border = BorderStroke(
-                width = 1.dp,
-                color = red
-            ),
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.Logout,
-                contentDescription = "Logout",
-                modifier = Modifier.padding(4.dp)
+            Text(
+                text = "Support by Mbakasir.com",
+                style = MaterialTheme.typography.bodyMedium,
+                color = primary_text
             )
             Text(
-                "Logout",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(4.dp)
+                text = "Version 0.0.1",
+                style = MaterialTheme.typography.bodyMedium,
+                color = primary_text
             )
         }
     }

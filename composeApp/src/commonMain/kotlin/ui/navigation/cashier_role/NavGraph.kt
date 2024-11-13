@@ -52,12 +52,10 @@ import features.cashier_role.sales.presentation.invoice.InvoiceScreen
 import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentScreen
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
 import ui.theme.primary
+import utils.generateKodeInvoice
 
 @Composable
 fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass) {
@@ -186,7 +184,6 @@ fun NavHostContent(
         }
         composable(
             route = "${Screen.EntrySales.route}/{draftId}",
-            arguments = listOf(navArgument("draftId") { nullable = true })
         ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             EntrySalesScreen(
@@ -194,17 +191,23 @@ fun NavHostContent(
                 navController = navController,
                 paymentViewModel = koinViewModel<PaymentViewModel>(),
                 navigationType = navigationType,
-                draftId = draftId
+                draftId = draftId.toString()
             )
         }
-        composable("${Screen.Payment.route}/{scannedProducts}") { backStackEntry ->
+        composable(route = "${Screen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
+            arguments = listOf(
+                navArgument("scannedProducts") { nullable = false },
+                navArgument("draftId") { nullable = false }
+            )) { backStackEntry ->
+            val draftId = backStackEntry.arguments?.getString("draftId")
             val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
             val scannedProducts =
                 jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
             PaymentScreen(
                 viewModel = koinViewModel<PaymentViewModel>(),
                 navController = navController,
-                products = scannedProducts ?: emptyList()
+                products = scannedProducts ?: emptyList(),
+                draftId = draftId.toString()
             )
         }
         composable(
@@ -342,19 +345,3 @@ val navigationItems = listOf(
         screen = Screen.Profile
     )
 )
-
-private fun generateKodeInvoice(): String {
-    val currentMoment = Clock.System.now()
-    val currentDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
-
-    val formattedDateTime = currentDateTime.run {
-        "${dayOfMonth.toString().padStart(2, '0')}${
-            monthNumber.toString().padStart(2, '0')
-        }${year.toString().takeLast(2)}" +
-                "${hour.toString().padStart(2, '0')}${
-                    minute.toString().padStart(2, '0')
-                }${second.toString().padStart(2, '0')}"
-    }
-
-    return "POS$formattedDateTime"
-}
