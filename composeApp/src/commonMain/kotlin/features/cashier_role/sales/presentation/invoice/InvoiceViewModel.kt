@@ -3,7 +3,9 @@ package features.cashier_role.sales.presentation.invoice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.auth.domain.Toko
+import features.auth.domain.User
 import features.cashier_role.sales.data.SalesRepository
+import features.cashier_role.sales.domain.toDetailPayment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,23 +74,24 @@ class InvoiceViewModel(
     }
 
     private fun handlePaymentLoaded(event: InvoiceUiEvent.ArgumentPaymentLoaded) {
+        val detail = event.payment.products.map { it.toDetailPayment() }
         viewModelScope.launch {
-            val totalHarga = event.payment.data.detil.sumOf { it.subtotal.toInt() }.toString()
+            val totalHarga = event.payment.products.sumOf { it.subtotal.toInt() }.toString()
                 .toDoubleOrNull() ?: 0.0
-            val diskon = event.payment.data.detil.sumOf { it.diskon.toInt() }.toString()
+            val diskon = event.payment.products.sumOf { it.diskon.toInt() }.toString()
                 .toDoubleOrNull() ?: 0.0
             _uiState.value = _uiState.value.copy(
                 totalHarga = totalHarga,
                 diskon = diskon,
                 subtotal = totalHarga - diskon,
-                invoiceNumber = event.payment.data.invoice,
-                tanggal = event.payment.data.tanggal,
-                method = event.payment.data.method,
-                kasir = event.payment.data.kasir,
-                ppn = event.payment.data.ppn.toDoubleOrNull() ?: 0.0,
-                bayar = event.payment.data.bayar.toDoubleOrNull() ?: 0.0,
-                kembali = event.payment.data.kembali.toDoubleOrNull() ?: 0.0,
-                detil = event.payment.data.detil,
+                invoiceNumber = event.payment.noInvoice,
+                tanggal = event.payment.currentDate,
+                method = event.payment.paymentMethod,
+                kasir = getUserInfo().nama,
+                ppn = "event.payment.ppn".toDoubleOrNull() ?: 0.0,
+                bayar = event.payment.uangDiterima.toDoubleOrNull() ?: 0.0,
+                kembali = event.payment.kembalian.toString().toDoubleOrNull() ?: 0.0,
+                detil = detail,
                 store = getStoreInfo()
             )
         }
@@ -99,6 +102,14 @@ class InvoiceViewModel(
             nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
             alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
             telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
+        )
+    }
+
+    private suspend fun getUserInfo(): User {
+        return User(
+            username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
+            nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
+            role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"
         )
     }
 }

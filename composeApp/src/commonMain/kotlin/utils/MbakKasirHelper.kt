@@ -24,3 +24,16 @@ fun generateKodeInvoice(): String {
 
     return "POS$formattedDateTime"
 }
+
+fun getCurrentFormattedDateTime(): String {
+    val currentMoment = Clock.System.now()
+    val dateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    val day = dateTime.dayOfMonth.toString().padStart(2, '0')
+    val month = dateTime.month.name.lowercase().replaceFirstChar { it.uppercase() }.take(3)
+    val year = dateTime.year
+    val hour = dateTime.hour.toString().padStart(2, '0')
+    val minute = dateTime.minute.toString().padStart(2, '0')
+
+    return "$day $month $year, $hour:$minute WIB"
+}

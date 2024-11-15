@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import features.auth.presentation.login.EnhancedLoading
-import features.cashier_role.sales.domain.CreatePaymentApiModel
+import features.cashier_role.sales.presentation.payment.PaymentUiState
 import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
 import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
 import ui.navigation.cashier_role.Screen
@@ -59,7 +59,7 @@ import utils.currencyFormat
 fun InvoiceScreen(
     viewModel: InvoiceViewModel,
     navController: NavController,
-    paymentResponse: CreatePaymentApiModel? = null,
+    paymentData: PaymentUiState? = null,
     noInvoice: String? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,7 +67,7 @@ fun InvoiceScreen(
     Invoice(
         uiState = uiState,
         onEvent = { viewModel.onEvent(it) },
-        paymentResponse = paymentResponse,
+        paymentData = paymentData,
         noInvoice = noInvoice,
         navigateBack = {
             navController.navigate(Screen.Sales.route) {
@@ -83,16 +83,16 @@ fun InvoiceScreen(
 fun Invoice(
     uiState: InvoiceUiState,
     onEvent: (InvoiceUiEvent) -> Unit,
-    paymentResponse: CreatePaymentApiModel? = null,
+    paymentData: PaymentUiState? = null,
     noInvoice: String? = null,
     navigateBack: () -> Unit
 ) {
     val captureController = rememberScreenCaptureController()
 
-    LaunchedEffect(paymentResponse, noInvoice) {
+    LaunchedEffect(paymentData, noInvoice) {
         when {
-            paymentResponse != null -> {
-                onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentResponse))
+            paymentData != null -> {
+                onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentData))
             }
 
             noInvoice != null -> {

@@ -43,7 +43,6 @@ import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.presentation.HomeScreen
 import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.SalesScreen
-import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.ProductTransSerializable
 import features.cashier_role.sales.presentation.SalesViewModel
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
@@ -51,6 +50,7 @@ import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.invoice.InvoiceScreen
 import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentScreen
+import features.cashier_role.sales.presentation.payment.PaymentUiState
 import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
@@ -220,10 +220,10 @@ fun NavHostContent(
             val jsonResponse = backStackEntry.arguments?.getString("paymentData")
             val noInvoice = backStackEntry.arguments?.getString("noInvoice")
             val paymentData =
-                jsonResponse?.let { Json.decodeFromString<CreatePaymentApiModel>(it) }
+                jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
             InvoiceScreen(
                 viewModel = koinViewModel<InvoiceViewModel>(),
-                paymentResponse = paymentData,
+                paymentData = paymentData,
                 noInvoice = noInvoice,
                 navController = navController
             )

@@ -99,10 +99,15 @@ fun Payment(
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     val state = rememberMessageBarState()
 
+    LaunchedEffect(selectedOption) {
+        onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
+    }
     LaunchedEffect(products) {
         onEvent(PaymentUiEvent.ArgumentProductsLoaded(products))
     }
-
+    LaunchedEffect(draftId) {
+        onEvent(PaymentUiEvent.NoInvoiceChanged(draftId))
+    }
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             state.addError(Exception("Ups, terjadi kesalahan!"))
@@ -115,8 +120,6 @@ fun Payment(
                 uiState.products.forEach {
                     onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
                 }
-                val jsonResponse = Json.encodeToString(response)
-                moveToInvoice(jsonResponse)
             }
         }
     }
@@ -256,9 +259,9 @@ fun Payment(
                                     state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
                                     return@FooterButton
                                 }
-                                val method =
-                                    if (selectedOption == "Tunai") "Cash" else "Kredit"
-                                onEvent(PaymentUiEvent.ConfirmButtonClicked(method))
+                                onEvent(PaymentUiEvent.ConfirmButtonClicked)
+                                val jsonResponse = Json.encodeToString(uiState)
+                                moveToInvoice(jsonResponse)
                             },
                             cancelText = "Kembali",
                             confirmText = "Bayar",

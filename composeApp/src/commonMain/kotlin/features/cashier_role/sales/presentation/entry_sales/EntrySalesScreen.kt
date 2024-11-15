@@ -673,7 +673,7 @@ fun EntrySalesAndPayment(
                                         return@FooterButton
                                     }
                                     val method = if (selectedOption == "Tunai") "Cash" else "Kredit"
-                                    paymentOnEvent(PaymentUiEvent.ConfirmButtonClicked(method))
+                                    paymentOnEvent(PaymentUiEvent.ConfirmButtonClicked)
                                 },
                                 cancelText = "Kembali",
                                 confirmText = "Bayar"

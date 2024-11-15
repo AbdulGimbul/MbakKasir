@@ -72,6 +72,18 @@ fun ProductTransSerializable.toDetailPayload(): DetailPayload {
     )
 }
 
+fun ProductTransSerializable.toDetailPayment(): DetailPayment {
+    return DetailPayment(
+        namaBarang = this.nama_barang,
+        kodeDetilJual = this.id_barang,
+        jenis = this.jenis,
+        qtyJual = this.qty_jual.toString(),
+        hargaItem = this.harga_item.toString(),
+        subtotal = this.subtotal.toString(),
+        diskon = this.diskon.toString()
+    )
+}
+
 fun ProductTrans.copyWithNewId(newId: String): ProductTrans {
     return ProductTrans().apply {
         id_barang = newId

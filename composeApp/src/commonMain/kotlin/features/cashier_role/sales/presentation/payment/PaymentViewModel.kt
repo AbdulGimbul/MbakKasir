@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import network.onError
 import network.onSuccess
+import utils.getCurrentFormattedDateTime
 
 class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel() {
 
@@ -44,7 +45,17 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             }
 
             is PaymentUiEvent.ConfirmButtonClicked -> {
-                createPayment(event.method)
+                createPayment()
+            }
+
+            is PaymentUiEvent.PaymentMethodChanged -> {
+                _uiState.value = _uiState.value.copy(paymentMethod = event.method)
+            }
+
+            is PaymentUiEvent.NoInvoiceChanged -> {
+                val date = getCurrentFormattedDateTime()
+                _uiState.value =
+                    _uiState.value.copy(noInvoice = event.noInvoice, currentDate = date)
             }
 
             is PaymentUiEvent.SelectedDateChanged -> {
@@ -71,7 +82,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
         }
     }
 
-    private fun createPayment(method: String) {
+    private fun createPayment() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -79,7 +90,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                 CreatePaymentRequest(
                     kembali = _uiState.value.kembalian.toString(),
                     bayar = _uiState.value.uangDiterima,
-                    metode = method,
+                    metode = _uiState.value.paymentMethod,
                     kasir = "3",
                     cus = "1",
                     nominal_ppn = "0",
