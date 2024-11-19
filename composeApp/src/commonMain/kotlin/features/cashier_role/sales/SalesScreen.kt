@@ -85,7 +85,13 @@ fun Sales(
                 items(uiState.draftList) { product ->
                     SalesItem(
                         product = product,
-                        onClick = { moveToEntrySales(product.draftId) },
+                        onClick = {
+                            if (product.isPrinted) {
+                                println("Lakukan kirim ulang ke server")
+                            } else {
+                                moveToEntrySales(product.draftId)
+                            }
+                        },
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }

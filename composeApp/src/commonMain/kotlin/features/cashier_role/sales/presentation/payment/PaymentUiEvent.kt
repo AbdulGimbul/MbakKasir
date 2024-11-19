@@ -13,5 +13,6 @@ sealed class PaymentUiEvent {
     data class PaymentMethodChanged(val method: String) : PaymentUiEvent()
     data class NoInvoiceChanged(val noInvoice: String) : PaymentUiEvent()
     data class SelectedDateChanged(val date: String) : PaymentUiEvent()
+    data class DraftIsPrinted(val draftId: String) : PaymentUiEvent()
     data object DismissDialog : PaymentUiEvent()
 }

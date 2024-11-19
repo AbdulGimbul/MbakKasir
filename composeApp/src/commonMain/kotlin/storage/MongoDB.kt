@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import utils.currentTimeCustom
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -123,7 +120,12 @@ class MongoDB {
             ?: flow { emit(emptyList()) }
     }
 
-    suspend fun updateProductTransInDraft(draftId: String, productId: String, qty: Int) {
+    suspend fun updateProductTransInDraft(
+        draftId: String,
+        productId: String? = null,
+        qty: Int? = null,
+        isPrinted: Boolean? = null
+    ) {
         realm?.write {
             val draft = query<ProductTransDraft>("draftId == $0", draftId).first().find()
 
@@ -131,7 +133,9 @@ class MongoDB {
                 val product = existingDraft.detail.firstOrNull { it.id_barang == productId }
 
                 product?.apply {
-                    qty_jual = qty
+                    if (qty != null) {
+                        qty_jual = qty
+                    }
 
                     if (qty_jual < 1) {
                         existingDraft.detail.remove(this)
@@ -143,6 +147,8 @@ class MongoDB {
                         }
                     }
                 }
+
+                isPrinted?.let { existingDraft.isPrinted = it }
             }
         }
     }
@@ -162,16 +168,5 @@ class MongoDB {
                 println(e)
             }
         }
-    }
-
-    fun currentTimeCustom(): String {
-        val currentMoment: Instant = Clock.System.now()
-        val localDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
-
-        return "${localDateTime.date} ${
-            localDateTime.hour.toString().padStart(2, '0')
-        }:${localDateTime.minute.toString().padStart(2, '0')}:${
-            localDateTime.second.toString().padStart(2, '0')
-        }"
     }
 }

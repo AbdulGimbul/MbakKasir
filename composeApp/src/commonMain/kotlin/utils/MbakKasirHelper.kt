@@ -1,6 +1,7 @@
 package utils
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -36,4 +37,15 @@ fun getCurrentFormattedDateTime(): String {
     val minute = dateTime.minute.toString().padStart(2, '0')
 
     return "$day $month $year, $hour:$minute WIB"
+}
+
+fun currentTimeCustom(): String {
+    val currentMoment: Instant = Clock.System.now()
+    val localDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    return "${localDateTime.date} ${
+        localDateTime.hour.toString().padStart(2, '0')
+    }:${localDateTime.minute.toString().padStart(2, '0')}:${
+        localDateTime.second.toString().padStart(2, '0')
+    }"
 }

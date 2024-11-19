@@ -20,7 +20,13 @@ interface SalesRepository {
     )
 
     suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTrans>>
-    suspend fun updateProductTransInDraft(draftId: String, productId: String, qty: Int)
+    suspend fun updateProductTransInDraft(
+        draftId: String,
+        productId: String? = null,
+        qty: Int? = null,
+        isPrinted: Boolean? = null
+    )
+
     suspend fun deleteDraft(draftId: String)
     suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException>
     suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>

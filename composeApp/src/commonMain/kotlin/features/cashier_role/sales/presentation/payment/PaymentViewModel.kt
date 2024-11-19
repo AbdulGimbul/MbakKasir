@@ -67,6 +67,10 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                 _uiState.value = _uiState.value.copy(showDatePicker = false)
             }
 
+            is PaymentUiEvent.DraftIsPrinted -> {
+                updateTransDraftIsPrinted(event.draftId)
+            }
+
             is PaymentUiEvent.ArgumentProductsLoaded -> {
                 _uiState.value = _uiState.value.copy(products = event.products)
                 val totalHarga = _uiState.value.products.sumOf { it.subtotal }
@@ -115,6 +119,14 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     private fun deleteScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             salesRepository.deleteDraft(draftId)
+        }
+    }
+
+    private fun updateTransDraftIsPrinted(draftId: String?) {
+        if (draftId != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                salesRepository.updateProductTransInDraft(draftId, isPrinted = true)
+            }
         }
     }
 }

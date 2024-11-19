@@ -26,10 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import features.cashier_role.sales.domain.ProductTransDraft
+import ui.theme.blue
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.red
 import ui.theme.secondary_text
+import ui.theme.yellow
 import utils.currencyFormat
 
 @Composable
@@ -67,25 +69,25 @@ fun SalesItem(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(
-                label = "Draft",
+                label = if (product.isPrinted) "Belum posting" else "Draft",
                 value = currencyFormat(product.totalTagihan.toDouble()),
-                color = red
+                color = if (product.isPrinted) yellow else red
             )
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(label = product.kasir, value = product.draftId, color = dark)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = primary),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (product.isPrinted) blue else primary),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = primary
+                    color = if (product.isPrinted) blue else primary
                 ),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Selesaikan",
+                    text = if (product.isPrinted) "Kirim ulang" else "Selesaikan",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                 )
             }

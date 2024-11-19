@@ -14,6 +14,7 @@ class ProductTransDraft : RealmObject {
     var detail: RealmList<ProductTrans> = realmListOf()
     val totalTagihan: Int
         get() = detail.sumOf { it.subtotal }
+    var isPrinted: Boolean = false
 }
 
 class ProductTrans : RealmObject {

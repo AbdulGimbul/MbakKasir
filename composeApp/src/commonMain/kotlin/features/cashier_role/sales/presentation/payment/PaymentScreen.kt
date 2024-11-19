@@ -110,7 +110,10 @@ fun Payment(
     }
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
-            state.addError(Exception("Ups, terjadi kesalahan!"))
+            state.addError(Exception("Ups, Silahkan lakukan kirim ulang ya!"))
+            onEvent(PaymentUiEvent.DraftIsPrinted(draftId))
+            val jsonResponse = Json.encodeToString(uiState)
+            moveToInvoice(jsonResponse)
         }
     }
 
@@ -121,6 +124,9 @@ fun Payment(
                     onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
                 }
             }
+
+            val jsonResponse = Json.encodeToString(uiState)
+            moveToInvoice(jsonResponse)
         }
     }
 
@@ -260,8 +266,6 @@ fun Payment(
                                     return@FooterButton
                                 }
                                 onEvent(PaymentUiEvent.ConfirmButtonClicked)
-                                val jsonResponse = Json.encodeToString(uiState)
-                                moveToInvoice(jsonResponse)
                             },
                             cancelText = "Kembali",
                             confirmText = "Bayar",
