@@ -6,6 +6,8 @@ import features.auth.domain.SalesHistoryApiModel
 import features.auth.domain.Toko
 import features.auth.domain.User
 import features.auth.domain.UserData
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import kotlinx.coroutines.flow.first
 import network.NetworkException
 import network.NetworkResult
@@ -56,6 +58,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun logout() {
+        requestHandler.httpClient.authProvider<BearerAuthProvider>()?.clearToken()
         sessionHandler.clearData()
     }
 }
