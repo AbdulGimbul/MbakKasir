@@ -104,6 +104,12 @@ class EntrySalesViewModel(
     }
 
     private fun searchProduct() {
+        if (_uiState.value.inputUser.length < 5) {
+            searchJob?.cancel()
+            _uiState.value = _uiState.value.copy(searchResults = emptyList())
+            return
+        }
+
         searchJob?.cancel()
         searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(300)
@@ -134,7 +140,7 @@ class EntrySalesViewModel(
 
     private fun loadScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.Main) {
-            salesRepository.getProductsFromDraft(draftId.toString())
+            salesRepository.getProductsFromDraft(draftId)
                 .collectLatest { scannedProductsList ->
                     _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
                 }
@@ -143,7 +149,7 @@ class EntrySalesViewModel(
 
     private fun deleteScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            salesRepository.deleteDraft(draftId.toString())
+            salesRepository.deleteDraft(draftId)
         }
     }
 }

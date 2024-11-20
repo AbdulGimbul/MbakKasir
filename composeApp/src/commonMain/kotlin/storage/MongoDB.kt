@@ -63,7 +63,7 @@ class MongoDB {
         )
             ?.asFlow()
             ?.map { data -> data.list.sortedByDescending { it.barcode } }
-            ?: flow { throw IllegalArgumentException("Tidak ada barang") }
+            ?: flow { emit(emptyList()) }
     }
 
     fun getProductByBarcode(barcode: String): Flow<Product?> {

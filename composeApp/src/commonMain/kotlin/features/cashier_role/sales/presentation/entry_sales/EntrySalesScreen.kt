@@ -177,9 +177,7 @@ fun EntrySales(
                         value = uiState.inputUser,
                         onValueChange = { newBarcode ->
                             onEvent(EntrySalesUiEvent.OnInputUserChanged(newBarcode))
-                            if (newBarcode.length >= 5) {
-                                onEvent(EntrySalesUiEvent.SearchProduct)
-                            }
+                            onEvent(EntrySalesUiEvent.SearchProduct)
                         },
                         textStyle = MaterialTheme.typography.bodyMedium,
                         label = {
