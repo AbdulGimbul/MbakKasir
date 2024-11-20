@@ -49,3 +49,21 @@ fun currentTimeCustom(): String {
         localDateTime.second.toString().padStart(2, '0')
     }"
 }
+
+fun formatDateRange(startTimestamp: Long, endTimestamp: Long): String {
+    val startInstant = Instant.fromEpochMilliseconds(startTimestamp)
+    val endInstant = Instant.fromEpochMilliseconds(endTimestamp)
+
+    val startLocalDateTime = startInstant.toLocalDateTime(TimeZone.currentSystemDefault())
+    val endLocalDateTime = endInstant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    val startFormatted = "${startLocalDateTime.date.dayOfMonth.toString().padStart(2, '0')} " +
+            "${startLocalDateTime.date.month.name.take(3)} " +
+            "${startLocalDateTime.date.year}"
+
+    val endFormatted = "${endLocalDateTime.date.dayOfMonth.toString().padStart(2, '0')} " +
+            "${endLocalDateTime.date.month.name.take(3)} " +
+            "${endLocalDateTime.date.year}"
+
+    return "$startFormatted - $endFormatted"
+}
