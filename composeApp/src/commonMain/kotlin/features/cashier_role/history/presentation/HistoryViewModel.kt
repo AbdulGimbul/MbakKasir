@@ -19,15 +19,19 @@ class HistoryViewModel(
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState
 
-    init {
-        getHistory()
+    fun onEvent(event: HistoryUiEvent) {
+        when (event) {
+            is HistoryUiEvent.GetHistories -> {
+                getHistory(event.startDate, event.endDate)
+            }
+        }
     }
 
     private fun getHistory(
         startDate: String = "18-08-2024",
         endDate: String = "20-08-2024",
         page: String = "1",
-        perPage: String = "5"
+        perPage: String = "20"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)

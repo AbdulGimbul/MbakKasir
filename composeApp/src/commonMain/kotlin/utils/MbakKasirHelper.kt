@@ -67,3 +67,11 @@ fun formatDateRange(startTimestamp: Long, endTimestamp: Long): String {
 
     return "$startFormatted - $endFormatted"
 }
+
+fun formatDateForApi(timestamp: Long): String {
+    val localDateTime = Instant.fromEpochMilliseconds(timestamp)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.date.dayOfMonth.toString().padStart(2, '0')}-" +
+            "${localDateTime.date.monthNumber.toString().padStart(2, '0')}-" +
+            "${localDateTime.date.year}"
+}

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,20 +45,28 @@ import ui.theme.primary
 import ui.theme.primary_text
 import ui.theme.secondary_text
 import ui.theme.stroke
+import utils.formatDateForApi
 import utils.formatDateRange
 
 @Composable
 fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    History(uiState = uiState, moveToInvoice = {
-        navController.navigate("${Screen.Invoice.route}?noInvoice=$it")
-    })
+    History(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        moveToInvoice = {
+            navController.navigate("${Screen.Invoice.route}?noInvoice=$it")
+        })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun History(uiState: HistoryUiState, moveToInvoice: (String) -> Unit) {
+fun History(
+    uiState: HistoryUiState,
+    onEvent: (HistoryUiEvent) -> Unit,
+    moveToInvoice: (String) -> Unit
+) {
 
     val state = rememberDateRangePickerState()
     var isDateRangePickerVisible by remember { mutableStateOf(false) }
@@ -74,7 +81,6 @@ fun History(uiState: HistoryUiState, moveToInvoice: (String) -> Unit) {
                 .padding(16.dp)
                 .imePadding()
                 .statusBarsPadding()
-                .navigationBarsPadding()
         ) {
             HeadlineText("History", modifier = Modifier.padding(bottom = 32.dp))
             OutlinedTextField(
@@ -122,16 +128,19 @@ fun History(uiState: HistoryUiState, moveToInvoice: (String) -> Unit) {
                 ) {
                     IconButton(
                         onClick = {
-                            val startDate = state.selectedStartDateMillis?.let { start ->
-                                state.selectedEndDateMillis?.let { end ->
-                                    formatDateRange(start, end)
-                                }
-                            }
+                            val startDate = state.selectedStartDateMillis
+                            val endDate = state.selectedEndDateMillis
 
-                            startDate?.also { range ->
-                                selectedDateRange = range
+                            if (startDate != null && endDate != null) {
+                                selectedDateRange = formatDateRange(startDate, endDate)
+
+                                val apiStartDate = formatDateForApi(startDate)
+                                val apiEndDate = formatDateForApi(endDate)
+
+                                onEvent(HistoryUiEvent.GetHistories(apiStartDate, apiEndDate))
+
+                                isDateRangePickerVisible = false
                             }
-                            isDateRangePickerVisible = false
                         },
                         enabled = state.selectedEndDateMillis != null
                     ) {
