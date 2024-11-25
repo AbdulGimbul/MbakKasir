@@ -60,7 +60,7 @@ fun SalesItem(
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
-                    text = product.datetime,
+                    text = product.dateTime,
                     color = secondary_text,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -70,11 +70,11 @@ fun SalesItem(
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(
                 label = if (product.isPrinted) "Belum posting" else "Draft",
-                value = currencyFormat(product.totalTagihan.toDouble()),
+                value = currencyFormat(product.totalAmount.toDouble()),
                 color = if (product.isPrinted) yellow else red
             )
             Spacer(modifier = Modifier.height(16.dp))
-            ItemRowSales(label = product.kasir, value = product.draftId, color = dark)
+            ItemRowSales(label = product.cashier, value = product.draftId, color = dark)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,

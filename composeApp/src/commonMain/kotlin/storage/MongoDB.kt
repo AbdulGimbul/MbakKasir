@@ -99,13 +99,13 @@ class MongoDB {
             val clonedProduct = productTrans.copyWithNewId(Uuid.random().toString())
 
             draft?.apply {
-                detail.add(clonedProduct)
+                items.add(clonedProduct)
             } ?: run {
                 copyToRealm(ProductTransDraft().apply {
                     this.draftId = draftId
-                    this.datetime = currentTimeCustom()
-                    this.kasir = cashierName
-                    this.detail.add(clonedProduct)
+                    this.dateTime = currentTimeCustom()
+                    this.cashier = cashierName
+                    this.items.add(clonedProduct)
                 })
             }
         }
@@ -115,7 +115,7 @@ class MongoDB {
         return realm?.query<ProductTransDraft>("draftId == $0", draftId)
             ?.asFlow()
             ?.map { draft ->
-                draft.list.firstOrNull()?.detail?.sortedByDescending { it.id_barang } ?: emptyList()
+                draft.list.firstOrNull()?.items?.sortedByDescending { it.id_barang } ?: emptyList()
             }
             ?: flow { emit(emptyList()) }
     }
@@ -124,13 +124,16 @@ class MongoDB {
         draftId: String,
         productId: String? = null,
         qty: Int? = null,
-        isPrinted: Boolean? = null
+        amountPaid: Int? = null,
+        paymentMethod: String? = null,
+        dueDate: String? = null,
+        isPrinted: Boolean? = null,
     ) {
         realm?.write {
             val draft = query<ProductTransDraft>("draftId == $0", draftId).first().find()
 
             draft?.let { existingDraft ->
-                val product = existingDraft.detail.firstOrNull { it.id_barang == productId }
+                val product = existingDraft.items.firstOrNull { it.id_barang == productId }
 
                 product?.apply {
                     if (qty != null) {
@@ -138,10 +141,10 @@ class MongoDB {
                     }
 
                     if (qty_jual < 1) {
-                        existingDraft.detail.remove(this)
+                        existingDraft.items.remove(this)
                     }
 
-                    if (existingDraft.detail.isEmpty()) {
+                    if (existingDraft.items.isEmpty()) {
                         findLatest(existingDraft)?.let { latestDraft ->
                             delete(latestDraft)
                         }
@@ -149,6 +152,9 @@ class MongoDB {
                 }
 
                 isPrinted?.let { existingDraft.isPrinted = it }
+                amountPaid?.let { existingDraft.amountPaid = it }
+                paymentMethod?.let { existingDraft.paymentMethod = it }
+                dueDate?.let { existingDraft.dueDate = it }
             }
         }
     }

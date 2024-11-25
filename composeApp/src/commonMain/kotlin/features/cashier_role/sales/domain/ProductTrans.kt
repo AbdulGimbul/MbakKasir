@@ -9,12 +9,17 @@ import kotlinx.serialization.Serializable
 class ProductTransDraft : RealmObject {
     @PrimaryKey
     var draftId: String = ""
-    var datetime: String = ""
-    var kasir: String = ""
-    var detail: RealmList<ProductTrans> = realmListOf()
-    val totalTagihan: Int
-        get() = detail.sumOf { it.subtotal }
+    var dateTime: String = ""
+    var cashier: String = ""
+    var items: RealmList<ProductTrans> = realmListOf()
+    val totalAmount: Int
+        get() = items.sumOf { it.subtotal }
     var isPrinted: Boolean = false
+    var amountPaid: Int = 0
+    var paymentMethod: String = ""
+    val change: Int
+        get() = amountPaid.minus(totalAmount)
+    var dueDate: String = ""
 }
 
 class ProductTrans : RealmObject {

@@ -24,6 +24,9 @@ interface SalesRepository {
         draftId: String,
         productId: String? = null,
         qty: Int? = null,
+        amountPaid: Int? = null,
+        paymentMethod: String? = null,
+        dueDate: String? = null,
         isPrinted: Boolean? = null
     )
 

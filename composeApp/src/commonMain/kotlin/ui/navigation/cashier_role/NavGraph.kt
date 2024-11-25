@@ -43,8 +43,8 @@ import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.presentation.HomeScreen
 import features.cashier_role.home.presentation.HomeViewModel
 import features.cashier_role.sales.SalesScreen
+import features.cashier_role.sales.SalesViewModel
 import features.cashier_role.sales.domain.ProductTransSerializable
-import features.cashier_role.sales.presentation.SalesViewModel
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.invoice.InvoiceScreen

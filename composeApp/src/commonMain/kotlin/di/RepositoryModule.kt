@@ -10,9 +10,9 @@ import features.cashier_role.history.presentation.HistoryViewModel
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.HomeRepositoryImpl
 import features.cashier_role.home.presentation.HomeViewModel
+import features.cashier_role.sales.SalesViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
-import features.cashier_role.sales.presentation.SalesViewModel
 import features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import features.cashier_role.sales.presentation.payment.PaymentViewModel

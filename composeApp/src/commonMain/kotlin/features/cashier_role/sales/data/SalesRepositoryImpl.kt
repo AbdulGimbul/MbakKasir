@@ -44,9 +44,20 @@ class SalesRepositoryImpl(
         draftId: String,
         productId: String?,
         qty: Int?,
+        amountPaid: Int?,
+        paymentMethod: String?,
+        dueDate: String?,
         isPrinted: Boolean?
     ) {
-        return mongoDB.updateProductTransInDraft(draftId, productId, qty, isPrinted)
+        return mongoDB.updateProductTransInDraft(
+            draftId,
+            productId,
+            qty,
+            amountPaid,
+            paymentMethod,
+            dueDate,
+            isPrinted
+        )
     }
 
     override suspend fun deleteDraft(draftId: String) {

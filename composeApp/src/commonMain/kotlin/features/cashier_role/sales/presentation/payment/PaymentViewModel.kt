@@ -125,7 +125,13 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     private fun updateTransDraftIsPrinted(draftId: String?) {
         if (draftId != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                salesRepository.updateProductTransInDraft(draftId, isPrinted = true)
+                salesRepository.updateProductTransInDraft(
+                    draftId,
+                    amountPaid = _uiState.value.uangDiterima.toInt(),
+                    paymentMethod = _uiState.value.paymentMethod,
+                    dueDate = _uiState.value.selectedDate,
+                    isPrinted = true
+                )
             }
         }
     }
