@@ -19,7 +19,7 @@ datastorePreferences = "1.1.1"
 junit = "4.13.2"
 kmpDateTimePicker = "1.0.3"
 konnectivity = "0.1-alpha01"
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 kotlinxDatetime = "0.6.1"
 lifecycleViewmodelCompose = "2.8.4"
 material3WindowSizeClass = "1.7.1"
@@ -97,7 +97,6 @@ firebase-android-bom = { module = "com.google.firebase:firebase-bom", version.re
 firebase-android-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics" }
 gitlive-firebase-kotlin-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebase-gitlive-sdk" }
 #gitlive-firebase-kotlin-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase-gitlive-sdk"}
-moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "moko" }
 moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko" }
 
 [plugins]
