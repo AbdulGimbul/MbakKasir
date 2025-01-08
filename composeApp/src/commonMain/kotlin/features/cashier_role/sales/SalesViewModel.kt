@@ -57,7 +57,7 @@ class SalesViewModel(
                     metode = data?.paymentMethod.toString(),
                     kasir = "3",
                     cus = "1",
-                    nominal_ppn = "0",
+                    nominalPpn = "0",
                     tempo = data?.dueDate.toString(),
                     detil = data?.items?.map { it.toSerializable().toDetailPayload() }
                         ?: emptyList()

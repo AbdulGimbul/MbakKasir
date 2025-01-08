@@ -1,7 +1,7 @@
 package features.cashier_role.sales.presentation.entry_sales
 
-import features.cashier_role.home.domain.Product
-import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.home.domain.ProductEntity
+import features.cashier_role.sales.domain.ProductTransEntity
 
 data class EntrySalesUiState(
     val inputUser: String = "",
@@ -9,9 +9,9 @@ data class EntrySalesUiState(
     val flashlightOn: Boolean = false,
     val launchGallery: Boolean = false,
     val totalTagihan: Int = 0,
-    val product: ProductTrans = ProductTrans(),
-    val searchResults: List<Product> = emptyList(),
-    val scannedProducts: List<ProductTrans> = emptyList(),
+    val product: ProductTransEntity = ProductTransEntity(),
+    val searchResults: List<ProductEntity> = emptyList(),
+    val scannedProducts: List<ProductTransEntity> = emptyList(),
     val startBarCodeScan: Boolean = false,
     val errorMessage: String? = null,
 )

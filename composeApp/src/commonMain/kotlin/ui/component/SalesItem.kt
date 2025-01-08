@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import features.cashier_role.sales.domain.ProductTransDraft
+import features.cashier_role.sales.domain.ProductTransDraftEntity
 import ui.theme.blue
 import ui.theme.dark
 import ui.theme.primary
@@ -36,7 +36,7 @@ import utils.currencyFormat
 
 @Composable
 fun SalesItem(
-    product: ProductTransDraft,
+    product: ProductTransDraftEntity,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

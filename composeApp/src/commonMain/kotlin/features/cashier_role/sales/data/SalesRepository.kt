@@ -1,25 +1,25 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.domain.Product
+import features.cashier_role.home.domain.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
-import features.cashier_role.sales.domain.ProductTrans
-import features.cashier_role.sales.domain.ProductTransDraft
+import features.cashier_role.sales.domain.ProductTransEntity
+import features.cashier_role.sales.domain.ProductTransDraftEntity
 import kotlinx.coroutines.flow.Flow
 import network.NetworkException
 import network.NetworkResult
 
 interface SalesRepository {
-    suspend fun getProductByBarcode(barcode: String): Flow<Product?>
-    suspend fun searchProductsByBarcode(barcode: String): Flow<List<Product>>
+    suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?>
+    suspend fun searchProductsByBarcode(barcode: String): Flow<List<ProductEntity>>
     suspend fun addProductTransToDraft(
         draftId: String,
         cashierName: String,
-        productTrans: ProductTrans
+        productTransEntity: ProductTransEntity
     )
 
-    suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTrans>>
+    suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>>
     suspend fun updateProductTransInDraft(
         draftId: String,
         productId: String? = null,
@@ -33,5 +33,5 @@ interface SalesRepository {
     suspend fun deleteDraft(draftId: String)
     suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException>
     suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>
-    suspend fun getDrafts(): Flow<List<ProductTransDraft>>
+    suspend fun getDrafts(): Flow<List<ProductTransDraftEntity>>
 }

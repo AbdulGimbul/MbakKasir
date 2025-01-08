@@ -1,9 +1,9 @@
 [versions]
 adaptive = "1.0.1"
 agp = "8.2.2"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-minSdk = "24"
-android-targetSdk = "34"
+android-targetSdk = "35"
 androidx-activityCompose = "1.9.2"
 androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.1.4"
@@ -19,7 +19,7 @@ datastorePreferences = "1.1.1"
 junit = "4.13.2"
 kmpDateTimePicker = "1.0.3"
 konnectivity = "0.1-alpha01"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 kotlinxDatetime = "0.6.1"
 lifecycleViewmodelCompose = "2.8.4"
 material3WindowSizeClass = "1.7.3"
@@ -32,7 +32,6 @@ sdp-ssp = "1.0.4"
 ktor = "3.0.1"
 koin = "4.0.0"
 koinCompose = "4.0.0"
-realm = "3.0.0"
 coroutines = "1.9.0"
 stately = "2.0.7"
 core-splashscreen = "1.0.1"
@@ -43,6 +42,9 @@ firebase-gitlive-sdk = "2.1.0"
 build-konfig = "0.15.2"
 moko = "0.18.0"
 detekt = "1.23.7"
+ksp = "2.1.0-1.0.29"
+sqlite = "2.5.0-alpha12"
+room = "2.7.0-alpha12"
 
 [libraries]
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
@@ -82,7 +84,6 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koinCompose" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
-mongodb-realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -98,6 +99,9 @@ firebase-android-crashlytics-ktx = { module = "com.google.firebase:firebase-cras
 gitlive-firebase-kotlin-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebase-gitlive-sdk" }
 #gitlive-firebase-kotlin-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase-gitlive-sdk"}
 moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -106,11 +110,12 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-realm-plugin = { id = "io.realm.kotlin", version.ref = "realm" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugins-crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradlePlugins-google-services" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "build-konfig" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }
 
 [bundles]
 ktor = [

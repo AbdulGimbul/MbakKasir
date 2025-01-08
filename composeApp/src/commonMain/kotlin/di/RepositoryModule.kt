@@ -19,7 +19,6 @@ import features.cashier_role.sales.presentation.payment.PaymentViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import storage.MongoDB
 
 val provideAuthRepositoryModule = module {
     single<AuthRepositoryImpl> {
@@ -33,15 +32,16 @@ val provideAuthRepositoryModule = module {
 }
 
 val provideHomeRepositoryModule = module {
-    single { MongoDB() }
-    single<HomeRepositoryImpl> { HomeRepositoryImpl(get()) }.bind<HomeRepository>()
-    viewModel { HomeViewModel(homeRepository = get(), mongoDB = get()) }
+    single<HomeRepositoryImpl> { HomeRepositoryImpl(requestHandler = get(), productDao = get()) }.bind<HomeRepository>()
+    viewModel { HomeViewModel(homeRepository = get()) }
 }
 
 val provideSalesRepositoryModule = module {
     single<SalesRepositoryImpl> {
         SalesRepositoryImpl(
-            mongoDB = get(),
+            productDao = get(),
+            productTransDao = get(),
+            productTransDraftDao = get(),
             requestHandler = get()
         )
     }.bind<SalesRepository>()

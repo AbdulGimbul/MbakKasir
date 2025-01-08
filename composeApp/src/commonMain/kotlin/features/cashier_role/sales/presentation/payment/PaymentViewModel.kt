@@ -97,7 +97,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                     metode = _uiState.value.paymentMethod,
                     kasir = "3",
                     cus = "1",
-                    nominal_ppn = "0",
+                    nominalPpn = "0",
                     tempo = _uiState.value.selectedDate,
                     detil = _uiState.value.products.map { it.toDetailPayload() }
                 )

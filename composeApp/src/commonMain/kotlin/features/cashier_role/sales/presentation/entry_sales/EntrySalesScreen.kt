@@ -135,7 +135,7 @@ fun EntrySales(
     }
 
     LaunchedEffect(uiState.scannedProducts) {
-        val totalTagihan = uiState.scannedProducts.sumOf { it.harga_item * it.qty_jual }
+        val totalTagihan = uiState.scannedProducts.sumOf { it.hargaitem * it.qtyjual }
         onEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
     }
 
@@ -230,15 +230,15 @@ fun EntrySales(
                                     ignoreCase = true
                                 ) -> product.barcode
 
-                                product.nama_barang.contains(
+                                product.namaBarang.contains(
                                     uiState.inputUser,
                                     ignoreCase = true
-                                ) -> product.nama_barang
+                                ) -> product.namaBarang
 
-                                product.kode_barang.contains(
+                                product.kodeBarang.contains(
                                     uiState.inputUser,
                                     ignoreCase = true
-                                ) -> product.kode_barang
+                                ) -> product.kodeBarang
 
                                 else -> ""
                             }
@@ -413,7 +413,7 @@ fun EntrySalesAndPayment(
     val expanded = allowExpanded && entryUiState.searchResults.isNotEmpty()
 
     LaunchedEffect(entryUiState.scannedProducts) {
-        val totalTagihan = entryUiState.scannedProducts.sumOf { it.harga_item * it.qty_jual }
+        val totalTagihan = entryUiState.scannedProducts.sumOf { it.hargaitem * it.qtyjual }
         entryOnEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
     }
 
@@ -478,15 +478,15 @@ fun EntrySalesAndPayment(
                                         ignoreCase = true
                                     ) -> product.barcode
 
-                                    product.nama_barang.contains(
+                                    product.namaBarang.contains(
                                         entryUiState.inputUser,
                                         ignoreCase = true
-                                    ) -> product.nama_barang
+                                    ) -> product.namaBarang
 
-                                    product.kode_barang.contains(
+                                    product.kodeBarang.contains(
                                         entryUiState.inputUser,
                                         ignoreCase = true
-                                    ) -> product.kode_barang
+                                    ) -> product.kodeBarang
 
                                     else -> ""
                                 }

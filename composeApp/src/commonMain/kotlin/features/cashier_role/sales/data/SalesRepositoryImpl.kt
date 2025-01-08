@@ -1,24 +1,28 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.domain.Product
+import features.cashier_role.home.domain.ProductDao
+import features.cashier_role.home.domain.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
-import features.cashier_role.sales.domain.ProductTrans
-import features.cashier_role.sales.domain.ProductTransDraft
+import features.cashier_role.sales.domain.ProductTransDao
+import features.cashier_role.sales.domain.ProductTransDraftDao
+import features.cashier_role.sales.domain.ProductTransEntity
+import features.cashier_role.sales.domain.ProductTransDraftEntity
 import kotlinx.coroutines.flow.Flow
 import network.NetworkException
 import network.NetworkResult
 import network.RequestHandler
-import storage.MongoDB
 
 class SalesRepositoryImpl(
-    private val mongoDB: MongoDB,
+    private val productDao: ProductDao,
+    private val productTransDao: ProductTransDao,
+    private val productTransDraftDao: ProductTransDraftDao,
     private val requestHandler: RequestHandler
 ) : SalesRepository {
 
-    override suspend fun getProductByBarcode(barcode: String): Flow<Product?> {
-        return mongoDB.getProductByBarcode(barcode)
+    override suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?> {
+        return productDao.getProductByBarcode(barcode)
     }
 
     override suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException> {
@@ -28,16 +32,16 @@ class SalesRepositoryImpl(
         )
     }
 
-    override suspend fun searchProductsByBarcode(barcode: String): Flow<List<Product>> {
-        return mongoDB.searchProductsByBarcode(barcode)
+    override suspend fun searchProductsByBarcode(barcode: String): Flow<List<ProductEntity>> {
+        return productDao.searchProductsByBarcode(barcode)
     }
 
     override suspend fun addProductTransToDraft(
         draftId: String,
         cashierName: String,
-        productTrans: ProductTrans
+        productTransEntity: ProductTransEntity
     ) {
-        return mongoDB.addProductTransToDraft(draftId, cashierName, productTrans)
+        return productTransDraftDao.addProductTransToDraft(draftId, cashierName, productTransEntity)
     }
 
     override suspend fun updateProductTransInDraft(
@@ -49,7 +53,7 @@ class SalesRepositoryImpl(
         dueDate: String?,
         isPrinted: Boolean?
     ) {
-        return mongoDB.updateProductTransInDraft(
+        return productTransDraftDao.updateProductTransInDraft(
             draftId,
             productId,
             qty,
@@ -61,11 +65,11 @@ class SalesRepositoryImpl(
     }
 
     override suspend fun deleteDraft(draftId: String) {
-        return mongoDB.deleteDraft(draftId)
+        return productTransDraftDao.deleteDraftById(draftId)
     }
 
-    override suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTrans>> {
-        return mongoDB.getProductsFromDraft(draftId)
+    override suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>> {
+        return productTransDao.getProductsFromDraft(draftId)
     }
 
     override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException> {
@@ -75,7 +79,7 @@ class SalesRepositoryImpl(
         )
     }
 
-    override suspend fun getDrafts(): Flow<List<ProductTransDraft>> {
-        return mongoDB.getDrafts()
+    override suspend fun getDrafts(): Flow<List<ProductTransDraftEntity>> {
+        return productTransDraftDao.getDrafts()
     }
 }

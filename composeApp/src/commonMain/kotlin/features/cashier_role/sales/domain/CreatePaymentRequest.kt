@@ -1,5 +1,6 @@
 package features.cashier_role.sales.domain
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,18 +10,23 @@ data class CreatePaymentRequest(
     val metode: String,
     val kasir: String,
     val cus: String,
-    val nominal_ppn: String,
+    @SerialName("nominal_ppn")
+    val nominalPpn: String,
     val tempo: String,
     val detil: List<DetailPayload>
 )
 
 @Serializable
 data class DetailPayload(
-    val id_barang: String,
-    val id_karyawan: String,
+    @SerialName("id_barang")
+    val idBarang: String,
+    @SerialName("id_karyawan")
+    val idKaryawan: String,
     val jenis: String,
-    val qty_jual: String,
-    val harga_item: String,
+    @SerialName("qty_jual")
+    val qtyJual: String,
+    @SerialName("harga_item")
+    val hargaItem: String,
     val subtotal: String,
     val diskon: Int
 )

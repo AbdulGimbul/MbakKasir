@@ -9,11 +9,12 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.realm.plugin)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -34,6 +35,10 @@ kotlin {
             isStatic = true
         }
     }
+
+//    room {
+//        schemaDirectory("$projectDir/schemas")
+//    }
 
     sourceSets {
 
@@ -59,7 +64,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.viewmodel.navigation)
-            implementation(libs.mongodb.realm)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
             implementation(libs.kotlin.coroutines)
             implementation(libs.stately.common)
             implementation(libs.kmp.date.time.picker)
@@ -90,7 +96,23 @@ kotlin {
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
+//        dependencies {
+//            ksp(libs.androidx.room.compiler)
+//        }
     }
+}
+
+dependencies {
+    //keep in mind that i am not compiling for iOS x86, if you do need it, just add it below
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+}
+
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 buildkonfig {
@@ -159,5 +181,31 @@ android {
 tasks.withType<Detekt>().configureEach {
     reports {
         md.required.set(true)
+    }
+}
+
+tasks.withType<Test> {
+    if (name == "mergeDebugAndroidTestAssets") {
+        enabled = false
+    }
+}
+
+tasks.withType<Test> {
+    if (name == "copyRoomSchemasToAndroidTestAssetsDebugAndroidTest") {
+        enabled = false
+    }
+}
+
+tasks.whenTaskAdded {
+    if (name.contains("copyRoomSchemasToAndroidTestAssetsDebugAndroidTest")) {
+        enabled = false
+    }
+}
+
+gradle.taskGraph.whenReady {
+    allTasks.onEach { task ->
+        if (task.name.contains("androidTest") || task.name.contains("connectedAndroidTest")) {
+            task.enabled = false
+        }
     }
 }

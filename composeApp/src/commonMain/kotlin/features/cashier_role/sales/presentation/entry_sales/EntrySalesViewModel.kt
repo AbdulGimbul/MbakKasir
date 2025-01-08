@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import features.auth.data.AuthRepository
 import features.cashier_role.home.domain.toProductTrans
 import features.cashier_role.sales.data.SalesRepository
-import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.sales.domain.ProductTransEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -122,18 +122,18 @@ class EntrySalesViewModel(
         }
     }
 
-    private fun increaseProductQty(draftId: String, product: ProductTrans) {
+    private fun increaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qty_jual + 1
-            salesRepository.updateProductTransInDraft(draftId, product.id_barang, newQty)
+            val newQty = product.qtyjual + 1
+            salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
             loadScannedProducts(draftId)
         }
     }
 
-    private fun decreaseProductQty(draftId: String, product: ProductTrans) {
+    private fun decreaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qty_jual - 1
-            salesRepository.updateProductTransInDraft(draftId, product.id_barang, newQty)
+            val newQty = product.qtyjual - 1
+            salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
             loadScannedProducts(draftId)
         }
     }

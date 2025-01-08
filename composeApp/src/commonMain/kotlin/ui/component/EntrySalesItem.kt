@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import features.cashier_role.sales.domain.ProductTrans
+import features.cashier_role.sales.domain.ProductTransEntity
 import ui.theme.dark
 import ui.theme.primary
 import ui.theme.primary_text
@@ -36,9 +36,9 @@ import utils.currencyFormat
 
 @Composable
 fun EntrySalesItem(
-    product: ProductTrans,
-    onIncreaseQty: (ProductTrans) -> Unit,
-    onDecreaseQty: (ProductTrans) -> Unit,
+    product: ProductTransEntity,
+    onIncreaseQty: (ProductTransEntity) -> Unit,
+    onDecreaseQty: (ProductTransEntity) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -59,13 +59,13 @@ fun EntrySalesItem(
         ) {
             Column {
                 Text(
-                    text = "[${product.kode_barang}] ${product.barcode}",
+                    text = "[${product.kodeBarang}] ${product.barcode}",
                     color = primary_text,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = product.nama_barang,
+                    text = product.namaBarang,
                     color = dark,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
@@ -77,7 +77,7 @@ fun EntrySalesItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    currencyFormat(product.harga_item.toDouble()), color = dark,
+                    currencyFormat(product.hargaitem.toDouble()), color = dark,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 Row(
@@ -99,7 +99,7 @@ fun EntrySalesItem(
                         )
                     }
                     Text(
-                        product.qty_jual.toString(),
+                        product.qtyjual.toString(),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = dark,
                         textAlign = TextAlign.Center
