@@ -15,16 +15,14 @@ data class ProductTransDraftEntity(
     var isPrinted: Boolean = false,
     var amountPaid: Int = 0,
     var paymentMethod: String = "",
-    var dueDate: String = ""
+    var dueDate: String = "",
+    var totalAmount: Int = 0
 ) {
     @Ignore
     val items: List<ProductTransEntity> = emptyList()
 
     val change: Int
         get() = amountPaid - totalAmount
-
-    val totalAmount: Int
-        get() = items.sumOf { it.subtotal }
 }
 
 @Entity(
@@ -49,11 +47,10 @@ data class ProductTransEntity(
     val jenis: String = "Produk",
     var qtyjual: Int = 1,
     val hargaitem: Int = 0,
-    val diskon: Int = 0
+    val diskon: Int = 0,
+    val subtotal: Int = 0
 ) {
-    // Computed property not stored in the database
-    val subtotal: Int
-        get() = qtyjual * hargaitem - diskon
+    fun calculateSubtotal(): Int = qtyjual * hargaitem - diskon
 }
 
 @Serializable

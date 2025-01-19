@@ -6,7 +6,7 @@ import features.cashier_role.sales.domain.ProductTransEntity
 
 @Entity(tableName = "products")
 data class ProductEntity(
-    @PrimaryKey var idBarang: String, // Primary key field
+    @PrimaryKey var idBarang: String,
     var kodeBarang: String = "",
     var barcode: String = "",
     var namaBarang: String = "",
@@ -15,12 +15,15 @@ data class ProductEntity(
     var stok: String = ""
 )
 
-fun ProductEntity.toProductTrans(): ProductTransEntity {
+fun ProductEntity.toProductTrans(draftId: String): ProductTransEntity {
     return ProductTransEntity(
+        draftId = draftId,
         idBarang = this.idBarang,
         kodeBarang = this.kodeBarang,
         barcode = this.barcode,
         namaBarang = this.namaBarang,
-        hargaitem = this.hargaJual.toIntOrNull() ?: 0 // Handle potential conversion errors
+        qtyjual = 1, // Default to 1 item initially
+        hargaitem = this.hargaJual.toIntOrNull() ?: 0,
+        subtotal = (this.hargaJual.toIntOrNull() ?: 0) * 1
     )
 }

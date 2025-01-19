@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
+import utils.currentTimeCustom
 
 @Dao
 interface ProductTransDao {
@@ -16,4 +18,37 @@ interface ProductTransDao {
 
     @Query("DELETE FROM product_trans WHERE idBarang = :productId AND draftId = :draftId")
     suspend fun deleteProductFromDraft(draftId: String, productId: String)
+
+    @Transaction
+    suspend fun insertProductTrans(
+        draftId: String,
+        cashierName: String,
+        productTransEntity: ProductTransEntity
+    ) {
+        val existingDraft = getDraftById(draftId)
+        if (existingDraft == null) {
+            insertDraft(
+                ProductTransDraftEntity(
+                    draftId = draftId,
+                    dateTime = currentTimeCustom(),
+                    cashier = cashierName
+                )
+            )
+        }
+
+        val correctedEntity = productTransEntity.copy(
+            subtotal = productTransEntity.qtyjual * productTransEntity.hargaitem
+        )
+
+        insertProductTrans(correctedEntity)
+    }
+
+    @Query("SELECT * FROM product_trans_drafts WHERE draftId = :draftId LIMIT 1")
+    suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDraft(draft: ProductTransDraftEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertProductTrans(productTransEntity: ProductTransEntity)
 }

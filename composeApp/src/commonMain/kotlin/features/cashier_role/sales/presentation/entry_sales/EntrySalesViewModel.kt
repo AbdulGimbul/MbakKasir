@@ -87,7 +87,7 @@ class EntrySalesViewModel(
                 product?.let { newProduct ->
                     val currentList = _uiState.value.scannedProducts
                     if (!currentList.any { it.barcode == product.barcode }) {
-                        val scannedProduct = newProduct.toProductTrans()
+                        val scannedProduct = newProduct.toProductTrans(draftId)
                         salesRepository.addProductTransToDraft(
                             draftId,
                             cashier,
