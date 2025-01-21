@@ -5,7 +5,7 @@ import features.cashier_role.home.domain.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
-import features.cashier_role.sales.domain.ProductTransDao
+import features.cashier_role.sales.domain.ProductDraftWithItems
 import features.cashier_role.sales.domain.ProductTransDraftDao
 import features.cashier_role.sales.domain.ProductTransEntity
 import features.cashier_role.sales.domain.ProductTransDraftEntity
@@ -16,7 +16,6 @@ import network.RequestHandler
 
 class SalesRepositoryImpl(
     private val productDao: ProductDao,
-    private val productTransDao: ProductTransDao,
     private val productTransDraftDao: ProductTransDraftDao,
     private val requestHandler: RequestHandler
 ) : SalesRepository {
@@ -41,7 +40,7 @@ class SalesRepositoryImpl(
         cashierName: String,
         productTransEntity: ProductTransEntity
     ) {
-        return productTransDraftDao.addProductTransToDraft(draftId, cashierName, productTransEntity)
+        return productTransDraftDao.addProductToDraft(draftId, cashierName, productTransEntity)
     }
 
     override suspend fun updateProductTransInDraft(
@@ -53,7 +52,7 @@ class SalesRepositoryImpl(
         dueDate: String?,
         isPrinted: Boolean?
     ) {
-        return productTransDraftDao.updateProductTransInDraft(
+        return productTransDraftDao.updateProductInDraft(
             draftId,
             productId,
             qty,
@@ -69,7 +68,7 @@ class SalesRepositoryImpl(
     }
 
     override suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>> {
-        return productTransDao.getProductsFromDraft(draftId)
+        return productTransDraftDao.getProductsByDraftId(draftId)
     }
 
     override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException> {
@@ -79,7 +78,7 @@ class SalesRepositoryImpl(
         )
     }
 
-    override suspend fun getDrafts(): Flow<List<ProductTransDraftEntity>> {
-        return productTransDraftDao.getDrafts()
+    override suspend fun getDrafts(): Flow<List<ProductDraftWithItems>> {
+        return productTransDraftDao.getAllDrafts()
     }
 }

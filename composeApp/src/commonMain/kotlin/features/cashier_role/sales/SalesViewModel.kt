@@ -46,19 +46,19 @@ class SalesViewModel(
     }
 
     private fun sendDraftTrans(invoiceNumber: String) {
-        val data = _uiState.value.draftList.find { it.draftId == invoiceNumber }
+        val data = _uiState.value.draftList.find { it.draft.draftId == invoiceNumber }
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = salesRepository.createPayment(
                 CreatePaymentRequest(
                     kembali = data?.change.toString(),
-                    bayar = data?.amountPaid.toString(),
-                    metode = data?.paymentMethod.toString(),
+                    bayar = data?.draft?.amountPaid.toString(),
+                    metode = data?.draft?.paymentMethod.toString(),
                     kasir = "3",
                     cus = "1",
                     nominalPpn = "0",
-                    tempo = data?.dueDate.toString(),
+                    tempo = data?.draft?.dueDate.toString(),
                     detil = data?.items?.map { it.toSerializable().toDetailPayload() }
                         ?: emptyList()
                 )

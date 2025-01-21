@@ -40,7 +40,6 @@ val provideSalesRepositoryModule = module {
     single<SalesRepositoryImpl> {
         SalesRepositoryImpl(
             productDao = get(),
-            productTransDao = get(),
             productTransDraftDao = get(),
             requestHandler = get()
         )

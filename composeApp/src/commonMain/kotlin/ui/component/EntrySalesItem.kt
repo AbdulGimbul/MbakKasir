@@ -77,7 +77,7 @@ fun EntrySalesItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    currencyFormat(product.hargaitem.toDouble()), color = dark,
+                    currencyFormat(product.hargaItem.toDouble()), color = dark,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 Row(
@@ -99,7 +99,7 @@ fun EntrySalesItem(
                         )
                     }
                     Text(
-                        product.qtyjual.toString(),
+                        product.qtyJual.toString(),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = dark,
                         textAlign = TextAlign.Center

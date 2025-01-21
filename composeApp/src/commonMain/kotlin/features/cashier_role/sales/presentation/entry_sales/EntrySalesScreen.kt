@@ -135,7 +135,7 @@ fun EntrySales(
     }
 
     LaunchedEffect(uiState.scannedProducts) {
-        val totalTagihan = uiState.scannedProducts.sumOf { it.hargaitem * it.qtyjual }
+        val totalTagihan = uiState.scannedProducts.sumOf { it.hargaItem * it.qtyJual }
         onEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
     }
 
@@ -413,7 +413,7 @@ fun EntrySalesAndPayment(
     val expanded = allowExpanded && entryUiState.searchResults.isNotEmpty()
 
     LaunchedEffect(entryUiState.scannedProducts) {
-        val totalTagihan = entryUiState.scannedProducts.sumOf { it.hargaitem * it.qtyjual }
+        val totalTagihan = entryUiState.scannedProducts.sumOf { it.hargaItem * it.qtyJual }
         entryOnEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
     }
 

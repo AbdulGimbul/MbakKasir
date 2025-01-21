@@ -1,56 +1,49 @@
 package features.cashier_role.sales.domain
 
+import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Ignore
-import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import kotlinx.serialization.Serializable
 
 @Entity(tableName = "product_trans_drafts")
 data class ProductTransDraftEntity(
-    @PrimaryKey val draftId: String,
+    @PrimaryKey val draftId: String = "",
     val dateTime: String = "",
     val cashier: String = "",
     var isPrinted: Boolean = false,
     var amountPaid: Int = 0,
     var paymentMethod: String = "",
-    var dueDate: String = "",
-    var totalAmount: Int = 0
-) {
-    @Ignore
-    val items: List<ProductTransEntity> = emptyList()
-
-    val change: Int
-        get() = amountPaid - totalAmount
-}
-
-@Entity(
-    tableName = "product_trans",
-    foreignKeys = [
-        ForeignKey(
-            entity = ProductTransDraftEntity::class,
-            parentColumns = ["draftId"],
-            childColumns = ["draftId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index(value = ["draftId"])]
+    var dueDate: String = ""
 )
+
+@Entity(tableName = "product_trans")
 data class ProductTransEntity(
     @PrimaryKey val idBarang: String = "",
     val draftId: String = "",
     val kodeBarang: String = "",
     val barcode: String = "",
     val namaBarang: String = "",
-    val idkaryawan: String = "",
+    val idKaryawan: String = "",
     val jenis: String = "Produk",
-    var qtyjual: Int = 1,
-    val hargaitem: Int = 0,
+    var qtyJual: Int = 1,
+    val hargaItem: Int = 0,
     val diskon: Int = 0,
     val subtotal: Int = 0
+)
+
+data class ProductDraftWithItems(
+    @Embedded val draft: ProductTransDraftEntity,
+    @Relation(
+        parentColumn = "draftId",
+        entityColumn = "draftId"
+    )
+    val items: List<ProductTransEntity>
 ) {
-    fun calculateSubtotal(): Int = qtyjual * hargaitem - diskon
+    val totalAmount: Int
+        get() = items.sumOf { it.qtyJual * it.hargaItem - it.diskon }
+    val change: Int
+        get() = draft.amountPaid - totalAmount
 }
 
 @Serializable
@@ -73,10 +66,10 @@ fun ProductTransEntity.toSerializable(): ProductTransSerializable {
         kodebarang = this.kodeBarang,
         barcode = this.barcode,
         namaBarang = this.namaBarang,
-        idKaryawan = this.idkaryawan,
+        idKaryawan = this.idKaryawan,
         jenis = this.jenis,
-        qtyJual = this.qtyjual,
-        hargaItem = this.hargaitem,
+        qtyJual = this.qtyJual,
+        hargaItem = this.hargaItem,
         diskon = this.diskon,
         subtotal = this.subtotal
     )

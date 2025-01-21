@@ -124,7 +124,7 @@ class EntrySalesViewModel(
 
     private fun increaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qtyjual + 1
+            val newQty = product.qtyJual + 1
             salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
             loadScannedProducts(draftId)
         }
@@ -132,14 +132,14 @@ class EntrySalesViewModel(
 
     private fun decreaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qtyjual - 1
+            val newQty = product.qtyJual - 1
             salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
             loadScannedProducts(draftId)
         }
     }
 
     private fun loadScannedProducts(draftId: String) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             salesRepository.getProductsFromDraft(draftId)
                 .collectLatest { scannedProductsList ->
                     _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)

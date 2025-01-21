@@ -22,8 +22,7 @@ fun ProductEntity.toProductTrans(draftId: String): ProductTransEntity {
         kodeBarang = this.kodeBarang,
         barcode = this.barcode,
         namaBarang = this.namaBarang,
-        qtyjual = 1, // Default to 1 item initially
-        hargaitem = this.hargaJual.toIntOrNull() ?: 0,
-        subtotal = (this.hargaJual.toIntOrNull() ?: 0) * 1
+        qtyJual = 1,
+        hargaItem = this.hargaJual.toIntOrNull() ?: 0
     )
 }

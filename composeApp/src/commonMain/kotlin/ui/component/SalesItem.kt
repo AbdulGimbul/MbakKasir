@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import features.cashier_role.sales.domain.ProductDraftWithItems
 import features.cashier_role.sales.domain.ProductTransDraftEntity
 import ui.theme.blue
 import ui.theme.dark
@@ -36,7 +37,7 @@ import utils.currencyFormat
 
 @Composable
 fun SalesItem(
-    product: ProductTransDraftEntity,
+    product: ProductDraftWithItems,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -60,7 +61,7 @@ fun SalesItem(
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
-                    text = product.dateTime,
+                    text = product.draft.dateTime,
                     color = secondary_text,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -69,25 +70,25 @@ fun SalesItem(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(
-                label = if (product.isPrinted) "Belum posting" else "Draft",
+                label = if (product.draft.isPrinted) "Belum posting" else "Draft",
                 value = currencyFormat(product.totalAmount.toDouble()),
-                color = if (product.isPrinted) yellow else red
+                color = if (product.draft.isPrinted) yellow else red
             )
             Spacer(modifier = Modifier.height(16.dp))
-            ItemRowSales(label = product.cashier, value = product.draftId, color = dark)
+            ItemRowSales(label = product.draft.cashier, value = product.draft.draftId, color = dark)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (product.isPrinted) blue else primary),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (product.draft.isPrinted) blue else primary),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (product.isPrinted) blue else primary
+                    color = if (product.draft.isPrinted) blue else primary
                 ),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = if (product.isPrinted) "Kirim ulang" else "Selesaikan",
+                    text = if (product.draft.isPrinted) "Kirim ulang" else "Selesaikan",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                 )
             }

@@ -12,17 +12,19 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addProduct(productEntity: ProductEntity)
 
-    @Delete
-    suspend fun deleteProduct(productEntity: ProductEntity)
-
     @Query("SELECT * FROM products ORDER BY idBarang DESC")
     fun getProducts(): Flow<List<ProductEntity>>
 
-    @Query(
-        "SELECT * FROM products WHERE barcode LIKE '%' || :query || '%' OR " +
-                "namaBarang LIKE '%' || :query || '%' OR " +
-                "kodeBarang LIKE '%' || :query || '%' ORDER BY barcode DESC"
-    )
+    @Query("DELETE FROM products WHERE idBarang = :id")
+    suspend fun deleteProductById(id: String)
+
+    @Query("""
+        SELECT * FROM products 
+        WHERE barcode LIKE '%' || :query || '%' 
+           OR namaBarang LIKE '%' || :query || '%' 
+           OR kodeBarang LIKE '%' || :query || '%' 
+        ORDER BY barcode DESC
+    """)
     fun searchProductsByBarcode(query: String): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM products WHERE barcode = :barcode LIMIT 1")

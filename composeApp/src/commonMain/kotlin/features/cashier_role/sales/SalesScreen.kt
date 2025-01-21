@@ -107,10 +107,10 @@ fun Sales(
                             SalesItem(
                                 product = product,
                                 onClick = {
-                                    if (product.isPrinted) {
-                                        onEvent(SalesUiEvent.SendDraftTrans(product.draftId))
+                                    if (product.draft.isPrinted) {
+                                        onEvent(SalesUiEvent.SendDraftTrans(product.draft.draftId))
                                     } else {
-                                        moveToEntrySales(product.draftId)
+                                        moveToEntrySales(product.draft.draftId)
                                     }
                                 },
                                 modifier = Modifier.padding(vertical = 4.dp)

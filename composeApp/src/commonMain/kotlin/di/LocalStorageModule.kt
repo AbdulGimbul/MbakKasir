@@ -15,6 +15,5 @@ val provideLocalStorageModule = module {
             .build()
     }
     single { get<ProductMbakKasirDatabase>().productDao }
-    single { get<ProductMbakKasirDatabase>().productTransDao }
     single { get<ProductMbakKasirDatabase>().productTransDraftDao }
 }
