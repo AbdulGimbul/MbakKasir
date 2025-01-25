@@ -40,6 +40,7 @@ import ui.component.DefaultTextField
 import ui.component.ProductItem
 import ui.theme.dark
 import ui.theme.primary
+import utils.formatDateTime
 
 @Composable
 fun ProductScreen(viewModel: ProductViewModel) {
@@ -56,11 +57,6 @@ fun Product(
     uiState: ProductUiState,
 ) {
     var search by remember { mutableStateOf("") }
-    val composition by rememberLottieComposition {
-        LottieCompositionSpec.JsonString(
-            Res.readBytes("files/nodata.json").decodeToString()
-        )
-    }
     val state = rememberMessageBarState()
 
     LaunchedEffect(uiState.errorMessage) {
@@ -116,11 +112,11 @@ fun Product(
                 ) {
                     Column {
                         Text(
-                            "Diperbaharui", color = dark,
+                            "Terakhir Diperbaharui", color = dark,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                         Text(
-                            "12 Oktober 2023", color = primary,
+                            text = formatDateTime(uiState.latestUpdate), color = primary,
                             style = MaterialTheme.typography.titleMedium
                         )
                     }

@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class ProductViewModel(
     private val productRepository: ProductRepository
@@ -20,11 +23,14 @@ class ProductViewModel(
         getTotalProduct()
     }
 
-    private fun getTopProduct(){
+    private fun getTopProduct() {
         viewModelScope.launch {
             productRepository.getTopProductByStock().collectLatest { product ->
+                val latestCreatedAt = product.maxByOrNull { it.createdAt }?.createdAt
                 _uiState.value = _uiState.value.copy(
-                    productList = product
+                    productList = product,
+                    latestUpdate = latestCreatedAt ?: Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             }
         }

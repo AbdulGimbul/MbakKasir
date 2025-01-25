@@ -2,6 +2,8 @@ package utils
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -37,6 +39,32 @@ fun getCurrentFormattedDateTime(): String {
     val minute = dateTime.minute.toString().padStart(2, '0')
 
     return "$day $month $year, $hour:$minute WIB"
+}
+
+fun formatDateTime(localDateTime: LocalDateTime): String {
+        val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
+        val month = when (localDateTime.month) {
+            Month.JANUARY -> "Jan"
+            Month.FEBRUARY -> "Feb"
+            Month.MARCH -> "Mar"
+            Month.APRIL -> "Apr"
+            Month.MAY -> "Mei"
+            Month.JUNE -> "Jun"
+            Month.JULY -> "Jul"
+            Month.AUGUST -> "Agu"
+            Month.SEPTEMBER -> "Sep"
+            Month.OCTOBER -> "Okt"
+            Month.NOVEMBER -> "Nov"
+            Month.DECEMBER -> "Des"
+            else -> {""}
+        }
+        val year = localDateTime.year
+        val hour = localDateTime.hour.toString().padStart(2, '0')
+        val minute = localDateTime.minute.toString().padStart(2, '0')
+        val second = localDateTime.second.toString().padStart(2, '0')
+
+        return "$day $month $year $hour:$minute:$second"
+
 }
 
 fun currentTimeCustom(): String {
