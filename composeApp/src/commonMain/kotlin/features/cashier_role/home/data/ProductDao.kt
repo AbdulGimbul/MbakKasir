@@ -1,7 +1,6 @@
-package features.cashier_role.home.domain
+package features.cashier_role.home.data
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,13 +17,15 @@ interface ProductDao {
     @Query("DELETE FROM products WHERE idBarang = :id")
     suspend fun deleteProductById(id: String)
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM products 
         WHERE barcode LIKE '%' || :query || '%' 
            OR namaBarang LIKE '%' || :query || '%' 
            OR kodeBarang LIKE '%' || :query || '%' 
         ORDER BY barcode DESC
-    """)
+    """
+    )
     fun searchProductsByBarcode(query: String): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM products WHERE barcode = :barcode LIMIT 1")

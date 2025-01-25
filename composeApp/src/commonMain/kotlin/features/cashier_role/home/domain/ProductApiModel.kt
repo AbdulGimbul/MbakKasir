@@ -1,5 +1,6 @@
 package features.cashier_role.home.domain
 
+import features.cashier_role.home.data.ProductEntity
 import kotlinx.serialization.Serializable
 
 @Serializable

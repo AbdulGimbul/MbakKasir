@@ -1,4 +1,4 @@
-package features.cashier_role.sales.domain
+package features.cashier_role.sales.data
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -84,7 +84,8 @@ interface ProductTransDraftDao {
                         deleteProductFromDraft(draftId, productId)
                     }
 
-                    val remainingItems = existingDraftWithItems.items.filter { it.idBarang != productId }
+                    val remainingItems =
+                        existingDraftWithItems.items.filter { it.idBarang != productId }
                     if (remainingItems.isEmpty()) {
                         deleteDraft(draftId)
                     }

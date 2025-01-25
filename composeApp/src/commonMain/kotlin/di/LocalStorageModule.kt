@@ -1,9 +1,9 @@
 package di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import features.cashier_role.home.domain.ProductMbakKasirDatabase
 import org.koin.dsl.module
 import storage.DatabaseFactory
+import storage.ProductMbakKasirDatabase
 import storage.SessionHandler
 
 val provideLocalStorageModule = module {

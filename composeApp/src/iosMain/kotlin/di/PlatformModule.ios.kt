@@ -1,6 +1,5 @@
 package di
 
-import dev.bluefalcon.ApplicationContext
 import dev.bluefalcon.BlueFalcon
 import io.ktor.client.engine.darwin.Darwin
 import org.koin.core.module.Module

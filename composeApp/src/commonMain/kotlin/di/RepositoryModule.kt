@@ -32,7 +32,12 @@ val provideAuthRepositoryModule = module {
 }
 
 val provideHomeRepositoryModule = module {
-    single<HomeRepositoryImpl> { HomeRepositoryImpl(requestHandler = get(), productDao = get()) }.bind<HomeRepository>()
+    single<HomeRepositoryImpl> {
+        HomeRepositoryImpl(
+            requestHandler = get(),
+            productDao = get()
+        )
+    }.bind<HomeRepository>()
     viewModel { HomeViewModel(homeRepository = get()) }
 }
 

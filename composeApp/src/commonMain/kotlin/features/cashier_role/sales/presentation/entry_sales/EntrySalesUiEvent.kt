@@ -1,6 +1,6 @@
 package features.cashier_role.sales.presentation.entry_sales
 
-import features.cashier_role.sales.domain.ProductTransEntity
+import features.cashier_role.sales.data.ProductTransEntity
 
 sealed class EntrySalesUiEvent {
     data class OnInputUserChanged(val inputUser: String) : EntrySalesUiEvent()

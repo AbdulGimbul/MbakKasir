@@ -1,12 +1,9 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.domain.ProductEntity
+import features.cashier_role.home.data.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
-import features.cashier_role.sales.domain.ProductDraftWithItems
-import features.cashier_role.sales.domain.ProductTransEntity
-import features.cashier_role.sales.domain.ProductTransDraftEntity
 import kotlinx.coroutines.flow.Flow
 import network.NetworkException
 import network.NetworkResult

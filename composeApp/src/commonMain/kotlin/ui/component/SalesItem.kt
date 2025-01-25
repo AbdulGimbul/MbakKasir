@@ -25,8 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import features.cashier_role.sales.domain.ProductDraftWithItems
-import features.cashier_role.sales.domain.ProductTransDraftEntity
+import features.cashier_role.sales.data.ProductDraftWithItems
 import ui.theme.blue
 import ui.theme.dark
 import ui.theme.primary

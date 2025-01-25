@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.auth.data.AuthRepository
 import features.cashier_role.home.domain.toProductTrans
+import features.cashier_role.sales.data.ProductTransEntity
 import features.cashier_role.sales.data.SalesRepository
-import features.cashier_role.sales.domain.ProductTransEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job

@@ -2,7 +2,6 @@ package storage
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import features.cashier_role.home.domain.ProductMbakKasirDatabase
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSUserDomainMask
 

@@ -1,7 +1,7 @@
 package features.cashier_role.sales.presentation.entry_sales
 
-import features.cashier_role.home.domain.ProductEntity
-import features.cashier_role.sales.domain.ProductTransEntity
+import features.cashier_role.home.data.ProductEntity
+import features.cashier_role.sales.data.ProductTransEntity
 
 data class EntrySalesUiState(
     val inputUser: String = "",

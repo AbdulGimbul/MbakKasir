@@ -1,8 +1,8 @@
-package features.cashier_role.home.domain
+package storage
 
 import androidx.room.RoomDatabaseConstructor
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object ProductDatabaseConstructor: RoomDatabaseConstructor<ProductMbakKasirDatabase> {
+expect object ProductDatabaseConstructor : RoomDatabaseConstructor<ProductMbakKasirDatabase> {
     override fun initialize(): ProductMbakKasirDatabase
 }

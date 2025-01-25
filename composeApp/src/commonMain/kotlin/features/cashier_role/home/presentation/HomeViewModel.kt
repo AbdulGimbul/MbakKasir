@@ -3,7 +3,6 @@ package features.cashier_role.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.cashier_role.home.data.HomeRepository
-import features.cashier_role.home.domain.ProductDao
 import features.cashier_role.home.domain.toProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
