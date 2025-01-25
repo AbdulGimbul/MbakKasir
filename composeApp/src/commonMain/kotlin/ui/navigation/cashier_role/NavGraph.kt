@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
@@ -38,10 +38,12 @@ import features.auth.presentation.login.LoginScreen
 import features.auth.presentation.login.LoginViewModel
 import features.auth.presentation.profile.ProfileScreen
 import features.auth.presentation.profile.ProfileViewModel
-import features.cashier_role.history.presentation.HistoryScreen
-import features.cashier_role.history.presentation.HistoryViewModel
+import features.cashier_role.sales.presentation.history.HistoryScreen
+import features.cashier_role.sales.presentation.history.HistoryViewModel
 import features.cashier_role.home.presentation.HomeScreen
 import features.cashier_role.home.presentation.HomeViewModel
+import features.cashier_role.product.presentation.ProductScreen
+import features.cashier_role.product.presentation.ProductViewModel
 import features.cashier_role.sales.SalesScreen
 import features.cashier_role.sales.SalesViewModel
 import features.cashier_role.sales.domain.ProductTransSerializable
@@ -74,12 +76,12 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 bottomBar = {
                     if (currentRoute in listOf(
                             Screen.Home.route,
-                            Screen.History.route,
+                            Screen.Sales.route,
+                            Screen.Product.route,
                             Screen.Profile.route,
-                            Screen.Sales.route
                         )
                     ) {
-                        BototmBar(navController)
+                        BottomBar(navController)
                     }
                 },
                 floatingActionButton = {
@@ -164,6 +166,9 @@ fun NavHostContent(
         composable(Screen.Home.route) {
             HomeScreen(viewModel = koinViewModel<HomeViewModel>())
         }
+        composable(Screen.Product.route){
+            ProductScreen(viewModel = koinViewModel<ProductViewModel>())
+        }
         composable(Screen.Sales.route) {
             SalesScreen(
                 viewModel = koinViewModel<SalesViewModel>(),
@@ -232,7 +237,7 @@ fun NavHostContent(
 }
 
 @Composable
-private fun BototmBar(
+private fun BottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -335,9 +340,9 @@ val navigationItems = listOf(
         screen = Screen.Sales
     ),
     BottomRailNavItem(
-        title = "Histori",
-        icon = Icons.Outlined.BarChart,
-        screen = Screen.History
+        title = "Barang",
+        icon = Icons.Outlined.Domain,
+        screen = Screen.Product
     ),
     BottomRailNavItem(
         title = "Akun",

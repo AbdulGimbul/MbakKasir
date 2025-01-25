@@ -131,7 +131,7 @@ fun Profile(
                 color = primary_text
             )
             Text(
-                text = "Version 0.0.1",
+                text = "POS Ritel Version 0.0.1",
                 style = MaterialTheme.typography.bodyMedium,
                 color = primary_text
             )

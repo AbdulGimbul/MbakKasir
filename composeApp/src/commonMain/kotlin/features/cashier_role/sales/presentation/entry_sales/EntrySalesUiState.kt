@@ -1,6 +1,6 @@
 package features.cashier_role.sales.presentation.entry_sales
 
-import features.cashier_role.home.data.ProductEntity
+import features.cashier_role.product.data.ProductEntity
 import features.cashier_role.sales.data.ProductTransEntity
 
 data class EntrySalesUiState(

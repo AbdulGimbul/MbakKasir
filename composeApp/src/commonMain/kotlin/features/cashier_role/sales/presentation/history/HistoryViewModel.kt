@@ -1,8 +1,8 @@
-package features.cashier_role.history.presentation
+package features.cashier_role.sales.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import features.cashier_role.history.data.HistoryRepository
+import features.cashier_role.sales.data.SalesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import network.onError
 import network.onSuccess
 
 class HistoryViewModel(
-    private val historyRepository: HistoryRepository
+    private val salesRepository: SalesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -36,7 +36,7 @@ class HistoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-            val result = historyRepository.getHistory(startDate, endDate, page, perPage)
+            val result = salesRepository.getHistory(startDate, endDate, page, perPage)
             withContext(Dispatchers.Main) {
                 result.onSuccess { response ->
                     if (response.code == "200") {

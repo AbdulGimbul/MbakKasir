@@ -4,12 +4,13 @@ import features.auth.data.AuthRepository
 import features.auth.data.AuthRepositoryImpl
 import features.auth.presentation.login.LoginViewModel
 import features.auth.presentation.profile.ProfileViewModel
-import features.cashier_role.history.data.HistoryRepository
-import features.cashier_role.history.data.HistoryRepositoryImpl
-import features.cashier_role.history.presentation.HistoryViewModel
+import features.cashier_role.sales.presentation.history.HistoryViewModel
 import features.cashier_role.home.data.HomeRepository
 import features.cashier_role.home.data.HomeRepositoryImpl
 import features.cashier_role.home.presentation.HomeViewModel
+import features.cashier_role.product.data.ProductRepository
+import features.cashier_role.product.data.ProductRepositoryImpl
+import features.cashier_role.product.presentation.ProductViewModel
 import features.cashier_role.sales.SalesViewModel
 import features.cashier_role.sales.data.SalesRepository
 import features.cashier_role.sales.data.SalesRepositoryImpl
@@ -33,12 +34,16 @@ val provideAuthRepositoryModule = module {
 
 val provideHomeRepositoryModule = module {
     single<HomeRepositoryImpl> {
-        HomeRepositoryImpl(
-            requestHandler = get(),
-            productDao = get()
-        )
+        HomeRepositoryImpl(productDao = get())
     }.bind<HomeRepository>()
-    viewModel { HomeViewModel(homeRepository = get()) }
+    viewModel { HomeViewModel(homeRepository = get(), productRepository = get()) }
+}
+
+val provideProductRepositoryModule = module {
+    single<ProductRepositoryImpl> {
+        ProductRepositoryImpl(requestHandler = get(), productDao = get())
+    }.bind<ProductRepository>()
+    viewModel { ProductViewModel(productRepository = get()) }
 }
 
 val provideSalesRepositoryModule = module {
@@ -53,14 +58,4 @@ val provideSalesRepositoryModule = module {
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
     viewModel { SalesViewModel(salesRepository = get()) }
-}
-
-val provideHistoryRepositoryModule = module {
-    single<HistoryRepositoryImpl> {
-        HistoryRepositoryImpl(
-            requestHandler = get()
-        )
-    }.bind<HistoryRepository>()
-
-    viewModel { HistoryViewModel(historyRepository = get()) }
 }

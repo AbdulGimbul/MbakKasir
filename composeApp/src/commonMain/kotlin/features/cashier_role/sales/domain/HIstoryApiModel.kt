@@ -1,4 +1,4 @@
-package features.cashier_role.history.domain
+package features.cashier_role.sales.domain
 
 import kotlinx.serialization.Serializable
 

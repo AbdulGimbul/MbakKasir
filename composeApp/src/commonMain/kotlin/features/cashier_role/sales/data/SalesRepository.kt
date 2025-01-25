@@ -1,6 +1,7 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.data.ProductEntity
+import features.cashier_role.sales.domain.HistoryApiModel
+import features.cashier_role.product.data.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
@@ -32,4 +33,10 @@ interface SalesRepository {
     suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException>
     suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>
     suspend fun getDrafts(): Flow<List<ProductDraftWithItems>>
+    suspend fun getHistory(
+        startDate: String,
+        endDate: String,
+        page: String,
+        perPage: String
+    ): NetworkResult<HistoryApiModel, NetworkException>
 }

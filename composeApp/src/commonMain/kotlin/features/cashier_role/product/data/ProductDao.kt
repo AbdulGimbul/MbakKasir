@@ -1,4 +1,4 @@
-package features.cashier_role.home.data
+package features.cashier_role.product.data
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -33,4 +33,10 @@ interface ProductDao {
 
     @Query("SELECT COUNT(*) > 0 FROM products")
     fun isProductCacheAvailable(): Flow<Boolean>
+
+    @Query("SELECT * FROM products ORDER BY stok DESC LIMIT 20")
+    fun getTopProductsByStok(): Flow<List<ProductEntity>>
+
+    @Query("SELECT COUNT(*) FROM products")
+    fun calculateTotalProducts(): Flow<Int>
 }

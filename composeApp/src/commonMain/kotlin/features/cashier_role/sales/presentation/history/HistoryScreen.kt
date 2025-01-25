@@ -1,4 +1,4 @@
-package features.cashier_role.history.presentation
+package features.cashier_role.sales.presentation.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

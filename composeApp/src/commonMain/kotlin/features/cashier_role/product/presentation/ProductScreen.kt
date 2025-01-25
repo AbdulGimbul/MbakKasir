@@ -1,7 +1,6 @@
-package features.cashier_role.sales
+package features.cashier_role.product.presentation
 
 import ContentWithMessageBar
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,13 +13,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.automirrored.outlined.Note
-import androidx.compose.material.icons.automirrored.outlined.Notes
-import androidx.compose.material.icons.automirrored.outlined.StickyNote2
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.StickyNote2
+import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,45 +30,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import features.auth.presentation.login.EnhancedLoading
-import io.github.alexzhirkevich.compottie.Compottie
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
-import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mbakkasir.composeapp.generated.resources.Res
-import mbakkasir.composeapp.generated.resources.ic_notes
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
 import ui.component.DefaultTextField
-import ui.component.SalesItem
-import ui.navigation.cashier_role.Screen
+import ui.component.ProductItem
 import ui.theme.dark
+import ui.theme.primary
 
 @Composable
-fun SalesScreen(viewModel: SalesViewModel, navController: NavController) {
+fun ProductScreen(viewModel: ProductViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Sales(
-        uiState = uiState,
-        onEvent = viewModel::onEvent,
-        moveToEntrySales = {
-            navController.navigate("${Screen.EntrySales.route}/$it")
-        },
-        moveToHistory = {
-            navController.navigate(Screen.History.route)
-        }
+    Product(
+        uiState = uiState
     )
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun Sales(
-    uiState: SalesUiState,
-    onEvent: (SalesUiEvent) -> Unit,
-    moveToEntrySales: (String) -> Unit,
-    moveToHistory: () -> Unit
+fun Product(
+    uiState: ProductUiState,
 ) {
     var search by remember { mutableStateOf("") }
     val composition by rememberLottieComposition {
@@ -108,14 +87,19 @@ fun Sales(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "Penjualan",
+                        "Barang",
                         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                         color = dark,
                     )
                     IconButton(
-                        onClick = moveToHistory
+                        onClick = { }
                     ) {
-                        Icon(painter = painterResource(Res.drawable.ic_notes), contentDescription = null, modifier = Modifier.size(32.dp))
+                        Icon(
+                            imageVector = Icons.Outlined.CloudDownload,
+                            contentDescription = null,
+                            tint = primary,
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
                 }
                 DefaultTextField(
@@ -125,40 +109,38 @@ fun Sales(
                     leadingIcon = Icons.Default.Search,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                if (uiState.draftList.isNotEmpty()) {
-                    LazyColumn {
-                        items(uiState.draftList) { product ->
-                            SalesItem(
-                                product = product,
-                                onClick = {
-                                    if (product.draft.isPrinted) {
-                                        onEvent(SalesUiEvent.SendDraftTrans(product.draft.draftId))
-                                    } else {
-                                        moveToEntrySales(product.draft.draftId)
-                                    }
-                                },
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = rememberLottiePainter(
-                                composition = composition,
-                                iterations = Compottie.IterateForever
-                            ),
-                            contentDescription = "Lottie animation",
-                            modifier = Modifier.size(170.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            "Diperbaharui", color = dark,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                         Text(
-                            "Data not available.",
-                            style = MaterialTheme.typography.bodyMedium,
+                            "12 Oktober 2023", color = primary,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    Column {
+                        Text(
+                            "Jumlah Barang", color = dark,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                        Text(
+                            uiState.totalProduct.toString(), color = primary,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                LazyColumn {
+                    items(uiState.productList) { product ->
+                        ProductItem(
+                            product = product,
+                            modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
                 }

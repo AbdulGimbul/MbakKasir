@@ -3,7 +3,8 @@ package features.cashier_role.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import features.cashier_role.home.data.HomeRepository
-import features.cashier_role.home.domain.toProduct
+import features.cashier_role.product.data.ProductRepository
+import features.cashier_role.product.domain.toProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import network.onSuccess
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -31,11 +33,11 @@ class HomeViewModel(
                 val isCacheAvailable = homeRepository.checkCache()
 
                 if (!isCacheAvailable.first()) {
-                    val result = homeRepository.getProducts()
+                    val result = productRepository.getProducts()
                     withContext(Dispatchers.Main) {
                         result.onSuccess { data ->
                             data.barangs.forEach { barang ->
-                                homeRepository.addProduct(barang.toProduct())
+                                productRepository.addProduct(barang.toProduct())
                             }
                         }.onError { error ->
                             _uiState.value = _uiState.value.copy(errorMessage = error.message)

@@ -1,7 +1,8 @@
 package features.cashier_role.sales.data
 
-import features.cashier_role.home.data.ProductDao
-import features.cashier_role.home.data.ProductEntity
+import features.cashier_role.sales.domain.HistoryApiModel
+import features.cashier_role.product.data.ProductDao
+import features.cashier_role.product.data.ProductEntity
 import features.cashier_role.sales.domain.CreatePaymentApiModel
 import features.cashier_role.sales.domain.CreatePaymentRequest
 import features.cashier_role.sales.domain.InvoiceApiModel
@@ -76,5 +77,22 @@ class SalesRepositoryImpl(
 
     override suspend fun getDrafts(): Flow<List<ProductDraftWithItems>> {
         return productTransDraftDao.getAllDrafts()
+    }
+
+    override suspend fun getHistory(
+        startDate: String,
+        endDate: String,
+        page: String,
+        perPage: String
+    ): NetworkResult<HistoryApiModel, NetworkException> {
+        return requestHandler.get(
+            urlPathSegments = listOf("api", "penjualan", "get"),
+            queryParams = mapOf(
+                "startDate" to startDate,
+                "endDate" to endDate,
+                "page" to page,
+                "perPage" to perPage
+            )
+        )
     }
 }

@@ -1,6 +1,6 @@
-package features.cashier_role.home.domain
+package features.cashier_role.product.domain
 
-import features.cashier_role.home.data.ProductEntity
+import features.cashier_role.product.data.ProductEntity
 import features.cashier_role.sales.data.ProductTransEntity
 
 fun ProductEntity.toProductTrans(draftId: String): ProductTransEntity {

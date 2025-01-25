@@ -1,6 +1,6 @@
-package features.cashier_role.history.presentation
+package features.cashier_role.sales.presentation.history
 
-import features.cashier_role.history.domain.HistoryApiModel
+import features.cashier_role.sales.domain.HistoryApiModel
 
 data class HistoryUiState(
     val history: HistoryApiModel? = null,

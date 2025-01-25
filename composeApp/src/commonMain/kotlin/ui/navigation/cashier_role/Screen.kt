@@ -9,5 +9,5 @@ sealed class Screen(val route: String) {
     data object EntrySales : Screen("entry_sales")
     data object Payment : Screen("payment")
     data object Invoice : Screen("invoice")
-
+    data object Product : Screen("product")
 }

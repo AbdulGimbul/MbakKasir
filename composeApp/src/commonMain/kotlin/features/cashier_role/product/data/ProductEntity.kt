@@ -1,4 +1,4 @@
-package features.cashier_role.home.data
+package features.cashier_role.product.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
