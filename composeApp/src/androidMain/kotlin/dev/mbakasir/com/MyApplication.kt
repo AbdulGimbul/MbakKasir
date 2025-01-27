@@ -1,7 +1,7 @@
 package dev.mbakasir.com
 
 import android.app.Application
-import di.initKoin
+import dev.mbakasir.com.di.initKoin
 import org.koin.android.ext.koin.androidContext
 
 class MyApplication : Application() {

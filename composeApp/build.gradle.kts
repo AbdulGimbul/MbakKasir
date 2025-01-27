@@ -36,10 +36,6 @@ kotlin {
         }
     }
 
-//    room {
-//        schemaDirectory("$projectDir/schemas")
-//    }
-
     sourceSets {
 
         androidMain.dependencies {
@@ -96,10 +92,6 @@ kotlin {
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-
-//        dependencies {
-//            ksp(libs.androidx.room.compiler)
-//        }
     }
 }
 
@@ -107,9 +99,9 @@ dependencies {
     //keep in mind that i am not compiling for iOS x86, if you do need it, just add it below
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
 }
-
 
 room {
     schemaDirectory("$projectDir/schemas")
