@@ -14,13 +14,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.automirrored.outlined.Note
-import androidx.compose.material.icons.automirrored.outlined.Notes
-import androidx.compose.material.icons.automirrored.outlined.StickyNote2
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.StickyNote2
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +45,7 @@ import ui.component.DefaultTextField
 import ui.component.SalesItem
 import ui.navigation.cashier_role.Screen
 import ui.theme.dark
+import ui.theme.primary
 
 @Composable
 fun SalesScreen(viewModel: SalesViewModel, navController: NavController) {
@@ -115,7 +110,12 @@ fun Sales(
                     IconButton(
                         onClick = moveToHistory
                     ) {
-                        Icon(painter = painterResource(Res.drawable.ic_notes), contentDescription = null, modifier = Modifier.size(32.dp))
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_notes),
+                            tint = primary,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
                 }
                 DefaultTextField(

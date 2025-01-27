@@ -71,7 +71,7 @@ fun InvoiceScreen(
         noInvoice = noInvoice,
         navigateBack = {
             navController.navigate(Screen.Sales.route) {
-                popUpTo(Screen.History.route) {
+                popUpTo(Screen.Sales.route) {
                     inclusive = true
                 }
             }
