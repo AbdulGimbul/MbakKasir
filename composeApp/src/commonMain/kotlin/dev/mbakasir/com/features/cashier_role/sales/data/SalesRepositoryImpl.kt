@@ -4,6 +4,7 @@ import dev.mbakasir.com.features.cashier_role.product.data.ProductDao
 import dev.mbakasir.com.features.cashier_role.product.data.ProductEntity
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentRequest
+import dev.mbakasir.com.features.cashier_role.sales.domain.HistoryApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.InvoiceApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult
@@ -83,7 +84,7 @@ class SalesRepositoryImpl(
         endDate: String,
         page: String,
         perPage: String
-    ): NetworkResult<dev.mbakasir.com.features.cashier_role.sales.domain.HistoryApiModel, NetworkException> {
+    ): NetworkResult<HistoryApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "get"),
             queryParams = mapOf(

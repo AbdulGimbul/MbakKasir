@@ -34,8 +34,8 @@ interface ProductDao {
     @Query("SELECT COUNT(*) > 0 FROM products")
     fun isProductCacheAvailable(): Flow<Boolean>
 
-    @Query("SELECT * FROM products ORDER BY stok DESC LIMIT 20")
-    fun getTopProductsByStok(): Flow<List<ProductEntity>>
+    @Query("SELECT * FROM products ORDER BY stok DESC LIMIT :pageSize OFFSET :offset")
+    fun getTopProductsByStok(pageSize: Int, offset: Int): Flow<List<ProductEntity>>
 
     @Query("SELECT COUNT(*) FROM products")
     fun calculateTotalProducts(): Flow<Int>

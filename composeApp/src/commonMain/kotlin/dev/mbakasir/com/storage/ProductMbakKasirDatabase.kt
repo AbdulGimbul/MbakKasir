@@ -3,6 +3,7 @@ package dev.mbakasir.com.storage
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import dev.mbakasir.com.features.cashier_role.product.data.ProductDao
 import dev.mbakasir.com.features.cashier_role.product.data.ProductEntity
@@ -24,4 +25,9 @@ abstract class ProductMbakKasirDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "mbakasir.db"
     }
+}
+
+@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+internal expect object ProductDatabaseConstructor : RoomDatabaseConstructor<ProductMbakKasirDatabase> {
+    override fun initialize(): ProductMbakKasirDatabase
 }

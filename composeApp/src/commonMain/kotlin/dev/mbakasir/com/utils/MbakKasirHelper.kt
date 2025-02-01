@@ -1,10 +1,13 @@
 package dev.mbakasir.com.utils
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 
 
@@ -42,28 +45,30 @@ fun getCurrentFormattedDateTime(): String {
 }
 
 fun formatDateTime(localDateTime: LocalDateTime): String {
-        val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
-        val month = when (localDateTime.month) {
-            Month.JANUARY -> "Jan"
-            Month.FEBRUARY -> "Feb"
-            Month.MARCH -> "Mar"
-            Month.APRIL -> "Apr"
-            Month.MAY -> "Mei"
-            Month.JUNE -> "Jun"
-            Month.JULY -> "Jul"
-            Month.AUGUST -> "Agu"
-            Month.SEPTEMBER -> "Sep"
-            Month.OCTOBER -> "Okt"
-            Month.NOVEMBER -> "Nov"
-            Month.DECEMBER -> "Des"
-            else -> {""}
+    val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
+    val month = when (localDateTime.month) {
+        Month.JANUARY -> "Jan"
+        Month.FEBRUARY -> "Feb"
+        Month.MARCH -> "Mar"
+        Month.APRIL -> "Apr"
+        Month.MAY -> "Mei"
+        Month.JUNE -> "Jun"
+        Month.JULY -> "Jul"
+        Month.AUGUST -> "Agu"
+        Month.SEPTEMBER -> "Sep"
+        Month.OCTOBER -> "Okt"
+        Month.NOVEMBER -> "Nov"
+        Month.DECEMBER -> "Des"
+        else -> {
+            ""
         }
-        val year = localDateTime.year
-        val hour = localDateTime.hour.toString().padStart(2, '0')
-        val minute = localDateTime.minute.toString().padStart(2, '0')
-        val second = localDateTime.second.toString().padStart(2, '0')
+    }
+    val year = localDateTime.year
+    val hour = localDateTime.hour.toString().padStart(2, '0')
+    val minute = localDateTime.minute.toString().padStart(2, '0')
+    val second = localDateTime.second.toString().padStart(2, '0')
 
-        return "$day $month $year $hour:$minute:$second"
+    return "$day $month $year $hour:$minute:$second"
 
 }
 
@@ -102,4 +107,19 @@ fun formatDateForApi(timestamp: Long): String {
     return "${localDateTime.date.dayOfMonth.toString().padStart(2, '0')}-" +
             "${localDateTime.date.monthNumber.toString().padStart(2, '0')}-" +
             "${localDateTime.date.year}"
+}
+
+fun getTodayDate(): String {
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    return formatDateForApi(
+        today.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+    )
+}
+
+fun getLastWeekDate(): String {
+    val lastWeek = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+        .minus(DatePeriod(days = 7))
+    return formatDateForApi(
+        lastWeek.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+    )
 }

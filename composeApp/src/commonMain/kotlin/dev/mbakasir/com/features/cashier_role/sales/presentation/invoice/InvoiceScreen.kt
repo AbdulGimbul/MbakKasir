@@ -43,6 +43,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
+import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState
+import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.icon
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.stroke
+import dev.mbakasir.com.utils.currencyFormat
 import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
 import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
 
@@ -50,7 +59,7 @@ import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCapture
 fun InvoiceScreen(
     viewModel: InvoiceViewModel,
     navController: NavController,
-    paymentData: dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState? = null,
+    paymentData: PaymentUiState? = null,
     noInvoice: String? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,8 +70,8 @@ fun InvoiceScreen(
         paymentData = paymentData,
         noInvoice = noInvoice,
         navigateBack = {
-            navController.navigate(dev.mbakasir.com.ui.navigation.cashier_role.Screen.Sales.route) {
-                popUpTo(dev.mbakasir.com.ui.navigation.cashier_role.Screen.Sales.route) {
+            navController.navigate(Screen.Sales.route) {
+                popUpTo(Screen.Sales.route) {
                     inclusive = true
                 }
             }
@@ -74,7 +83,7 @@ fun InvoiceScreen(
 fun Invoice(
     uiState: InvoiceUiState,
     onEvent: (InvoiceUiEvent) -> Unit,
-    paymentData: dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState? = null,
+    paymentData: PaymentUiState? = null,
     noInvoice: String? = null,
     navigateBack: () -> Unit
 ) {
@@ -93,7 +102,7 @@ fun Invoice(
     }
 
     if (uiState.isLoading) {
-        dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading()
+        EnhancedLoading()
     } else {
         Column(
             modifier = Modifier
@@ -133,19 +142,19 @@ fun Invoice(
                             Text(
                                 text = uiState.store?.nama.toString(),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = dev.mbakasir.com.ui.theme.dark,
+                                color = dark,
                                 modifier = Modifier.padding(8.dp),
                             )
                             Text(
                                 text = uiState.store?.alamat.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark,
+                                color = dark,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
                                 text = uiState.store?.telp.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark
+                                color = dark
                             )
                         }
                     }
@@ -158,89 +167,89 @@ fun Invoice(
                             Text(
                                 text = uiState.invoiceNumber,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark
+                                color = dark
                             )
                             Text(
                                 text = uiState.tanggal,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark
+                                color = dark
                             )
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
                                 text = uiState.method,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark
+                                color = dark
                             )
                             Text(
                                 text = uiState.kasir,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = dev.mbakasir.com.ui.theme.dark
+                                color = dark
                             )
                         }
                     }
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 16.dp),
-                        color = dev.mbakasir.com.ui.theme.stroke
+                        color = stroke
                     )
                     Text(
                         text = "Produk:",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = dev.mbakasir.com.ui.theme.dark,
+                        color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     uiState.detil.forEach {
                         ItemRow(
                             name = it.namaBarang,
                             qty = it.qtyJual,
-                            price = dev.mbakasir.com.utils.currencyFormat(
+                            price = currencyFormat(
                                 it.subtotal.toDoubleOrNull() ?: 0.0
                             ),
-                            discount = dev.mbakasir.com.utils.currencyFormat(
+                            discount = currencyFormat(
                                 it.diskon.toDoubleOrNull() ?: 0.0
                             )
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    DashedDivider(color = dev.mbakasir.com.ui.theme.dark, thickness = 1.dp)
+                    DashedDivider(color = dark, thickness = 1.dp)
                     Spacer(modifier = Modifier.height(16.dp))
                     TotalRow(
                         label = "TOTAL HARGA:",
-                        amount = dev.mbakasir.com.utils.currencyFormat(uiState.totalHarga)
+                        amount = currencyFormat(uiState.totalHarga)
                     )
                     TotalRow(
                         label = "PPN:",
-                        amount = dev.mbakasir.com.utils.currencyFormat(uiState.ppn)
+                        amount = currencyFormat(uiState.ppn)
                     )
                     TotalRow(
                         label = "DISKON:",
-                        amount = "- ${dev.mbakasir.com.utils.currencyFormat(uiState.diskon)}"
+                        amount = "- ${currencyFormat(uiState.diskon)}"
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     TotalRow(
                         label = "TOTAL TAGIHAN:",
-                        amount = dev.mbakasir.com.utils.currencyFormat(uiState.subtotal),
+                        amount = currencyFormat(uiState.subtotal),
                         isBold = true
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 16.dp),
-                        color = dev.mbakasir.com.ui.theme.stroke
+                        color = stroke
                     )
                     TotalRow(
                         label = "TUNAI:",
-                        amount = dev.mbakasir.com.utils.currencyFormat(uiState.bayar)
+                        amount = currencyFormat(uiState.bayar)
                     )
                     TotalRow(
                         label = "KEMBALIAN:",
-                        amount = dev.mbakasir.com.utils.currencyFormat(uiState.kembali)
+                        amount = currencyFormat(uiState.kembali)
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "==TERIMA KASIH SUDAH BERBELANJA==",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        color = dev.mbakasir.com.ui.theme.secondary_text,
+                        color = secondary_text,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -248,7 +257,7 @@ fun Invoice(
                         text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        color = dev.mbakasir.com.ui.theme.secondary_text,
+                        color = secondary_text,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -268,13 +277,13 @@ fun Invoice(
                             Icon(
                                 imageVector = Icons.Default.Print,
                                 contentDescription = "Cetak",
-                                tint = dev.mbakasir.com.ui.theme.primary
+                                tint = primary
                             )
                             Text(
                                 "Cetak",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 18.sp,
-                                color = dev.mbakasir.com.ui.theme.primary,
+                                color = primary,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         }
@@ -288,26 +297,26 @@ fun Invoice(
                                 Icon(
                                     imageVector = Icons.Outlined.ArrowBackIosNew,
                                     contentDescription = "Kembali",
-                                    tint = dev.mbakasir.com.ui.theme.icon
+                                    tint = icon
                                 )
                                 Text(
                                     "Kembali",
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 18.sp,
-                                    color = dev.mbakasir.com.ui.theme.icon,
+                                    color = icon,
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
                             } else {
                                 Icon(
                                     imageVector = Icons.Outlined.CheckCircle,
                                     contentDescription = "Selesai",
-                                    tint = dev.mbakasir.com.ui.theme.icon
+                                    tint = icon
                                 )
                                 Text(
                                     "Selesai",
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 18.sp,
-                                    color = dev.mbakasir.com.ui.theme.icon,
+                                    color = icon,
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
                             }
@@ -326,21 +335,21 @@ fun ItemRow(name: String, qty: String, price: String, discount: String) {
         Row {
             Text(
                 text = name,
-                color = dev.mbakasir.com.ui.theme.secondary_text,
+                color = secondary_text,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(3f)
             )
             Text(
                 text = qty,
                 textAlign = TextAlign.Center,
-                color = dev.mbakasir.com.ui.theme.secondary_text,
+                color = secondary_text,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = price,
                 textAlign = TextAlign.End,
-                color = dev.mbakasir.com.ui.theme.secondary_text,
+                color = secondary_text,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(2f)
             )
@@ -348,7 +357,7 @@ fun ItemRow(name: String, qty: String, price: String, discount: String) {
         Text(
             text = "Diskon: $discount",
             textAlign = TextAlign.End,
-            color = dev.mbakasir.com.ui.theme.secondary_text,
+            color = secondary_text,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
         )
@@ -364,12 +373,12 @@ fun TotalRow(label: String, amount: String, isBold: Boolean = false) {
         Text(
             text = label,
             style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.dark
+            color = dark
         )
         Text(
             text = amount,
             style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.dark
+            color = dark
         )
     }
 }

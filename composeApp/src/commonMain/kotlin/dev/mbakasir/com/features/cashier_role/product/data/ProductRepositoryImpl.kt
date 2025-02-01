@@ -16,8 +16,8 @@ class ProductRepositoryImpl(
         return productDao.addProduct(productEntity)
     }
 
-    override suspend fun getTopProductByStock(): Flow<List<ProductEntity>> {
-        return productDao.getTopProductsByStok()
+    override suspend fun getTopProductByStock(pageSize: Int, offset: Int): Flow<List<ProductEntity>> {
+        return productDao.getTopProductsByStok(pageSize, offset)
     }
 
     override suspend fun calculateTotalProducts(): Flow<Int> {

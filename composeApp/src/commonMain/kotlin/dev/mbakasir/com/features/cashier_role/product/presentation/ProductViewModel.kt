@@ -6,6 +6,7 @@ import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -18,21 +19,39 @@ class ProductViewModel(
     private val _uiState = MutableStateFlow(ProductUiState())
     val uiState: StateFlow<ProductUiState> = _uiState
 
+    private var currentPage = 0
+    private val pageSize = 20
+
     init {
         getTopProduct()
         getTotalProduct()
     }
 
-    private fun getTopProduct() {
+     fun getTopProduct() {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
         viewModelScope.launch {
-            productRepository.getTopProductByStock().collectLatest { product ->
-                val latestCreatedAt = product.maxByOrNull { it.createdAt }?.createdAt
-                _uiState.value = _uiState.value.copy(
-                    productList = product,
-                    latestUpdate = latestCreatedAt ?: Clock.System.now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                )
-            }
+            try {
+                val product = productRepository
+                    .getTopProductByStock(pageSize, currentPage * pageSize)
+                    .first()
+
+                if (product.isNotEmpty()) {
+                    val updatedList = _uiState.value.productList + product
+                    val latestCreatedAt = updatedList.maxByOrNull { it.createdAt }?.createdAt
+                    _uiState.value = _uiState.value.copy(
+                        productList = updatedList,
+                        latestUpdate = latestCreatedAt ?: Clock.System.now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault()),
+                        isLoading = false
+                    )
+                    currentPage++
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+            } finally {
+                _uiState.value = _uiState.value.copy(isLoading = false)            }
         }
     }
 

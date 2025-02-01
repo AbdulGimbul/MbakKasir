@@ -2,9 +2,11 @@ package dev.mbakasir.com.features.cashier_role.sales.presentation.invoice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.features.cashier_role.sales.domain.toDetailPayment
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
+import dev.mbakasir.com.storage.SessionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class InvoiceViewModel(
-    private val sessionHandler: dev.mbakasir.com.storage.SessionHandler,
-    private val salesRepository: dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
+    private val sessionHandler: SessionHandler,
+    private val salesRepository: SalesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(InvoiceUiState())
