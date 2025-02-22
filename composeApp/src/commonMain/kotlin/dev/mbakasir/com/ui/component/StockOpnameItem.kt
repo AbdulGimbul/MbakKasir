@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.mbakasir.com.ui.theme.blue
+import dev.mbakasir.com.ui.theme.red
 
 @Composable
 fun StockOpnameItem(modifier: Modifier = Modifier) {
@@ -73,7 +75,7 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = dev.mbakasir.com.ui.theme.blue,
+                        containerColor = blue,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(24.dp),
@@ -84,7 +86,7 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(10.dp))
                 OutlinedButton(
                     onClick = {},
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = dev.mbakasir.com.ui.theme.red),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(
                         width = 1.dp,
                         color = dev.mbakasir.com.ui.theme.red

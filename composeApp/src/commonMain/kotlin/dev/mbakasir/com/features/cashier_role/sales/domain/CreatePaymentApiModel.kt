@@ -1,5 +1,6 @@
 package dev.mbakasir.com.features.cashier_role.sales.domain
 
+import dev.mbakasir.com.utils.JavaSerializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +9,7 @@ data class CreatePaymentApiModel(
     val message: String,
     val data: DataPayment,
     val code: String
-) : dev.mbakasir.com.utils.JavaSerializable
+) : JavaSerializable
 
 @Serializable
 data class DataPayment(
@@ -22,7 +23,7 @@ data class DataPayment(
     val device: String,
     val tanggal: String,
     val detil: List<DetailPayment>
-) : dev.mbakasir.com.utils.JavaSerializable
+) : JavaSerializable
 
 @Serializable
 data class DetailPayment(
@@ -37,4 +38,4 @@ data class DetailPayment(
     val hargaItem: String,
     val subtotal: String,
     val diskon: String
-) : dev.mbakasir.com.utils.JavaSerializable
+) : JavaSerializable

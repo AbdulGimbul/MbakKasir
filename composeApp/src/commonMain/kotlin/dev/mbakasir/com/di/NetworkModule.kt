@@ -1,16 +1,18 @@
 package dev.mbakasir.com.di
 
 import dev.mbakasir.com.BuildKonfig
+import dev.mbakasir.com.network.MbakKasirHttpClientBuilder
+import dev.mbakasir.com.network.RequestHandler
 import io.ktor.http.URLProtocol
 import org.koin.dsl.module
 
 val provideHttpClientModule = module {
     single {
-        dev.mbakasir.com.network.MbakKasirHttpClientBuilder(get())
+        MbakKasirHttpClientBuilder(get())
             .protocol(URLProtocol.HTTPS)
             .host(BuildKonfig.BASE_URL)
             .build(get())
     }
 
-    single { dev.mbakasir.com.network.RequestHandler(get()) }
+    single { RequestHandler(get()) }
 }

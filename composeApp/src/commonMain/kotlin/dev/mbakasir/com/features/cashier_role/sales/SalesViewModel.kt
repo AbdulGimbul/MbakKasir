@@ -13,15 +13,18 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SalesViewModel(
-    private val salesRepository: SalesRepository
+    private val salesRepository: SalesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SalesUiState())
     val uiState: StateFlow<SalesUiState> = _uiState
+
+    private var currentDraftId: String? = null
 
     init {
         getDrafts()
@@ -30,6 +33,7 @@ class SalesViewModel(
     fun onEvent(event: SalesUiEvent) {
         when (event) {
             is SalesUiEvent.SendDraftTrans -> {
+                currentDraftId = event.invoiceNumber
                 sendDraftTrans(event.invoiceNumber)
             }
         }
@@ -67,6 +71,10 @@ class SalesViewModel(
                 result.onSuccess {
                     if (it.code == "200") {
                         _uiState.value = _uiState.value.copy(paymentResponse = it)
+                        currentDraftId?.let { deleteDraftId ->
+                            deleteScannedProducts(deleteDraftId)
+                            currentDraftId = null
+                        }
                     }
                 }.onError {
                     _uiState.value =
@@ -74,6 +82,17 @@ class SalesViewModel(
                 }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun deleteScannedProducts(draftId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            salesRepository.deleteDraft(draftId)
+            _uiState.update { currentState ->
+                currentState.copy(
+                    draftList = currentState.draftList.filterNot { it.draft.draftId == draftId }
+                )
             }
         }
     }

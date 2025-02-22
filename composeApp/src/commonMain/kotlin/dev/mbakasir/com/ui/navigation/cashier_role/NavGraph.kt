@@ -34,6 +34,28 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowWidthSizeClass
+import dev.mbakasir.com.features.auth.presentation.login.LoginScreen
+import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
+import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
+import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
+import dev.mbakasir.com.features.cashier_role.home.presentation.HomeScreen
+import dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel
+import dev.mbakasir.com.features.cashier_role.product.presentation.ProductScreen
+import dev.mbakasir.com.features.cashier_role.product.presentation.ProductViewModel
+import dev.mbakasir.com.features.cashier_role.sales.SalesScreen
+import dev.mbakasir.com.features.cashier_role.sales.SalesViewModel
+import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable
+import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
+import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryViewModel
+import dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceViewModel
+import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState
+import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentViewModel
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.utils.generateKodeInvoice
 import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -64,13 +86,13 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 },
                 floatingActionButton = {
                     if (currentRoute == Screen.Sales.route) {
-                        val draftId = dev.mbakasir.com.utils.generateKodeInvoice()
+                        val draftId = generateKodeInvoice()
                         FloatingActionButton(
                             onClick = {
                                 navController.navigate("${Screen.EntrySales.route}/$draftId")
                             },
                             shape = CircleShape,
-                            containerColor = dev.mbakasir.com.ui.theme.primary
+                            containerColor = primary
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -101,7 +123,7 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                                         navController.navigate(Screen.EntrySales.route)
                                     },
                                     shape = CircleShape,
-                                    containerColor = dev.mbakasir.com.ui.theme.primary
+                                    containerColor = primary
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
@@ -136,32 +158,32 @@ fun NavHostContent(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(Screen.Login.route) {
-            dev.mbakasir.com.features.auth.presentation.login.LoginScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.auth.presentation.login.LoginViewModel>(),
+            LoginScreen(
+                viewModel = koinViewModel<LoginViewModel>(),
                 navController = navController
             )
         }
         composable(Screen.Home.route) {
-            dev.mbakasir.com.features.cashier_role.home.presentation.HomeScreen(viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel>())
+            HomeScreen(viewModel = koinViewModel<HomeViewModel>())
         }
         composable(Screen.Product.route){
-            dev.mbakasir.com.features.cashier_role.product.presentation.ProductScreen(viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.product.presentation.ProductViewModel>())
+            ProductScreen(viewModel = koinViewModel<ProductViewModel>())
         }
         composable(Screen.Sales.route) {
-            dev.mbakasir.com.features.cashier_role.sales.SalesScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.SalesViewModel>(),
+            SalesScreen(
+                viewModel = koinViewModel<SalesViewModel>(),
                 navController = navController
             )
         }
         composable(Screen.History.route) {
-            dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryViewModel>(),
+            HistoryScreen(
+                viewModel = koinViewModel<HistoryViewModel>(),
                 navController = navController
             )
         }
         composable(Screen.Profile.route) {
-            dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel>(),
+            ProfileScreen(
+                viewModel = koinViewModel<ProfileViewModel>(),
                 navController = navController
             )
         }
@@ -169,10 +191,10 @@ fun NavHostContent(
             route = "${Screen.EntrySales.route}/{draftId}",
         ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
-            dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel>(),
+            EntrySalesScreen(
+                viewModel = koinViewModel<EntrySalesViewModel>(),
                 navController = navController,
-                paymentViewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentViewModel>(),
+                paymentViewModel = koinViewModel<PaymentViewModel>(),
                 navigationType = navigationType,
                 draftId = draftId.toString()
             )
@@ -185,9 +207,9 @@ fun NavHostContent(
             val draftId = backStackEntry.arguments?.getString("draftId")
             val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
             val scannedProducts =
-                jsonResponse?.let { Json.decodeFromString<List<dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable>>(it) }
-            dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentViewModel>(),
+                jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
+            PaymentScreen(
+                viewModel = koinViewModel<PaymentViewModel>(),
                 navController = navController,
                 products = scannedProducts ?: emptyList(),
                 draftId = draftId.toString()
@@ -203,9 +225,9 @@ fun NavHostContent(
             val jsonResponse = backStackEntry.arguments?.getString("paymentData")
             val noInvoice = backStackEntry.arguments?.getString("noInvoice")
             val paymentData =
-                jsonResponse?.let { Json.decodeFromString<dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState>(it) }
-            dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceScreen(
-                viewModel = koinViewModel<dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceViewModel>(),
+                jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
+            InvoiceScreen(
+                viewModel = koinViewModel<InvoiceViewModel>(),
                 paymentData = paymentData,
                 noInvoice = noInvoice,
                 navController = navController
@@ -249,8 +271,8 @@ private fun BottomBar(
                     Text(text = item.title)
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = dev.mbakasir.com.ui.theme.primary,
-                    selectedTextColor = dev.mbakasir.com.ui.theme.primary,
+                    selectedIconColor = primary,
+                    selectedTextColor = primary,
                     indicatorColor = Color.Transparent
                 )
             )
