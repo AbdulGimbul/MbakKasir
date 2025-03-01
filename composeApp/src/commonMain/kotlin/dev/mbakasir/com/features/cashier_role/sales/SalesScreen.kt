@@ -33,7 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
-import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiEvent
 import dev.mbakasir.com.ui.component.SalesItem
 import dev.mbakasir.com.ui.navigation.cashier_role.Screen
 import dev.mbakasir.com.ui.theme.dark

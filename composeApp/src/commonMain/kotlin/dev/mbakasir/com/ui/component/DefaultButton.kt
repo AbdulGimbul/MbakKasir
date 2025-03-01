@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.primary
 
 @Composable
 fun DefaultButton(
@@ -21,7 +22,7 @@ fun DefaultButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = dev.mbakasir.com.ui.theme.primary,
+            containerColor = primary,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(10.dp),
