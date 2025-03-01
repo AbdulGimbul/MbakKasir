@@ -27,7 +27,7 @@ abstract class ProductMbakKasirDatabase : RoomDatabase() {
     }
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-internal expect object ProductDatabaseConstructor : RoomDatabaseConstructor<ProductMbakKasirDatabase> {
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object ProductDatabaseConstructor : RoomDatabaseConstructor<ProductMbakKasirDatabase> {
     override fun initialize(): ProductMbakKasirDatabase
 }
