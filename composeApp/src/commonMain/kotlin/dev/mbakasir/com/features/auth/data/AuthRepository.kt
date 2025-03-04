@@ -2,6 +2,7 @@ package dev.mbakasir.com.features.auth.data
 
 import dev.mbakasir.com.features.auth.domain.LoginApiModel
 import dev.mbakasir.com.features.auth.domain.LoginRequest
+import dev.mbakasir.com.features.auth.domain.LogoutApiModel
 import dev.mbakasir.com.features.auth.domain.SalesHistoryApiModel
 import dev.mbakasir.com.features.auth.domain.UserData
 import dev.mbakasir.com.network.NetworkException
@@ -17,5 +18,5 @@ interface AuthRepository {
     ): NetworkResult<SalesHistoryApiModel, NetworkException>
 
     suspend fun userInfo(): UserData
-    suspend fun logout()
+    suspend fun logout(): NetworkResult<LogoutApiModel, NetworkException>
 }

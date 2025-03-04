@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,6 +35,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import dev.mbakasir.com.features.auth.domain.Toko
+import dev.mbakasir.com.features.auth.domain.User
+import dev.mbakasir.com.ui.component.EnhancedLoading
+import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.primary_text
+import dev.mbakasir.com.ui.theme.red
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
@@ -43,7 +53,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
 
     if (uiState.isLogout) {
         LaunchedEffect(Unit) {
-            navController.navigate(dev.mbakasir.com.ui.navigation.cashier_role.Screen.Login.route) {
+            navController.navigate(Screen.Login.route) {
                 popUpTo(0) {
                     inclusive = true
                 }
@@ -63,78 +73,86 @@ fun Profile(
     uiState: ProfileUiState,
     onEvent: (ProfileUiEvent) -> Unit
 ) {
-
-    Column {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .weight(1f)
+    if (uiState.isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Box(
+            CircularProgressIndicator(color = primary)
+        }
+    } else {
+        Column {
+            Column(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                    .weight(1f)
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
-                        .background(Color.White),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .background(dev.mbakasir.com.ui.theme.primary)
-                )
-                uiState.user?.userInfo?.let { UserInfoHeader(it) }
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = 24.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
+                            .background(Color.White),
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .background(primary)
+                    )
+                    uiState.user?.userInfo?.let { UserInfoHeader(it) }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                uiState.user?.storeInfo?.let { StoreInformationCard(it) }
+                Spacer(modifier = Modifier.height(32.dp))
+                OutlinedButton(
+                    onClick = { onEvent(ProfileUiEvent.Logout) },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = red
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.Logout,
+                        contentDescription = "Logout",
+                        modifier = Modifier.padding(4.dp)
+                    )
+                    Text(
+                        "Logout",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            uiState.user?.storeInfo?.let { StoreInformationCard(it) }
-            Spacer(modifier = Modifier.height(32.dp))
-            OutlinedButton(
-                onClick = { onEvent(ProfileUiEvent.Logout) },
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = dev.mbakasir.com.ui.theme.red),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = dev.mbakasir.com.ui.theme.red
-                ),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.Logout,
-                    contentDescription = "Logout",
-                    modifier = Modifier.padding(4.dp)
+                Text(
+                    text = "Support by Mbakasir.com",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = primary_text
                 )
                 Text(
-                    "Logout",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(4.dp)
+                    text = "POS Ritel Version 0.0.1",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = primary_text
                 )
             }
-        }
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Support by Mbakasir.com",
-                style = MaterialTheme.typography.bodyMedium,
-                color = dev.mbakasir.com.ui.theme.primary_text
-            )
-            Text(
-                text = "POS Ritel Version 0.0.1",
-                style = MaterialTheme.typography.bodyMedium,
-                color = dev.mbakasir.com.ui.theme.primary_text
-            )
         }
     }
 }
 
 @Composable
 fun UserInfoHeader(
-    user: dev.mbakasir.com.features.auth.domain.User
+    user: User
 ) {
     Column(
         modifier = Modifier
@@ -153,25 +171,25 @@ fun UserInfoHeader(
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
-            color = dev.mbakasir.com.ui.theme.dark,
+            color = dark,
             modifier = Modifier.padding(top = 8.dp)
         )
         Text(
             text = user.username,
             style = MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.dark
+            color = dark
         )
         Text(
             text = user.role,
             style = MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.primary_text
+            color = primary_text
         )
     }
 }
 
 @Composable
 fun StoreInformationCard(
-    store: dev.mbakasir.com.features.auth.domain.Toko
+    store: Toko
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -187,7 +205,7 @@ fun StoreInformationCard(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = dev.mbakasir.com.ui.theme.dark
+                color = dark
             )
             Spacer(modifier = Modifier.height(8.dp))
             InfoRow(label = "Nama", info = store.nama)
@@ -208,12 +226,12 @@ fun InfoRow(label: String, info: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.primary_text
+            color = primary_text
         )
         Text(
             text = info,
             style = MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.dark
+            color = dark
         )
     }
 }

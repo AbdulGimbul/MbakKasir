@@ -27,6 +27,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DefaultButton
+import dev.mbakasir.com.ui.component.EnhancedLoading
+import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.primary_text
+import dev.mbakasir.com.ui.theme.secondary_text
 import rememberMessageBarState
 
 @Composable
@@ -39,8 +45,8 @@ fun LoginScreen(
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
             LaunchedEffect(Unit) {
-                navController.navigate(dev.mbakasir.com.ui.navigation.cashier_role.Screen.Home.route) {
-                    popUpTo(dev.mbakasir.com.ui.navigation.cashier_role.Screen.Login.route) {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Login.route) {
                         inclusive = true
                     }
                 }
@@ -89,7 +95,7 @@ fun Login(
                     Text(
                         text = "Welcome",
                         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                        color = dev.mbakasir.com.ui.theme.dark,
+                        color = dark,
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -98,7 +104,7 @@ fun Login(
                             text = "Back",
                             style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                             modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
-                            color = dev.mbakasir.com.ui.theme.dark
+                            color = dark
                         )
                         Text(
                             text = "\uD83D\uDC4B\uD83C\uDFFC",
@@ -109,7 +115,7 @@ fun Login(
                         "Silahkan login ke akun yang sudah ada.",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 24.dp),
-                        color = dev.mbakasir.com.ui.theme.secondary_text
+                        color = secondary_text
                     )
                     DefaultTextField(
                         value = uiState.username,
@@ -145,30 +151,15 @@ fun Login(
                     Text(
                         text = "Support by Mbakasir.com",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = dev.mbakasir.com.ui.theme.primary_text
+                        color = primary_text
                     )
                     Text(
                         text = "POS Ritel Version 0.0.1",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = dev.mbakasir.com.ui.theme.primary_text
+                        color = primary_text
                     )
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-fun EnhancedLoading(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(color = dev.mbakasir.com.ui.theme.primary)
-            Spacer(modifier = Modifier.height(10.dp))
-            Text("Mohon tunggu...")
         }
     }
 }

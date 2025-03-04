@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultTextField
-import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
+import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.SalesItem
 import dev.mbakasir.com.ui.navigation.cashier_role.Screen
 import dev.mbakasir.com.ui.theme.dark

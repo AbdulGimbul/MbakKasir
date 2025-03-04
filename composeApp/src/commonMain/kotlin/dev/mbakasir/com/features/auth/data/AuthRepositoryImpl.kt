@@ -2,6 +2,7 @@ package dev.mbakasir.com.features.auth.data
 
 import dev.mbakasir.com.features.auth.domain.LoginApiModel
 import dev.mbakasir.com.features.auth.domain.LoginRequest
+import dev.mbakasir.com.features.auth.domain.LogoutApiModel
 import dev.mbakasir.com.features.auth.domain.SalesHistoryApiModel
 import dev.mbakasir.com.features.auth.domain.Toko
 import dev.mbakasir.com.features.auth.domain.User
@@ -57,8 +58,16 @@ class AuthRepositoryImpl(
         )
     }
 
-    override suspend fun logout() {
-        requestHandler.httpClient.authProvider<BearerAuthProvider>()?.clearToken()
-        sessionHandler.clearData()
+    override suspend fun logout(): NetworkResult<LogoutApiModel, NetworkException> {
+        val result = requestHandler.post<Unit, LogoutApiModel>(
+            urlPathSegments = listOf("api", "logout")
+        )
+
+        if (result is NetworkResult.Success) {
+            requestHandler.httpClient.authProvider<BearerAuthProvider>()?.clearToken()
+            sessionHandler.clearData()
+        }
+
+        return result
     }
 }

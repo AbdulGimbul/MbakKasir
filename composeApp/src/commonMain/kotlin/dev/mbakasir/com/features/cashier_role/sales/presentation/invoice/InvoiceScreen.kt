@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState
+import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.navigation.cashier_role.Screen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon

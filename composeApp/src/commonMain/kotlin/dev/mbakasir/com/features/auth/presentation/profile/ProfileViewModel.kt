@@ -3,11 +3,14 @@ package dev.mbakasir.com.features.auth.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.mbakasir.com.features.auth.data.AuthRepository
+import dev.mbakasir.com.network.onError
+import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileViewModel(
     private val authRepository: AuthRepository
@@ -30,11 +33,13 @@ class ProfileViewModel(
 
     private fun getUserData() {
         viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 authRepository.userInfo().let {
-                    _uiState.value = _uiState.value.copy(user = it)
+                    _uiState.value = _uiState.value.copy(user = it, isLoading = false)
                 }
             } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false)
                 e.printStackTrace()
             }
         }
@@ -42,12 +47,21 @@ class ProfileViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            try {
-                authRepository.logout().let {
-                    _uiState.value = _uiState.value.copy(isLogout = true)
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+            val result = authRepository.logout()
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
+                    _uiState.value = _uiState.value.copy(
+                        isLogout = true,
+                        isLoading = false
+                    )
+                }.onError {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = it.message,
+                        isLoading = false
+                    )
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }

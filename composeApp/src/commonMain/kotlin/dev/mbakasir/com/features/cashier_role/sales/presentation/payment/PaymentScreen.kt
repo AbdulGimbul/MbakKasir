@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
 import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DisabledTextField
+import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.navigation.cashier_role.Screen

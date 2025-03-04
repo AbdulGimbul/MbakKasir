@@ -52,7 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import dev.mbakasir.com.features.auth.presentation.login.EnhancedLoading
 import dev.mbakasir.com.features.cashier_role.sales.domain.toSerializable
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentOptions
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiEvent
@@ -61,6 +60,7 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.Payment
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.SummaryRow
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DisabledTextField
+import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.EntrySalesItem
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
