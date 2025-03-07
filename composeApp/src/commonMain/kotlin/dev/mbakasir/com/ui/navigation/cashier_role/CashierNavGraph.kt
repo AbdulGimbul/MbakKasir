@@ -60,7 +60,7 @@ import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass) {
+fun CashierNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass, parentNavController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -75,21 +75,21 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
             Scaffold(
                 bottomBar = {
                     if (currentRoute in listOf(
-                            Screen.Home.route,
-                            Screen.Sales.route,
-                            Screen.Product.route,
-                            Screen.Profile.route,
+                            CashierScreen.Home.route,
+                            CashierScreen.Sales.route,
+                            CashierScreen.Product.route,
+                            CashierScreen.Profile.route,
                         )
                     ) {
                         BottomBar(navController)
                     }
                 },
                 floatingActionButton = {
-                    if (currentRoute == Screen.Sales.route) {
+                    if (currentRoute == CashierScreen.Sales.route) {
                         val draftId = generateKodeInvoice()
                         FloatingActionButton(
                             onClick = {
-                                navController.navigate("${Screen.EntrySales.route}/$draftId")
+                                navController.navigate("${CashierScreen.EntrySales.route}/$draftId")
                             },
                             shape = CircleShape,
                             containerColor = primary
@@ -106,7 +106,8 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 NavHostContent(
                     navController = navController,
                     innerPadding = innerPadding,
-                    navigationType = navigationType
+                    navigationType = navigationType,
+                    parentNavController = parentNavController
                 )
             }
         }
@@ -117,10 +118,10 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 content = {
                     Scaffold(
                         floatingActionButton = {
-                            if (currentRoute == Screen.Sales.route) {
+                            if (currentRoute == CashierScreen.Sales.route) {
                                 FloatingActionButton(
                                     onClick = {
-                                        navController.navigate(Screen.EntrySales.route)
+                                        navController.navigate(CashierScreen.EntrySales.route)
                                     },
                                     shape = CircleShape,
                                     containerColor = primary
@@ -137,7 +138,8 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                         NavHostContent(
                             navController = navController,
                             innerPadding = innerPadding,
-                            navigationType = navigationType
+                            navigationType = navigationType,
+                            parentNavController = parentNavController
                         )
                     }
                 }
@@ -150,45 +152,40 @@ fun SetupNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
 fun NavHostContent(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    navigationType: MbakKasirNavigationType
+    navigationType: MbakKasirNavigationType,
+    parentNavController: NavHostController
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route,
+        startDestination = CashierScreen.Home.route,
         modifier = Modifier.padding(innerPadding)
     ) {
-        composable(Screen.Login.route) {
-            LoginScreen(
-                viewModel = koinViewModel<LoginViewModel>(),
-                navController = navController
-            )
-        }
-        composable(Screen.Home.route) {
+        composable(CashierScreen.Home.route) {
             HomeScreen(viewModel = koinViewModel<HomeViewModel>())
         }
-        composable(Screen.Product.route){
+        composable(CashierScreen.Product.route) {
             ProductScreen(viewModel = koinViewModel<ProductViewModel>())
         }
-        composable(Screen.Sales.route) {
+        composable(CashierScreen.Sales.route) {
             SalesScreen(
                 viewModel = koinViewModel<SalesViewModel>(),
                 navController = navController
             )
         }
-        composable(Screen.History.route) {
+        composable(CashierScreen.History.route) {
             HistoryScreen(
                 viewModel = koinViewModel<HistoryViewModel>(),
                 navController = navController
             )
         }
-        composable(Screen.Profile.route) {
+        composable(CashierScreen.Profile.route) {
             ProfileScreen(
                 viewModel = koinViewModel<ProfileViewModel>(),
-                navController = navController
+                navController = parentNavController
             )
         }
         composable(
-            route = "${Screen.EntrySales.route}/{draftId}",
+            route = "${CashierScreen.EntrySales.route}/{draftId}",
         ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             EntrySalesScreen(
@@ -199,7 +196,7 @@ fun NavHostContent(
                 draftId = draftId.toString()
             )
         }
-        composable(route = "${Screen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
+        composable(route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
             arguments = listOf(
                 navArgument("scannedProducts") { nullable = false },
                 navArgument("draftId") { nullable = false }
@@ -216,7 +213,7 @@ fun NavHostContent(
             )
         }
         composable(
-            route = "${Screen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
+            route = "${CashierScreen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
             arguments = listOf(
                 navArgument("paymentData") { nullable = true },
                 navArgument("noInvoice") { nullable = true }
@@ -253,7 +250,7 @@ private fun BottomBar(
                 onClick = {
                     navController.navigate(item.screen.route) {
                         navController.graph.startDestinationRoute?.let {
-                            popUpTo(Screen.Home.route) {
+                            popUpTo(CashierScreen.Home.route) {
                                 saveState = true
                             }
                             restoreState = true
@@ -310,7 +307,7 @@ fun SideBar(navController: NavHostController) {
                     onClick = {
                         navController.navigate(item.screen.route) {
                             navController.graph.startDestinationRoute?.let {
-                                popUpTo(Screen.Home.route) { saveState = true }
+                                popUpTo(CashierScreen.Home.route) { saveState = true }
                                 restoreState = true
                                 launchSingleTop = true
                             }
@@ -329,24 +326,24 @@ enum class MbakKasirNavigationType {
 }
 
 val navigationItems = listOf(
-    BottomRailNavItem(
+    CashierBottomRailNavItem(
         title = "Beranda",
         icon = Icons.Outlined.Home,
-        screen = Screen.Home
+        screen = CashierScreen.Home
     ),
-    BottomRailNavItem(
+    CashierBottomRailNavItem(
         title = "Penjualan",
         icon = Icons.Outlined.ShoppingCart,
-        screen = Screen.Sales
+        screen = CashierScreen.Sales
     ),
-    BottomRailNavItem(
+    CashierBottomRailNavItem(
         title = "Barang",
         icon = Icons.Outlined.Domain,
-        screen = Screen.Product
+        screen = CashierScreen.Product
     ),
-    BottomRailNavItem(
+    CashierBottomRailNavItem(
         title = "Akun",
         icon = Icons.Outlined.AccountCircle,
-        screen = Screen.Profile
+        screen = CashierScreen.Profile
     )
 )

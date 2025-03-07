@@ -5,7 +5,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import dev.mbakasir.com.ui.navigation.cashier_role.SetupNavHost
+import dev.mbakasir.com.ui.navigation.MainNavHost
 import dev.mbakasir.com.ui.theme.PoppinsTypography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -30,7 +30,7 @@ fun App() {
         BindEffect(controller)
          */
 
-        SetupNavHost(
+        MainNavHost(
             navController = navController,
             windowSize = windowSizeClass.windowWidthSizeClass
         )

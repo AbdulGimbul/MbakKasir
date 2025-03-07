@@ -8,5 +8,7 @@ sealed class LoginUiState {
         val errorMessage: String? = null
     ) : LoginUiState()
 
-    data object Authenticated : LoginUiState()
+    data class Authenticated(
+        val role: String = ""
+    ) : LoginUiState()
 }

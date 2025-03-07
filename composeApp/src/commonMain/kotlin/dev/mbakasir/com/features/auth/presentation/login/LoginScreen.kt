@@ -1,11 +1,9 @@
 package dev.mbakasir.com.features.auth.presentation.login
 
 import ContentWithMessageBar
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,12 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DefaultButton
+import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.MainScreen
+import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
-import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import rememberMessageBarState
@@ -44,10 +42,20 @@ fun LoginScreen(
 
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
-            LaunchedEffect(Unit) {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Login.route) {
-                        inclusive = true
+            if (state.role == "Kasir") {
+                LaunchedEffect(Unit) {
+                    navController.navigate(MainScreen.Cashier.route) {
+                        popUpTo(MainScreen.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(MainScreen.Admin.route) {
+                        popUpTo(MainScreen.Login.route) {
+                            inclusive = true
+                        }
                     }
                 }
             }

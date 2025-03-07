@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.SalesItem
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import io.github.alexzhirkevich.compottie.Compottie
@@ -55,10 +55,10 @@ fun SalesScreen(viewModel: SalesViewModel, navController: NavController) {
         uiState = uiState,
         onEvent = viewModel::onEvent,
         moveToEntrySales = {
-            navController.navigate("${Screen.EntrySales.route}/$it")
+            navController.navigate("${CashierScreen.EntrySales.route}/$it")
         },
         moveToHistory = {
-            navController.navigate(Screen.History.route)
+            navController.navigate(CashierScreen.History.route)
         }
     )
 }

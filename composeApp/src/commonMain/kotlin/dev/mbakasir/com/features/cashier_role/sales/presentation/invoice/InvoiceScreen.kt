@@ -45,7 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState
 import dev.mbakasir.com.ui.component.EnhancedLoading
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
@@ -70,8 +70,8 @@ fun InvoiceScreen(
         paymentData = paymentData,
         noInvoice = noInvoice,
         navigateBack = {
-            navController.navigate(Screen.Sales.route) {
-                popUpTo(Screen.Sales.route) {
+            navController.navigate(CashierScreen.Sales.route) {
+                popUpTo(CashierScreen.Sales.route) {
                     inclusive = true
                 }
             }

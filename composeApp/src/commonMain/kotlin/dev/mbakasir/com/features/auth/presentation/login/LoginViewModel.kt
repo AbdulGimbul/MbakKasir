@@ -59,7 +59,7 @@ class LoginViewModel(
                             telp = it.toko.telp,
                             token = it.token
                         )
-                        _uiState.value = LoginUiState.Authenticated
+                        _uiState.value = LoginUiState.Authenticated(role = it.user.role)
                     }
                 }.onError { error ->
                     updateState {
@@ -78,7 +78,7 @@ class LoginViewModel(
             val result = authRepository.isTokenValid("", "", "1", "1")
             withContext(Dispatchers.Main) {
                 result.onSuccess {
-                    _uiState.value = LoginUiState.Authenticated
+                    _uiState.value = LoginUiState.Authenticated()
                 }.onError { error ->
                     updateState {
                         it.copy(errorMessage = error.message)

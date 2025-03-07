@@ -37,8 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.features.auth.domain.Toko
 import dev.mbakasir.com.features.auth.domain.User
-import dev.mbakasir.com.ui.component.EnhancedLoading
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.MainScreen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
@@ -53,8 +53,8 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
 
     if (uiState.isLogout) {
         LaunchedEffect(Unit) {
-            navController.navigate(Screen.Login.route) {
-                popUpTo(0) {
+            navController.navigate(MainScreen.Login.route) {
+                popUpTo(MainScreen.Login.route) {
                     inclusive = true
                 }
                 launchSingleTop = true

@@ -45,7 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.HistoryItem
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
@@ -74,7 +74,7 @@ fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
         uiState = uiState,
         onEvent = { viewModel.onEvent(it) },
         moveToInvoice = {
-            navController.navigate("${Screen.Invoice.route}?noInvoice=$it")
+            navController.navigate("${CashierScreen.Invoice.route}?noInvoice=$it")
         },
         listState = listState
     )

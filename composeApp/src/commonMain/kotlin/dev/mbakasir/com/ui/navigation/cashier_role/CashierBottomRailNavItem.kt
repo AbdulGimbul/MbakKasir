@@ -2,8 +2,8 @@ package dev.mbakasir.com.ui.navigation.cashier_role
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
-data class BottomRailNavItem(
+data class CashierBottomRailNavItem(
     val title: String,
     val icon: ImageVector,
-    val screen: Screen
+    val screen: CashierScreen
 )

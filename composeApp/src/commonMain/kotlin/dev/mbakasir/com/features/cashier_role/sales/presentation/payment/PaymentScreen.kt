@@ -47,7 +47,7 @@ import dev.mbakasir.com.ui.component.DisabledTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
@@ -56,7 +56,6 @@ import dev.mbakasir.com.ui.theme.secondary
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.currencyFormat
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
@@ -76,7 +75,7 @@ fun PaymentScreen(
         uiState = uiState,
         onEvent = { viewModel.onEvent(it) },
         moveToInvoice = {
-            navController.navigate("${Screen.Invoice.route}?paymentData=$it")
+            navController.navigate("${CashierScreen.Invoice.route}?paymentData=$it")
         },
         navigateBack = {
             navController.navigateUp()

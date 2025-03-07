@@ -65,13 +65,12 @@ import dev.mbakasir.com.ui.component.EntrySalesItem
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
-import dev.mbakasir.com.ui.navigation.cashier_role.Screen
+import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import qrscanner.QrScanner
 import rememberMessageBarState
@@ -100,7 +99,7 @@ fun EntrySalesScreen(
             uiState = uiState,
             onEvent = { viewModel.onEvent(it) },
             moveToPayment = { scannedProducts, draftId ->
-                navController.navigate("${Screen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId") {
+                navController.navigate("${CashierScreen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId") {
                     restoreState = true
                 }
             },
