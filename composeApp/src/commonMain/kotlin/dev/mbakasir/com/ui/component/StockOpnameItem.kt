@@ -14,9 +14,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,16 +27,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.mbakasir.com.ui.theme.blue
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.icon
+import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.red
+import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
-fun StockOpnameItem(modifier: Modifier = Modifier) {
-    Card(
+fun StockOpnameItem(
+    price: String,
+    date: String,
+    barcode: String,
+    productName: String,
+    onPreviewClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(0.5.dp, dev.mbakasir.com.ui.theme.stroke)
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -44,27 +59,45 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         imageVector = Icons.Default.AccessTime,
+                        tint = icon,
                         contentDescription = "Lock Clock",
                         modifier = Modifier.padding(end = 4.dp)
                     )
-                    Text(text = "2024-06-30 17:13:00", color = dev.mbakasir.com.ui.theme.primary_text)
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.bodyMedium.copy(color = primary_text)
+                    )
                 }
                 Text(
-                    text = "Rp. 76.790",
-                    color = dev.mbakasir.com.ui.theme.primary_text, fontWeight = FontWeight.SemiBold
+                    text = currencyFormat(price.toDouble()),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = dark,
+                    )
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(16.dp))
             Column {
-                Text(text = "51342344555", color = dev.mbakasir.com.ui.theme.primary_text, fontWeight = FontWeight.SemiBold)
                 Text(
-                    text = "MR POTATO RS BBQ 60GR",
-                    color = dev.mbakasir.com.ui.theme.primary_text,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    text = barcode,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = primary_text
+                    )
+                )
+                Text(
+                    text = productName,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = dark,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -73,7 +106,7 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {},
+                    onClick = onPreviewClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = blue,
                         contentColor = Color.White
@@ -85,11 +118,11 @@ fun StockOpnameItem(modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 OutlinedButton(
-                    onClick = {},
+                    onClick = onDeleteClick,
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(
                         width = 1.dp,
-                        color = dev.mbakasir.com.ui.theme.red
+                        color = red
                     ),
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.weight(1f)

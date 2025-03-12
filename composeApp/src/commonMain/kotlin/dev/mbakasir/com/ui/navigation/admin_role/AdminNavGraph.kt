@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -32,14 +35,19 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.admin_role.product.EntryStockOpnameScreen
 import dev.mbakasir.com.features.admin_role.product.StockOpnamePreviewScreen
-import dev.mbakasir.com.features.admin_role.product.StockOpnameScreen
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameScreen
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
 import dev.mbakasir.com.ui.theme.primary
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun AdminNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass, parentNavController: NavHostController) {
+fun AdminNavHost(
+    navController: NavHostController,
+    windowSize: WindowWidthSizeClass,
+    parentNavController: NavHostController,
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -53,26 +61,25 @@ fun AdminNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
                 bottomBar = {
-                        BottomBar(navController)
+                    BottomBar(navController)
                 },
-//                floatingActionButton = {
-//                    if (currentRoute == AdminScreen.Sales.route) {
-//                        val draftId = generateKodeInvoice()
-//                        FloatingActionButton(
-//                            onClick = {
-//                                navController.navigate("${AdminScreen.EntrySales.route}/$draftId")
-//                            },
-//                            shape = CircleShape,
-//                            containerColor = primary
-//                        ) {
-//                            Icon(
-//                                imageVector = Icons.Default.Add,
-//                                contentDescription = "Add",
-//                                tint = Color.White
-//                            )
-//                        }
-//                    }
-//                }
+                floatingActionButton = {
+                    if (currentRoute == AdminScreen.StockOpname.route) {
+                        FloatingActionButton(
+                            onClick = {
+                                navController.navigate(AdminScreen.EntryStockOpname.route)
+                            },
+                            shape = CircleShape,
+                            containerColor = primary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
             ) { innerPadding ->
                 NavHostContent(
                     navController = navController,
@@ -88,23 +95,23 @@ fun AdminNavHost(navController: NavHostController, windowSize: WindowWidthSizeCl
                 drawerContent = { SideBar(navController) },
                 content = {
                     Scaffold(
-//                        floatingActionButton = {
-//                            if (currentRoute == AdminScreen.Sales.route) {
-//                                FloatingActionButton(
-//                                    onClick = {
-//                                        navController.navigate(AdminScreen.EntrySales.route)
-//                                    },
-//                                    shape = CircleShape,
-//                                    containerColor = primary
-//                                ) {
-//                                    Icon(
-//                                        imageVector = Icons.Default.Add,
-//                                        contentDescription = "Add",
-//                                        tint = Color.White
-//                                    )
-//                                }
-//                            }
-//                        }
+                        floatingActionButton = {
+                            if (currentRoute == AdminScreen.StockOpname.route) {
+                                FloatingActionButton(
+                                    onClick = {
+                                        navController.navigate(AdminScreen.EntryStockOpname.route)
+                                    },
+                                    shape = CircleShape,
+                                    containerColor = primary
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Add",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
                     ) { innerPadding ->
                         NavHostContent(
                             navController = navController,
@@ -144,7 +151,7 @@ fun NavHostContent(
             StockOpnamePreviewScreen()
         }
         composable(AdminScreen.StockOpname.route) {
-            StockOpnameScreen()
+            StockOpnameScreen(viewModel = koinViewModel<StockOpnameViewModel>(), navController = navController)
         }
         composable(AdminScreen.EntryStockOpname.route) {
             EntryStockOpnameScreen()
@@ -251,7 +258,7 @@ val navigationItems = listOf(
     AdminBottomRailNavItem(
         title = "Beranda",
         icon = Icons.Outlined.Home,
-        screen = AdminScreen.StockOpname
+        screen = AdminScreen.EntryStockOpname
     ),
     AdminBottomRailNavItem(
         title = "Stock In/Out",
@@ -261,7 +268,7 @@ val navigationItems = listOf(
     AdminBottomRailNavItem(
         title = "Stock Opname",
         icon = Icons.Outlined.Domain,
-        screen = AdminScreen.EntryStockOpname
+        screen = AdminScreen.StockOpname
     ),
     AdminBottomRailNavItem(
         title = "Akun",

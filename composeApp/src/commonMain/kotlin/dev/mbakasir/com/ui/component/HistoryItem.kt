@@ -25,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.blue
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.secondary_text
 
 @Composable
 fun HistoryItem(
@@ -57,7 +60,7 @@ fun HistoryItem(
                 )
                 Text(
                     text = date,
-                    color = dev.mbakasir.com.ui.theme.secondary_text,
+                    color = secondary_text,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -71,10 +74,10 @@ fun HistoryItem(
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = dev.mbakasir.com.ui.theme.blue),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = blue),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = dev.mbakasir.com.ui.theme.blue
+                    color = blue
                 ),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -96,11 +99,11 @@ fun ItemRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label, color = dev.mbakasir.com.ui.theme.dark,
+            text = label, color = dark,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
         )
         Text(
-            text = value, color = dev.mbakasir.com.ui.theme.dark,
+            text = value, color = dark,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
         )
     }

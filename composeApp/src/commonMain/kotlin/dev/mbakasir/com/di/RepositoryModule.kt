@@ -1,5 +1,8 @@
 package dev.mbakasir.com.di
 
+import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
+import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepositoryImpl
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
 import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.auth.data.AuthRepositoryImpl
 import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
@@ -59,4 +62,12 @@ val provideSalesRepositoryModule = module {
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
     viewModel { SalesViewModel(salesRepository = get()) }
     viewModel { HistoryViewModel(salesRepository = get()) }
+}
+
+val provideStockOpnameRepositoryModule = module {
+    single<StockOpnameRepositoryImpl> {
+        StockOpnameRepositoryImpl(requestHandler = get())
+    }.bind<StockOpnameRepository>()
+    viewModel { StockOpnameViewModel(stockOpnameRepository = get()) }
+
 }
