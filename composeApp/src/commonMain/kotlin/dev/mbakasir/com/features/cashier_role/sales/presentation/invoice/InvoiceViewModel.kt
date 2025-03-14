@@ -2,6 +2,8 @@ package dev.mbakasir.com.features.cashier_role.sales.presentation.invoice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.auth.domain.Toko
+import dev.mbakasir.com.features.auth.domain.User
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.features.cashier_role.sales.domain.toDetailPayment
 import dev.mbakasir.com.network.onError
@@ -95,16 +97,16 @@ class InvoiceViewModel(
         }
     }
 
-    private suspend fun getStoreInfo(): dev.mbakasir.com.features.auth.domain.Toko {
-        return dev.mbakasir.com.features.auth.domain.Toko(
+    private suspend fun getStoreInfo(): Toko {
+        return Toko(
             nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
             alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
             telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
         )
     }
 
-    private suspend fun getUserInfo(): dev.mbakasir.com.features.auth.domain.User {
-        return dev.mbakasir.com.features.auth.domain.User(
+    private suspend fun getUserInfo(): User {
+        return User(
             username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
             nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
             role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"

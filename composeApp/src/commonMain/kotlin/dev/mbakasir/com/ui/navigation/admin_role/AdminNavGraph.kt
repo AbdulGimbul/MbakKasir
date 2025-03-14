@@ -33,10 +33,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
-import dev.mbakasir.com.features.admin_role.product.EntryStockOpnameScreen
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname.EntryStockOpnameScreen
 import dev.mbakasir.com.features.admin_role.product.StockOpnamePreviewScreen
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameScreen
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname.EntryStockOpnameViewModel
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
 import dev.mbakasir.com.ui.theme.primary
@@ -139,7 +140,10 @@ fun NavHostContent(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(AdminScreen.Home.route) {
-            EntryStockOpnameScreen()
+            ProfileScreen(
+                viewModel = koinViewModel<ProfileViewModel>(),
+                navController = parentNavController
+            )
         }
         composable(AdminScreen.Profile.route) {
             ProfileScreen(
@@ -154,7 +158,7 @@ fun NavHostContent(
             StockOpnameScreen(viewModel = koinViewModel<StockOpnameViewModel>(), navController = navController)
         }
         composable(AdminScreen.EntryStockOpname.route) {
-            EntryStockOpnameScreen()
+            EntryStockOpnameScreen(viewModel = koinViewModel<EntryStockOpnameViewModel>(), navController = navController)
         }
         composable(AdminScreen.StockOpnamePreview.route) {
             StockOpnamePreviewScreen()

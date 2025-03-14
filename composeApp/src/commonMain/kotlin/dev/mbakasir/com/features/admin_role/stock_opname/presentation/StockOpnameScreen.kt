@@ -180,7 +180,8 @@ fun StockOpname(
                         price = it.nilai,
                         date = it.tanggal,
                         barcode = it.namaBarang,
-                        onClick = {},
+                        onPreviewClick = {},
+                        onDeleteClick = {},
                         productName = it.keterangan
                     )
                 }

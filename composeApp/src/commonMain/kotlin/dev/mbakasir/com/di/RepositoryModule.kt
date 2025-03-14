@@ -3,11 +3,11 @@ package dev.mbakasir.com.di
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepositoryImpl
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
+import dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname.EntryStockOpnameViewModel
 import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.auth.data.AuthRepositoryImpl
 import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
-import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryViewModel
 import dev.mbakasir.com.features.cashier_role.home.data.HomeRepository
 import dev.mbakasir.com.features.cashier_role.home.data.HomeRepositoryImpl
 import dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel
@@ -18,6 +18,7 @@ import dev.mbakasir.com.features.cashier_role.sales.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepositoryImpl
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
+import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentViewModel
 import org.koin.core.module.dsl.viewModel
@@ -66,8 +67,8 @@ val provideSalesRepositoryModule = module {
 
 val provideStockOpnameRepositoryModule = module {
     single<StockOpnameRepositoryImpl> {
-        StockOpnameRepositoryImpl(requestHandler = get())
+        StockOpnameRepositoryImpl(productDao = get(), requestHandler = get())
     }.bind<StockOpnameRepository>()
     viewModel { StockOpnameViewModel(stockOpnameRepository = get()) }
-
+    viewModel { EntryStockOpnameViewModel(stockOpnameRepository = get(), authRepository = get()) }
 }
