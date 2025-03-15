@@ -39,4 +39,7 @@ interface ProductDao {
 
     @Query("SELECT COUNT(*) FROM products")
     fun calculateTotalProducts(): Flow<Int>
+
+    @Query("UPDATE products SET stok = :newStok WHERE idBarang = :id")
+    suspend fun updateStockById(id: String, newStok: String)
 }

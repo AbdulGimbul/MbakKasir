@@ -19,7 +19,7 @@ class StockOpnameViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         StockOpnameUiState(
-            startDate = getLastWeekDate(),
+            startDate = getTodayDate(),
             endDate = getTodayDate()
         )
     )
@@ -61,13 +61,15 @@ class StockOpnameViewModel(
             withContext(Dispatchers.Main) {
                 result.onSuccess { response ->
                     if (response.code == "200") {
-                        val updatedStockOpname =
-                            _uiState.value.stockOpname?.let { currentStockOpname ->
-                                currentStockOpname.copy(
-                                    data = currentStockOpname.data + response.data
-                                )
-                            } ?: response
+                        val currentData = _uiState.value.stockOpname?.data ?: emptyList()
 
+                        val newData = if (currentStockOpnamePage == 1) {
+                            response.data
+                        } else {
+                            currentData + response.data
+                        }
+
+                        val updatedStockOpname = response.copy(data = newData.distinct())
                         _uiState.value = _uiState.value.copy(stockOpname = updatedStockOpname)
                         currentStockOpnamePage++
                     }
@@ -76,9 +78,16 @@ class StockOpnameViewModel(
                 }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
-
-
             }
         }
+    }
+
+    fun loadData() {
+        currentStockOpnamePage = 1
+        _uiState.value = _uiState.value.copy(
+            stockOpname = null,
+            errorMessage = null
+        )
+        getStockOpname(_uiState.value.startDate, _uiState.value.endDate)
     }
 }

@@ -101,6 +101,12 @@ class EntryStockOpnameViewModel(
                     _uiState.value = _uiState.value.copy(
                         updateStockResponse = it, isLoading = false
                     )
+                    if (it.code == "200") {
+                        stockOpnameRepository.updateStokById(
+                            id = _uiState.value.product.idBarang,
+                            newStok = _uiState.value.product.jumlah
+                        )
+                    }
                 }.onError {
                     _uiState.value =
                         _uiState.value.copy(errorMessage = it.message, isLoading = false)

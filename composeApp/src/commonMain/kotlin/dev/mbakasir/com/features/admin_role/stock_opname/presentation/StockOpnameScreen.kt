@@ -37,8 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.StockOpnameItem
 import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
 import dev.mbakasir.com.ui.theme.dark
@@ -53,13 +57,21 @@ import dev.mbakasir.com.utils.formatDateRange
 fun StockOpnameScreen(viewModel: StockOpnameViewModel, navController: NavController) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.loadData()
+            listState.scrollToItem(0)
+        }
+    }
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisibleIndex ->
                 val stockOpnameCount = state.stockOpname?.data?.size ?: 0
-                if (lastVisibleIndex != null) {
-                    if (lastVisibleIndex >= stockOpnameCount - 1 && stockOpnameCount > 0) {
+                if (lastVisibleIndex != null && stockOpnameCount > 0) {
+                    if (lastVisibleIndex >= stockOpnameCount - 1) {
                         viewModel.onEvent(StockOpnameUiEvent.GetStockOpname)
                     }
                 }
@@ -92,12 +104,7 @@ fun StockOpname(
         modifier = Modifier.fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(
-            "Stock Opname",
-            style = MaterialTheme.typography.titleLarge,
-            color = dark,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+        HeadlineText("Stock Opname", modifier = Modifier.padding(bottom = 32.dp))
         OutlinedTextField(
             value = selectedDateRange,
             onValueChange = {},
@@ -182,7 +189,8 @@ fun StockOpname(
                         barcode = it.namaBarang,
                         onPreviewClick = {},
                         onDeleteClick = {},
-                        productName = it.keterangan
+                        productName = it.keterangan,
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
             }

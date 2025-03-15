@@ -42,6 +42,10 @@ class StockOpnameRepositoryImpl(
         return productDao.searchProductsByBarcode(barcode)
     }
 
+    override suspend fun updateStokById(id: String, newStok: String) {
+        return productDao.updateStockById(id, newStok)
+    }
+
     override suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?> {
         return productDao.getProductByBarcode(barcode)
     }

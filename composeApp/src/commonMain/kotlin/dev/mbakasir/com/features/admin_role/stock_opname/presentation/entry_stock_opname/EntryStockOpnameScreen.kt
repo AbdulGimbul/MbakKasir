@@ -1,11 +1,13 @@
 package dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,6 +40,7 @@ import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultButton
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DisabledTextField
+import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
@@ -73,15 +76,14 @@ fun EntryStockOpname(
 
     Column(
         modifier = Modifier.fillMaxSize()
-            .imePadding()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text("Entry:", style = MaterialTheme.typography.titleLarge, color = dark)
-        Text(
-            "Stock Opname",
-            style = MaterialTheme.typography.titleLarge,
-            color = secondary_text,
+        HeadlineText("Entry:")
+        Spacer(modifier = Modifier.width(8.dp))
+        HeadlineText(
+            text = "Stock Opname",
+            color = primary_text,
             modifier = Modifier.padding(bottom = 32.dp)
         )
         ExposedDropdownMenuBox(
@@ -228,7 +230,7 @@ fun EntryStockOpname(
             modifier = Modifier.fillMaxWidth(),
         )
         if (uiState.isLoading) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(modifier = Modifier.padding(top = 24.dp))
         } else {
             DefaultButton(
                 text = "Simpan",

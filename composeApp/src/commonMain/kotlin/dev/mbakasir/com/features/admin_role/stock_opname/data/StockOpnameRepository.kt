@@ -20,4 +20,5 @@ interface StockOpnameRepository {
 
     suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?>
     suspend fun searchProductsByBarcode(barcode: String): Flow<List<ProductEntity>>
+    suspend fun updateStokById(id: String, newStok: String)
 }
