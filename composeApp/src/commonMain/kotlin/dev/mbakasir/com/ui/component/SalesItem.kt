@@ -66,7 +66,11 @@ fun SalesItem(
                 color = if (product.draft.isPrinted) dev.mbakasir.com.ui.theme.yellow else dev.mbakasir.com.ui.theme.red
             )
             Spacer(modifier = Modifier.height(16.dp))
-            ItemRowSales(label = product.draft.cashier, value = product.draft.draftId, color = dev.mbakasir.com.ui.theme.dark)
+            ItemRowSales(
+                label = product.draft.cashier,
+                value = product.draft.draftId,
+                color = dev.mbakasir.com.ui.theme.dark
+            )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
-import dev.mbakasir.com.utils.getLastWeekDate
 import dev.mbakasir.com.utils.getTodayDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

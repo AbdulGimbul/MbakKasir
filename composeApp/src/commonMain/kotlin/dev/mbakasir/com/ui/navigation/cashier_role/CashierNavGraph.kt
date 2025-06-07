@@ -34,8 +34,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowWidthSizeClass
-import dev.mbakasir.com.features.auth.presentation.login.LoginScreen
-import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
 import dev.mbakasir.com.features.cashier_role.home.presentation.HomeScreen
@@ -60,7 +58,11 @@ import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CashierNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass, parentNavController: NavHostController) {
+fun CashierNavHost(
+    navController: NavHostController,
+    windowSize: WindowWidthSizeClass,
+    parentNavController: NavHostController
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -196,7 +198,8 @@ fun NavHostContent(
                 draftId = draftId.toString()
             )
         }
-        composable(route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
+        composable(
+            route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
             arguments = listOf(
                 navArgument("scannedProducts") { nullable = false },
                 navArgument("draftId") { nullable = false }

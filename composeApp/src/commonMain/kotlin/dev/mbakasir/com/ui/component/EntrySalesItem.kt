@@ -72,7 +72,8 @@ fun EntrySalesItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    dev.mbakasir.com.utils.currencyFormat(product.hargaItem.toDouble()), color = dev.mbakasir.com.ui.theme.dark,
+                    dev.mbakasir.com.utils.currencyFormat(product.hargaItem.toDouble()),
+                    color = dev.mbakasir.com.ui.theme.dark,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 Row(

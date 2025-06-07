@@ -46,6 +46,7 @@ fun LoginScreen(
 
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
+            println("cek state ${state.role}")
             if (state.role == "Kasir") {
                 LaunchedEffect(Unit) {
                     navController.navigate(MainScreen.Cashier.route) {

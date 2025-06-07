@@ -27,7 +27,7 @@ class ProductViewModel(
         getTotalProduct()
     }
 
-     fun getTopProduct() {
+    fun getTopProduct() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch {
@@ -51,7 +51,8 @@ class ProductViewModel(
                 e.printStackTrace()
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
             } finally {
-                _uiState.value = _uiState.value.copy(isLoading = false)            }
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
         }
     }
 

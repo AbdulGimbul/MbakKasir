@@ -16,5 +16,6 @@ data class ProductEntity(
     var satuan: String = "",
     var hargaJual: String = "",
     var stok: String = "",
-    val createdAt: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val createdAt: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
 )

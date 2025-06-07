@@ -64,8 +64,8 @@ import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.EntrySalesItem
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
-import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
+import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text

@@ -2,24 +2,29 @@ package dev.mbakasir.com.features.cashier_role.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.cashier_role.home.data.HomeRepository
+import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
 import dev.mbakasir.com.features.cashier_role.product.domain.toProduct
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel(
-    private val homeRepository: dev.mbakasir.com.features.cashier_role.home.data.HomeRepository,
-    private val productRepository: dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
+    private val homeRepository: HomeRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
+        getSalesReport()
         fetchProducts()
     }
 
@@ -47,6 +52,24 @@ class HomeViewModel(
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
+        }
+    }
+
+    private fun getSalesReport() {
+        viewModelScope.launch {
+            val result = homeRepository.getSalesReport()
+            withContext(Dispatchers.Main) {
+                result.onSuccess { data ->
+                    _uiState.value = _uiState.value.copy(
+                        nominalPenjualan = data.nominalSales.data,
+                        jumlahPenjualan = data.totalSales.data,
+                        jumlahPembeli = data.totalCustomers.data
+                    )
+                }.onError { error ->
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                }
+            }
+
         }
     }
 }

@@ -38,7 +38,11 @@ fun StockOpnamePreviewScreen() {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text("Preview:", style = MaterialTheme.typography.titleLarge, color = dev.mbakasir.com.ui.theme.dark)
+            Text(
+                "Preview:",
+                style = MaterialTheme.typography.titleLarge,
+                color = dev.mbakasir.com.ui.theme.dark
+            )
             Text(
                 "Stock Opname",
                 style = MaterialTheme.typography.titleLarge,

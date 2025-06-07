@@ -13,5 +13,6 @@ data class ProductUiState(
     val paymentResponse: CreatePaymentApiModel? = null,
     val productList: List<ProductEntity> = emptyList(),
     val totalProduct: Int = 0,
-    val latestUpdate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val latestUpdate: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
 )

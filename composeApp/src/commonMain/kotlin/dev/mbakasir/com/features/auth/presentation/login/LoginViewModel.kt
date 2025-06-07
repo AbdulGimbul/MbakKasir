@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -92,7 +93,8 @@ class LoginViewModel(
             val result = authRepository.isTokenValid("", "", "1", "1")
             withContext(Dispatchers.Main) {
                 result.onSuccess {
-                    _uiState.value = LoginUiState.Authenticated()
+                    val role = sessionHandler.getRole().first()
+                    _uiState.value = LoginUiState.Authenticated(role = role)
                 }.onError { error ->
                     updateState {
                         it.copy(errorMessage = error.message)

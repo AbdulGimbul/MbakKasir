@@ -45,7 +45,6 @@ import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.StockOpnameItem
 import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
-import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text

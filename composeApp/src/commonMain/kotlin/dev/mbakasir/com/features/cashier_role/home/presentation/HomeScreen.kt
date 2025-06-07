@@ -19,12 +19,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_bell
 import mbakkasir.composeapp.generated.resources.img_jml_sales
@@ -34,29 +36,35 @@ import mbakkasir.composeapp.generated.resources.profile
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
+
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Home()
+    Home(
+        uiState = uiState
+    )
 
 }
 
 @Composable
-fun Home() {
+fun Home(
+    uiState: HomeUiState
+) {
 
     Column(modifier = Modifier.padding(16.dp).statusBarsPadding()) {
         HeaderSection()
         Spacer(modifier = Modifier.height(24.dp))
         StatCard(
             title = "Nominal Penjualan",
-            value = "Rp. 60.000.000",
+            value = uiState.nominalPenjualan,
             imageRes = Res.drawable.img_jml_sales,
             cardColor = dev.mbakasir.com.ui.theme.cyanLight3
         )
         Spacer(modifier = Modifier.height(16.dp))
         StatCard(
             title = "Jumlah Penjualan",
-            value = "1.000",
+            value = uiState.jumlahPenjualan.substringBefore(" "),
             suffix = "items",
             imageRes = Res.drawable.img_nom_sales,
             cardColor = dev.mbakasir.com.ui.theme.pinkLight3
@@ -64,7 +72,7 @@ fun Home() {
         Spacer(modifier = Modifier.height(16.dp))
         StatCard(
             title = "Jumlah Pembeli",
-            value = "99",
+            value = uiState.jumlahPembeli.substringBefore(" "),
             suffix = "orang",
             imageRes = Res.drawable.img_users_sales,
             cardColor = dev.mbakasir.com.ui.theme.purpleLight3
@@ -86,7 +94,11 @@ fun HeaderSection() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
-            Text("Role", style = MaterialTheme.typography.bodyMedium, color = dev.mbakasir.com.ui.theme.dark)
+            Text(
+                "Role",
+                style = MaterialTheme.typography.bodyMedium,
+                color = dev.mbakasir.com.ui.theme.dark
+            )
             Text(
                 "Penjualan",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -132,7 +144,11 @@ fun StatCard(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(title, style = MaterialTheme.typography.bodySmall, color = dev.mbakasir.com.ui.theme.secondary_text)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = dev.mbakasir.com.ui.theme.secondary_text
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.Bottom
