@@ -2,6 +2,7 @@ package dev.mbakasir.com.features.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plusmobileapps.konnectivity.Konnectivity
 import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.auth.domain.LoginRequest
 import dev.mbakasir.com.network.onError
@@ -17,6 +18,7 @@ import kotlinx.coroutines.withContext
 class LoginViewModel(
     private val sessionHandler: SessionHandler,
     private val authRepository: AuthRepository,
+    private val konnectivity: Konnectivity
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.NotAuthenticated())
@@ -24,6 +26,7 @@ class LoginViewModel(
 
     init {
         checkTokenValidity()
+        observeConnectivity()
     }
 
     fun onEvent(uiEvent: LoginUiEvent) {
@@ -32,6 +35,16 @@ class LoginViewModel(
             is LoginUiEvent.PasswordChanged -> updateState { it.copy(password = uiEvent.password) }
             is LoginUiEvent.Login -> {
                 login()
+            }
+        }
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            konnectivity.isConnectedState.collect { isConnected ->
+                withContext(Dispatchers.Main) {
+                    updateState { it.copy(isConnected = isConnected) }
+                }
             }
         }
     }

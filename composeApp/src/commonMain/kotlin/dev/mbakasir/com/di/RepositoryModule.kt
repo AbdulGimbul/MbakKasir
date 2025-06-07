@@ -1,5 +1,6 @@
 package dev.mbakasir.com.di
 
+import com.plusmobileapps.konnectivity.Konnectivity
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepositoryImpl
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
@@ -32,7 +33,14 @@ val provideAuthRepositoryModule = module {
             sessionHandler = get()
         )
     }.bind<AuthRepository>()
-    viewModel { LoginViewModel(sessionHandler = get(), authRepository = get()) }
+    single { Konnectivity() }
+    viewModel {
+        LoginViewModel(
+            sessionHandler = get(),
+            authRepository = get(),
+            konnectivity = get()
+        )
+    }
     viewModel { ProfileViewModel(authRepository = get()) }
 }
 

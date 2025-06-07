@@ -5,7 +5,8 @@ sealed class LoginUiState {
         val username: String = "",
         val password: String = "",
         val isLoading: Boolean = false,
-        val errorMessage: String? = null
+        val errorMessage: String? = null,
+        val isConnected: Boolean = true,
     ) : LoginUiState()
 
     data class Authenticated(

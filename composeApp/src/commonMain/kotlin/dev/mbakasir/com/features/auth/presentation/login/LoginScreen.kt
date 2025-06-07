@@ -97,10 +97,12 @@ fun Login(
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(16.dp)
+                    modifier = Modifier
                         .weight(1f),
                 ) {
                     Spacer(modifier = Modifier.height(40.dp))
@@ -160,32 +162,39 @@ fun Login(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
+                    if (uiState.isConnected) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Supported by ",
+                                style = MaterialTheme.typography.bodyMedium.copy(primary_text),
+                            )
+                            Text(
+                                text = "Mbakasir.com",
+                                style = MaterialTheme.typography.bodyMedium.copy(color = primary_text),
+                                modifier = Modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    getBrowserHelper().openBrowser("https://mbakasir.com/")
+                                }
+                            )
+                        }
                         Text(
-                            text = "Supported by ",
-                            style = MaterialTheme.typography.bodyMedium.copy(primary_text),
+                            text = "POS Ritel Version 0.0.1",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primary_text
                         )
+                    } else {
                         Text(
-                            text = "Mbakasir.com",
-                            style = MaterialTheme.typography.bodyMedium.copy(color = primary_text),
-                            modifier = Modifier.clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                getBrowserHelper().openBrowser("https://mbakasir.com/")
-                            }
+                            text = "Offline, tidak terhubung ke server.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primary_text
                         )
                     }
-                    Text(
-                        text = "POS Ritel Version 0.0.1",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = primary_text
-                    )
                 }
             }
         }
