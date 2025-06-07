@@ -1,7 +1,7 @@
 package dev.mbakasir.com
 
 import androidx.compose.ui.window.ComposeUIViewController
-import di.initKoin
+import dev.mbakasir.com.di.initKoin
 
 fun MainViewController() = ComposeUIViewController(
     configure = {
