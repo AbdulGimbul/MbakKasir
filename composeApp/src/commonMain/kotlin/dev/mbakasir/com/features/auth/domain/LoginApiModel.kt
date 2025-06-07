@@ -1,5 +1,6 @@
 package dev.mbakasir.com.features.auth.domain
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,4 +24,14 @@ data class Toko(
     val nama: String,
     val alamat: String,
     val telp: String
+)
+
+@Serializable
+data class GetVersionApiModel(
+    @SerialName("Name")
+    val name: String,
+    @SerialName("Version")
+    val version: String,
+    @SerialName("Website")
+    val website: String
 )

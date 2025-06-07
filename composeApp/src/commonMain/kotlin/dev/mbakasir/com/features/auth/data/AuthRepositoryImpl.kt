@@ -1,5 +1,6 @@
 package dev.mbakasir.com.features.auth.data
 
+import dev.mbakasir.com.features.auth.domain.GetVersionApiModel
 import dev.mbakasir.com.features.auth.domain.LoginApiModel
 import dev.mbakasir.com.features.auth.domain.LoginRequest
 import dev.mbakasir.com.features.auth.domain.LogoutApiModel
@@ -69,5 +70,11 @@ class AuthRepositoryImpl(
         }
 
         return result
+    }
+
+    override suspend fun getVersion(): NetworkResult<GetVersionApiModel, NetworkException> {
+        return requestHandler.get(
+            urlPathSegments = listOf("api", "version")
+        )
     }
 }

@@ -3,6 +3,8 @@ package dev.mbakasir.com.features.auth.presentation.profile
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,11 +41,11 @@ import androidx.navigation.NavController
 import dev.mbakasir.com.features.auth.domain.Toko
 import dev.mbakasir.com.features.auth.domain.User
 import dev.mbakasir.com.ui.navigation.MainScreen
-import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.red
+import dev.mbakasir.com.utils.getBrowserHelper
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.account
 import org.jetbrains.compose.resources.painterResource
@@ -135,13 +138,28 @@ fun Profile(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Supported by ",
+                        style = MaterialTheme.typography.bodyMedium.copy(primary_text),
+                    )
+                    Text(
+                        text = "Mbakasir.com",
+                        style = MaterialTheme.typography.bodyMedium.copy(color = primary_text),
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            getBrowserHelper().openBrowser("https://mbakasir.com/")
+                        }
+                    )
+                }
                 Text(
-                    text = "Support by Mbakasir.com",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = primary_text
-                )
-                Text(
-                    text = "POS Ritel Version 0.0.1",
+                    text = uiState.version,
                     style = MaterialTheme.typography.bodyMedium,
                     color = primary_text
                 )

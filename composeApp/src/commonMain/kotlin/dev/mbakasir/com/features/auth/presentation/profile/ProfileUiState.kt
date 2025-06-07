@@ -4,6 +4,7 @@ import dev.mbakasir.com.features.auth.domain.UserData
 
 data class ProfileUiState(
     val user: UserData? = null,
+    val version: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isLogout: Boolean = false

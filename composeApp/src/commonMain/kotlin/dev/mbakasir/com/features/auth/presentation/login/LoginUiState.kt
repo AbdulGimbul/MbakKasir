@@ -4,6 +4,7 @@ sealed class LoginUiState {
     data class NotAuthenticated(
         val username: String = "",
         val password: String = "",
+        val version: String = "",
         val isLoading: Boolean = false,
         val errorMessage: String? = null,
         val isConnected: Boolean = true,

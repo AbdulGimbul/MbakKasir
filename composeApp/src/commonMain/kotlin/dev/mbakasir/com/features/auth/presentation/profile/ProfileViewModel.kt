@@ -23,6 +23,7 @@ class ProfileViewModel(
         if (_uiState.value.user == null) {
             getUserData()
         }
+        getVersion()
     }
 
     fun onEvent(event: ProfileUiEvent) {
@@ -61,6 +62,21 @@ class ProfileViewModel(
                         errorMessage = it.message,
                         isLoading = false
                     )
+                }
+            }
+        }
+    }
+
+    private fun getVersion() {
+        viewModelScope.launch {
+            viewModelScope.launch {
+                val result = authRepository.getVersion()
+                withContext(Dispatchers.Main) {
+                    result.onSuccess { data ->
+                        _uiState.value = _uiState.value.copy(version = data.version)
+                    }.onError { error ->
+                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                    }
                 }
             }
         }

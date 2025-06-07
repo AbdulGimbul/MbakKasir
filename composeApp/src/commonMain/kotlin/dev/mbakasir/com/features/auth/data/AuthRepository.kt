@@ -1,5 +1,6 @@
 package dev.mbakasir.com.features.auth.data
 
+import dev.mbakasir.com.features.auth.domain.GetVersionApiModel
 import dev.mbakasir.com.features.auth.domain.LoginApiModel
 import dev.mbakasir.com.features.auth.domain.LoginRequest
 import dev.mbakasir.com.features.auth.domain.LogoutApiModel
@@ -19,4 +20,5 @@ interface AuthRepository {
 
     suspend fun userInfo(): UserData
     suspend fun logout(): NetworkResult<LogoutApiModel, NetworkException>
+    suspend fun getVersion(): NetworkResult<GetVersionApiModel, NetworkException>
 }

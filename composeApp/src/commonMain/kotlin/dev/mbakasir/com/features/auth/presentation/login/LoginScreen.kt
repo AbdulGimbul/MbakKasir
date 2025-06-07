@@ -184,7 +184,7 @@ fun Login(
                             )
                         }
                         Text(
-                            text = "POS Ritel Version 0.0.1",
+                            text = uiState.version,
                             style = MaterialTheme.typography.bodyMedium,
                             color = primary_text
                         )

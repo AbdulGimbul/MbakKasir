@@ -27,6 +27,7 @@ class LoginViewModel(
     init {
         checkTokenValidity()
         observeConnectivity()
+        getVersion()
     }
 
     fun onEvent(uiEvent: LoginUiEvent) {
@@ -99,6 +100,21 @@ class LoginViewModel(
                 }
 
                 updateState { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun getVersion() {
+        viewModelScope.launch {
+            val result = authRepository.getVersion()
+            withContext(Dispatchers.Main) {
+                result.onSuccess { data ->
+                    updateState { it.copy(version = data.version) }
+                }.onError { error ->
+                    updateState {
+                        it.copy(errorMessage = error.message)
+                    }
+                }
             }
         }
     }
