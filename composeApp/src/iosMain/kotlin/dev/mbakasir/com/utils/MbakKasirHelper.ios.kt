@@ -11,3 +11,12 @@ actual fun currencyFormat(
 }
 
 actual interface JavaSerializable
+
+class IosBrowserHelper : BrowserHelper {
+    override fun openBrowser(url: String) {
+        val nsUrl = NSURL.URLWithString(url) ?: return
+        UIApplication.sharedApplication.openURL(nsUrl)
+    }
+}
+
+actual fun getBrowserHelper(): BrowserHelper = IosBrowserHelper()

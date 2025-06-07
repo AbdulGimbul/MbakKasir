@@ -123,3 +123,9 @@ fun getLastWeekDate(): String {
         lastWeek.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     )
 }
+
+expect fun getBrowserHelper(): BrowserHelper
+
+interface BrowserHelper {
+    fun openBrowser(url: String)
+}

@@ -1,11 +1,15 @@
 package dev.mbakasir.com.features.auth.presentation.login
 
 import ContentWithMessageBar
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
@@ -16,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,11 +31,10 @@ import dev.mbakasir.com.ui.component.DefaultButton
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.navigation.MainScreen
-import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
-import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.utils.getBrowserHelper
 import rememberMessageBarState
 
 @Composable
@@ -88,7 +92,7 @@ fun Login(
     ContentWithMessageBar(
         messageBarState = state, errorMaxLines = 2, showCopyButton = false,
         visibilityDuration = 4000L,
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier.statusBarsPadding().navigationBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
@@ -156,11 +160,27 @@ fun Login(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Support by Mbakasir.com",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = primary_text
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Supported by ",
+                            style = MaterialTheme.typography.bodyMedium.copy(primary_text),
+                        )
+                        Text(
+                            text = "Mbakasir.com",
+                            style = MaterialTheme.typography.bodyMedium.copy(color = primary_text),
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                getBrowserHelper().openBrowser("https://mbakasir.com/")
+                            }
+                        )
+                    }
                     Text(
                         text = "POS Ritel Version 0.0.1",
                         style = MaterialTheme.typography.bodyMedium,
