@@ -5,6 +5,7 @@ import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentRequest
 import dev.mbakasir.com.features.cashier_role.sales.domain.HistoryApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.InvoiceApiModel
+import dev.mbakasir.com.features.cashier_role.sales.domain.PelangganApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
@@ -39,4 +40,6 @@ interface SalesRepository {
         page: String,
         perPage: String
     ): NetworkResult<HistoryApiModel, NetworkException>
+
+    suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
 }

@@ -1,6 +1,5 @@
 package dev.mbakasir.com.features.cashier_role.sales.presentation.payment
 
-
 sealed class PaymentUiEvent {
     data class UangDiterimaChanged(val uangDiterima: String) : PaymentUiEvent()
     data class DeleteScannedProducts(val draftId: String) : PaymentUiEvent()
@@ -14,4 +13,6 @@ sealed class PaymentUiEvent {
     data class SelectedDateChanged(val date: String) : PaymentUiEvent()
     data class DraftIsPrinted(val draftId: String) : PaymentUiEvent()
     data object DismissDialog : PaymentUiEvent()
+
+    data class OnSearchCustChanged(val searchCust: String) : PaymentUiEvent()
 }

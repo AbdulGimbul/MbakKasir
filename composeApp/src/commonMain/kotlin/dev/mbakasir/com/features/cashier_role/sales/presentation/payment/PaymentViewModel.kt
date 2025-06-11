@@ -25,6 +25,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     init {
         val isConnected = _connectivity.value.isConnected
         _uiState.value = _uiState.value.copy(isConnected = isConnected)
+        getCustomers()
     }
 
     fun onEvent(event: PaymentUiEvent) {
@@ -83,6 +84,10 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                         subtotal = subtotal
                     )
             }
+
+            is PaymentUiEvent.OnSearchCustChanged -> {
+                _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
+            }
         }
     }
 
@@ -96,7 +101,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                     bayar = _uiState.value.uangDiterima,
                     metode = _uiState.value.paymentMethod,
                     kasir = "3",
-                    cus = "1",
+                    cus = _uiState.value.searchCust,
                     nominalPpn = "0",
                     tempo = _uiState.value.selectedDate,
                     detil = _uiState.value.products.map { it.toDetailPayload() }
@@ -132,6 +137,17 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                     dueDate = _uiState.value.selectedDate,
                     isPrinted = true
                 )
+            }
+        }
+    }
+
+    private fun getCustomers() {
+        viewModelScope.launch {
+            val result = salesRepository.getCustomers()
+            result.onSuccess {
+                _uiState.value = _uiState.value.copy(customers = it.customers)
+            }.onError {
+                _uiState.value = _uiState.value.copy(errorMessage = it.message)
             }
         }
     }

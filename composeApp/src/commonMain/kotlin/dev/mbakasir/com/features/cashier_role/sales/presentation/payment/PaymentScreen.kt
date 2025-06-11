@@ -8,21 +8,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
@@ -34,8 +43,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,6 +96,7 @@ fun PaymentScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Payment(
     uiState: PaymentUiState,
@@ -97,6 +109,9 @@ fun Payment(
     val radioOptions = listOf("Tunai", "Kredit")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     val state = rememberMessageBarState()
+    val (checkedStatePelangan, onStateChange) = remember { mutableStateOf(false) }
+    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
+    val expanded = allowExpanded && uiState.customers.isNotEmpty()
 
     LaunchedEffect(selectedOption) {
         onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
@@ -157,6 +172,132 @@ fun Payment(
                         text = "Pembayaran",
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
+                    Text(
+                        text = "Pelanggan",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = dark,
+                    )
+                    Row(
+                        Modifier.fillMaxWidth()
+                            .height(56.dp)
+                            .toggleable(
+                                value = checkedStatePelangan,
+                                onValueChange = { onStateChange(!checkedStatePelangan) },
+                                role = Role.Checkbox
+                            )
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = checkedStatePelangan,
+                            onCheckedChange = null
+                        )
+                        Text(
+                            text = "Pelanggan",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
+                    }
+                    if (checkedStatePelangan) {
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = setExpanded
+                        ) {
+                            OutlinedTextField(
+                                value = uiState.searchCust,
+                                onValueChange = { newCust ->
+                                    onEvent(PaymentUiEvent.OnSearchCustChanged(newCust))
+                                },
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                                label = {
+                                    Text(
+                                        "List Pelanggan",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = secondary_text
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                singleLine = true,
+                                shape = RoundedCornerShape(10.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = stroke,
+                                    unfocusedBorderColor = stroke,
+                                    cursorColor = primary_text,
+                                    focusedLabelColor = primary,
+                                    unfocusedLabelColor = secondary_text,
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                                    .menuAnchor(type = MenuAnchorType.PrimaryEditable)
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = {
+                                    setExpanded(false)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 200.dp)
+                            ) {
+                                uiState.customers.forEach { customer ->
+                                    val displayText = when {
+                                        customer.nama.contains(
+                                            uiState.searchCust,
+                                            ignoreCase = true
+                                        ) -> customer.nama
+
+                                        customer.kode.contains(
+                                            uiState.searchCust,
+                                            ignoreCase = true
+                                        ) -> customer.kode
+
+                                        else -> ""
+                                    }
+
+                                    if (displayText.isNotEmpty()) {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                onEvent(PaymentUiEvent.OnSearchCustChanged(customer.kode))
+                                                setExpanded(false)
+                                            },
+                                            text = {
+                                                Column {
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.SpaceBetween
+                                                    ) {
+                                                        Text(
+                                                            text = customer.nama,
+                                                            style = MaterialTheme.typography.titleSmall
+                                                        )
+                                                        Text(
+                                                            text = customer.kode,
+                                                            style = MaterialTheme.typography.bodyMedium
+                                                        )
+                                                    }
+
+                                                    Text(
+                                                        text = customer.alamat,
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Person,
+                                                    contentDescription = null
+                                                )
+                                            },
+                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Text(
                         text = "Jenis Pembayaran",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
@@ -262,6 +403,12 @@ fun Payment(
                             onConfirmClick = {
                                 if (uiState.uangDiterima.isEmpty() || uiState.uangDiterima.toInt() < uiState.subtotal) {
                                     state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
+                                    return@FooterButton
+                                }
+                                val customerExists =
+                                    uiState.customers.any { customer -> customer.kode == uiState.searchCust }
+                                if (checkedStatePelangan && !customerExists) {
+                                    state.addError(Exception("Hei, kode customer belum dipilih atau tidak valid!"))
                                     return@FooterButton
                                 }
                                 onEvent(PaymentUiEvent.ConfirmButtonClicked)

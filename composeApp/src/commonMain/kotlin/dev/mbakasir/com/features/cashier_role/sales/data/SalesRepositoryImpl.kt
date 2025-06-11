@@ -6,6 +6,7 @@ import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentRequest
 import dev.mbakasir.com.features.cashier_role.sales.domain.HistoryApiModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.InvoiceApiModel
+import dev.mbakasir.com.features.cashier_role.sales.domain.PelangganApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult
 import dev.mbakasir.com.network.RequestHandler
@@ -93,6 +94,12 @@ class SalesRepositoryImpl(
                 "page" to page,
                 "perPage" to perPage
             )
+        )
+    }
+
+    override suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException> {
+        return requestHandler.get(
+            urlPathSegments = listOf("api", "pelanggan", "p", "all")
         )
     }
 }
