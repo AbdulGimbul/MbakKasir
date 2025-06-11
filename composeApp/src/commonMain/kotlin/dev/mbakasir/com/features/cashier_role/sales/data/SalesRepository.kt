@@ -27,7 +27,8 @@ interface SalesRepository {
         amountPaid: Int? = null,
         paymentMethod: String? = null,
         dueDate: String? = null,
-        isPrinted: Boolean? = null
+        isPrinted: Boolean? = null,
+        customer: String? = null
     )
 
     suspend fun deleteDraft(draftId: String)

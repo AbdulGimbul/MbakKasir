@@ -60,7 +60,7 @@ class SalesViewModel(
                     bayar = data?.draft?.amountPaid.toString(),
                     metode = data?.draft?.paymentMethod.toString(),
                     kasir = "3",
-                    cus = "1",
+                    cus = data?.draft?.customer.toString(),
                     nominalPpn = "0",
                     tempo = data?.draft?.dueDate.toString(),
                     detil = data?.items?.map { it.toSerializable().toDetailPayload() }

@@ -10,6 +10,7 @@ data class ProductTransDraftEntity(
     @PrimaryKey val draftId: String = "",
     val dateTime: String = "",
     val cashier: String = "",
+    var customer: String = "",
     var isPrinted: Boolean = false,
     var amountPaid: Int = 0,
     var paymentMethod: String = "",

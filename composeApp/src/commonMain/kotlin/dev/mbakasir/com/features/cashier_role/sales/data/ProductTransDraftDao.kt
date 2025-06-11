@@ -35,7 +35,8 @@ interface ProductTransDraftDao {
                 isPrinted = draft.isPrinted,
                 amountPaid = draft.amountPaid,
                 paymentMethod = draft.paymentMethod,
-                dueDate = draft.dueDate
+                dueDate = draft.dueDate,
+                customer = draft.customer
             )
         } else {
             val newDraft = ProductTransDraftEntity(
@@ -54,13 +55,14 @@ interface ProductTransDraftDao {
     suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 
 
-    @Query("UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate WHERE draftId = :draftId")
+    @Query("UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, customer = :customer WHERE draftId = :draftId")
     suspend fun updateDraft(
         draftId: String,
         isPrinted: Boolean?,
         amountPaid: Int?,
         paymentMethod: String?,
-        dueDate: String?
+        dueDate: String?,
+        customer: String?
     )
 
     @Transaction
@@ -71,7 +73,8 @@ interface ProductTransDraftDao {
         amountPaid: Int?,
         paymentMethod: String?,
         dueDate: String?,
-        isPrinted: Boolean?
+        isPrinted: Boolean?,
+        customer: String?
     ) {
         val draftWithItems = getDraftWithItemsById(draftId)
         draftWithItems?.let { existingDraftWithItems ->
@@ -102,13 +105,15 @@ interface ProductTransDraftDao {
             paymentMethod?.let { draft.paymentMethod = it }
             dueDate?.let { draft.dueDate = it }
             isPrinted?.let { draft.isPrinted = it }
+            customer?.let { draft.customer = it }
 
             updateDraft(
                 draftId = draft.draftId,
                 isPrinted = draft.isPrinted,
                 amountPaid = draft.amountPaid,
                 paymentMethod = draft.paymentMethod,
-                dueDate = draft.dueDate
+                dueDate = draft.dueDate,
+                customer = draft.customer
             )
         } ?: println("Draft not found for draftId: $draftId")
     }

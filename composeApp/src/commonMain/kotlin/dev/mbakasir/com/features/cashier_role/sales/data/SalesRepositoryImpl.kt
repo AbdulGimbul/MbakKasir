@@ -48,7 +48,8 @@ class SalesRepositoryImpl(
         amountPaid: Int?,
         paymentMethod: String?,
         dueDate: String?,
-        isPrinted: Boolean?
+        isPrinted: Boolean?,
+        customer: String?
     ) {
         return productTransDraftDao.updateProductInDraft(
             draftId,
@@ -57,7 +58,8 @@ class SalesRepositoryImpl(
             amountPaid,
             paymentMethod,
             dueDate,
-            isPrinted
+            isPrinted,
+            customer
         )
     }
 

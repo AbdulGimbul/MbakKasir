@@ -135,6 +135,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                     amountPaid = _uiState.value.uangDiterima.toInt(),
                     paymentMethod = _uiState.value.paymentMethod,
                     dueDate = _uiState.value.selectedDate,
+                    customer = _uiState.value.searchCust,
                     isPrinted = true
                 )
             }
