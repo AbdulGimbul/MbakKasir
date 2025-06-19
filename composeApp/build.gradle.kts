@@ -118,10 +118,10 @@ buildkonfig {
 
     targetConfigs("prod") {
         create("android") {
-            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "mbakasir.com")
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "pos-api.mbakasir.com")
         }
         create("ios") {
-            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "mbakasir.com")
+            buildConfigField(FieldSpec.Type.STRING, "BASE_URL", "pos-api.mbakasir.com")
         }
     }
 
