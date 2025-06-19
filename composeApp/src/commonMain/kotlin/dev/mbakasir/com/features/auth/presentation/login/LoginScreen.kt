@@ -1,6 +1,7 @@
 package dev.mbakasir.com.features.auth.presentation.login
 
 import ContentWithMessageBar
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -35,6 +37,9 @@ import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.utils.getBrowserHelper
+import mbakkasir.composeapp.generated.resources.Res
+import mbakkasir.composeapp.generated.resources.mbakasir_logo
+import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
 
 @Composable
@@ -103,32 +108,14 @@ fun Login(
                     .padding(16.dp)
             ) {
                 Column(
-                    modifier = Modifier
+                    modifier = Modifier.fillMaxWidth()
                         .weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.height(40.dp))
+                    Image(painter = painterResource(resource = Res.drawable.mbakasir_logo), contentDescription = null, modifier = Modifier.size(160.dp))
                     Text(
-                        text = "Welcome",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                        color = dark,
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "Back",
-                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
-                            color = dark
-                        )
-                        Text(
-                            text = "\uD83D\uDC4B\uD83C\uDFFC",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                    Text(
-                        "Silahkan login ke akun yang sudah ada.",
-                        style = MaterialTheme.typography.bodyMedium,
+                        "Sederhana, Untung Maksimal",
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 24.dp),
                         color = secondary_text
                     )
