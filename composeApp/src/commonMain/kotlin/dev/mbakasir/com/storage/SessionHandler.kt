@@ -19,6 +19,7 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
         val _address = stringPreferencesKey("Alamat")
         val _telp = stringPreferencesKey("Telp")
         val _userToken = stringPreferencesKey("Token")
+        val _lastUpdate = stringPreferencesKey("Last Update")
     }
 
     private fun <T> getPreference(key: Preferences.Key<T>, defaultValue: T): Flow<T> {
@@ -36,6 +37,7 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
     fun getStoreName(): Flow<String> = getPreference(_storeName, "")
     fun getAddress(): Flow<String> = getPreference(_address, "")
     fun getTelp(): Flow<String> = getPreference(_telp, "")
+    fun getLastUpdate(): Flow<String> = getPreference(_lastUpdate, "")
 
     suspend fun setUserData(
         username: String,
@@ -59,7 +61,17 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
 
     suspend fun clearData() {
         dataStore.edit { preferences ->
+            val lastUpdateValue = preferences[_lastUpdate]
             preferences.clear()
+            if (lastUpdateValue != null) {
+                preferences[_lastUpdate] = lastUpdateValue
+            }
+        }
+    }
+
+    suspend fun setLastUpdate(lastUpdate: String) {
+        dataStore.edit { pref ->
+            pref[_lastUpdate] = lastUpdate
         }
     }
 }

@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,6 +23,8 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val lastUpdate = MutableStateFlow("")
 
     init {
         if (_uiState.value.user == null) {
@@ -38,12 +39,20 @@ class HomeViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             try {
-                val isCacheAvailable = homeRepository.checkCache()
+                val lastUpdateCache = homeRepository.getLastUpdateCache()
+                val getLastUpdateMaster = homeRepository.getLastUpdateMaster()
+                val getProducts = productRepository.getProducts()
 
-                if (!isCacheAvailable.first()) {
-                    val result = productRepository.getProducts()
-                    withContext(Dispatchers.Main) {
-                        result.onSuccess { data ->
+                withContext(Dispatchers.Main) {
+                    getLastUpdateMaster.onSuccess {
+                        lastUpdate.value = it.lastUpdate
+                    }.onError { error ->
+                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                    }
+
+                    if (lastUpdateCache.isEmpty() || lastUpdateCache != lastUpdate.value) {
+                        homeRepository.setLastUpdateCache(lastUpdate.value)
+                        getProducts.onSuccess { data ->
                             data.barangs.forEach { barang ->
                                 productRepository.addProduct(barang.toProduct())
                             }

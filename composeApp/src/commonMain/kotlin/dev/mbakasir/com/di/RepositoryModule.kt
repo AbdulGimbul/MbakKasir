@@ -46,9 +46,15 @@ val provideAuthRepositoryModule = module {
 
 val provideHomeRepositoryModule = module {
     single<HomeRepositoryImpl> {
-        HomeRepositoryImpl(productDao = get(), reqHandler = get())
+        HomeRepositoryImpl(productDao = get(), reqHandler = get(), sessionHandler = get())
     }.bind<HomeRepository>()
-    viewModel { HomeViewModel(homeRepository = get(), productRepository = get(), authRepository = get()) }
+    viewModel {
+        HomeViewModel(
+            homeRepository = get(),
+            productRepository = get(),
+            authRepository = get()
+        )
+    }
 }
 
 val provideProductRepositoryModule = module {
