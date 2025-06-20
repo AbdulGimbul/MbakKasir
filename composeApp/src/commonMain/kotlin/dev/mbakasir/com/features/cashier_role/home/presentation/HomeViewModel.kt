@@ -2,6 +2,7 @@ package dev.mbakasir.com.features.cashier_role.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.cashier_role.home.data.HomeRepository
 import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
 import dev.mbakasir.com.features.cashier_role.product.domain.toProduct
@@ -17,13 +18,17 @@ import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
+        if (_uiState.value.user == null) {
+            getUserData()
+        }
         getSalesReport()
         fetchProducts()
     }
@@ -70,6 +75,20 @@ class HomeViewModel(
                 }
             }
 
+        }
+    }
+
+    private fun getUserData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                authRepository.userInfo().let {
+                    _uiState.value = _uiState.value.copy(user = it, isLoading = false)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                e.printStackTrace()
+            }
         }
     }
 }

@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface HomeRepository {
     suspend fun checkCache(): Flow<Boolean>
     suspend fun getSalesReport(): NetworkResult<SalesReportApiModel, NetworkException>
+
 }

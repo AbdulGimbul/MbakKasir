@@ -2,7 +2,9 @@ package dev.mbakasir.com.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.auth.authProvider
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.parameter
@@ -65,7 +67,17 @@ class RequestHandler(val httpClient: HttpClient) {
                         e
                     )
 
-                    else -> NetworkException.UnknownException("Error: ${e.response.status}", e)
+                    HttpStatusCode.Forbidden -> NetworkException.ForbiddenException(
+                        errorBody?.message ?: "Forbidden",
+                        e
+                    )
+
+                    HttpStatusCode.BadRequest -> NetworkException.BadRequestException(
+                        errorBody?.message ?: "Bad Request",
+                        e
+                    )
+
+                    else -> NetworkException.UnknownException("Error: ${errorBody?.message}", e)
                 }
                 NetworkResult.Error(networkException)
             } catch (e: UnresolvedAddressException) {
@@ -77,6 +89,10 @@ class RequestHandler(val httpClient: HttpClient) {
                         e
                     )
                 )
+            } catch (e: HttpRequestTimeoutException) {
+                NetworkResult.Error(NetworkException.RequestTimeoutException("request timeout", e))
+            } catch (e: ServerResponseException){
+                NetworkResult.Error(NetworkException.ServerErrorException("server error", e))
             } catch (e: Exception) {
                 NetworkResult.Error(NetworkException.UnknownException("unknown error", e))
             }

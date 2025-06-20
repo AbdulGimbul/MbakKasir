@@ -27,7 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.mbakasir.com.ui.theme.cyanLight3
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.pinkLight3
+import dev.mbakasir.com.ui.theme.purpleLight3
+import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.stroke
 import mbakkasir.composeapp.generated.resources.Res
+import mbakkasir.composeapp.generated.resources.account
 import mbakkasir.composeapp.generated.resources.ic_bell
 import mbakkasir.composeapp.generated.resources.img_jml_sales
 import mbakkasir.composeapp.generated.resources.img_nom_sales
@@ -53,21 +60,24 @@ fun Home(
 ) {
 
     Column(modifier = Modifier.padding(16.dp).statusBarsPadding()) {
-        HeaderSection()
+        HeaderSection(
+            username = uiState.user?.userInfo?.nama ?: "",
+            role = uiState.user?.userInfo?.role ?: ""
+        )
         Spacer(modifier = Modifier.height(24.dp))
         StatCard(
             title = "Nominal Penjualan",
             value = uiState.nominalPenjualan,
-            imageRes = Res.drawable.img_jml_sales,
-            cardColor = dev.mbakasir.com.ui.theme.cyanLight3
+            imageRes = Res.drawable.img_nom_sales,
+            cardColor = cyanLight3
         )
         Spacer(modifier = Modifier.height(16.dp))
         StatCard(
             title = "Jumlah Penjualan",
             value = uiState.jumlahPenjualan.substringBefore(" "),
             suffix = "items",
-            imageRes = Res.drawable.img_nom_sales,
-            cardColor = dev.mbakasir.com.ui.theme.pinkLight3
+            imageRes = Res.drawable.img_jml_sales,
+            cardColor = pinkLight3
         )
         Spacer(modifier = Modifier.height(16.dp))
         StatCard(
@@ -75,34 +85,36 @@ fun Home(
             value = uiState.jumlahPembeli.substringBefore(" "),
             suffix = "orang",
             imageRes = Res.drawable.img_users_sales,
-            cardColor = dev.mbakasir.com.ui.theme.purpleLight3
+            cardColor = purpleLight3
         )
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(
+    username: String,
+    role: String
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(resource = Res.drawable.profile),
+            painter = painterResource(resource = Res.drawable.account),
             contentDescription = null,
-            modifier = Modifier.size(48.dp).clip(CircleShape)
-                .border(width = 1.dp, color = dev.mbakasir.com.ui.theme.stroke, shape = CircleShape)
+            modifier = Modifier.size(80.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                "Role",
+                username,
                 style = MaterialTheme.typography.bodyMedium,
-                color = dev.mbakasir.com.ui.theme.dark
+                color = dark
             )
             Text(
-                "Penjualan",
+                role,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = dev.mbakasir.com.ui.theme.dark
+                color = dark
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -110,7 +122,7 @@ fun HeaderSection() {
             onClick = { },
             modifier = Modifier.border(
                 width = 1.dp,
-                color = dev.mbakasir.com.ui.theme.stroke,
+                color = stroke,
                 shape = RoundedCornerShape(8.dp)
             )
         ) {
@@ -147,7 +159,7 @@ fun StatCard(
                 Text(
                     title,
                     style = MaterialTheme.typography.bodySmall,
-                    color = dev.mbakasir.com.ui.theme.secondary_text
+                    color = secondary_text
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -155,13 +167,13 @@ fun StatCard(
                 ) {
                     Text(
                         value,
-                        color = dev.mbakasir.com.ui.theme.dark,
+                        color = dark,
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
                     )
                     if (suffix != null) {
                         Text(
                             "items",
-                            color = dev.mbakasir.com.ui.theme.dark,
+                            color = dark,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(start = 6.dp)
                         )

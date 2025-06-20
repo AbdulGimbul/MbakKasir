@@ -18,12 +18,22 @@ sealed class NetworkException(message: String, cause: Throwable) : Exception(mes
     data class SerializationException(override val message: String, override val cause: Throwable) :
         NetworkException(message, cause)
 
-    // Less common exceptions (commented out)
-    /*
+    data class ServerErrorException(override val message: String, override val cause: Throwable) :
+        NetworkException(message, cause)
+
     data class RequestTimeoutException(
         override val message: String,
         override val cause: Throwable
     ) : NetworkException(message, cause)
+
+    data class ForbiddenException(override val message: String, override val cause: Throwable) :
+        NetworkException(message, cause)
+
+    data class BadRequestException(override val message: String, override val cause: Throwable) :
+        NetworkException(message, cause)
+
+    // Less common exceptions (commented out)
+    /*
 
     data class TooManyRequestsException(
         override val message: String,
@@ -35,23 +45,5 @@ sealed class NetworkException(message: String, cause: Throwable) : Exception(mes
         override val cause: Throwable
     ) : NetworkException(message, cause)
 
-    data class ServerErrorException(override val message: String, override val cause: Throwable) :
-        NetworkException(message, cause)
-
-    data class ForbiddenException(override val message: String, override val cause: Throwable) :
-        NetworkException(message, cause)
-
-    data class BadRequestException(override val message: String, override val cause: Throwable) :
-        NetworkException(message, cause)
     */
-}
-
-fun NetworkException.toUiMessage(): String {
-    return when (this) {
-        is NetworkException.UnauthorizedException -> "Unauthorized"
-        is NetworkException.NotFoundException -> "Not Found"
-        is NetworkException.UnknownException -> "Unknown Error"
-        is NetworkException.NoInternetException -> "No Internet"
-        is NetworkException.SerializationException -> "Serialization Error"
-    }
 }
