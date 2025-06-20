@@ -14,4 +14,5 @@ interface ProductRepository {
     suspend fun getLastUpdateCache(): String
     suspend fun setLastUpdateCache(lastUpdate: String)
     suspend fun getLastUpdateMaster(): NetworkResult<LastUpdateBarangApiModel, NetworkException>
+    suspend fun deleteAllProducts()
 }

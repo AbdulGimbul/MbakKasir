@@ -4,11 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun addProduct(productEntity: ProductEntity)
 
     @Query("SELECT * FROM products ORDER BY idBarang DESC")
@@ -42,4 +43,7 @@ interface ProductDao {
 
     @Query("UPDATE products SET stok = :newStok WHERE idBarang = :id")
     suspend fun updateStockById(id: String, newStok: String)
+
+    @Query("DELETE  FROM products")
+    suspend fun deleteAllProduct()
 }

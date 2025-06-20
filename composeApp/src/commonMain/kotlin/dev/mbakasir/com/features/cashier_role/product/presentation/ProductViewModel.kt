@@ -30,10 +30,11 @@ class ProductViewModel(
 
     private val lastUpdateMaster = MutableStateFlow("")
 
-    init {
+    fun reloadData(){
+        currentPage = 0
+        fetchProducts()
         getTopProduct()
         getTotalProduct()
-        fetchProducts()
     }
 
     private fun fetchProducts() {
@@ -61,9 +62,11 @@ class ProductViewModel(
                                 productRepository.addProduct(barang.toProduct())
                             }
                         }.onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message, isLoading = false)
                         }
                     }
+
+                    getTopProduct()
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -84,7 +87,11 @@ class ProductViewModel(
                     .first()
 
                 if (product.isNotEmpty()) {
-                    val updatedList = _uiState.value.productList + product
+                    val updatedList = if (currentPage == 0) {
+                        product
+                    } else {
+                        _uiState.value.productList + product
+                    }
                     val latestCreatedAt = updatedList.maxByOrNull { it.createdAt }?.createdAt
                     _uiState.value = _uiState.value.copy(
                         productList = updatedList,
@@ -93,6 +100,12 @@ class ProductViewModel(
                         isLoading = false
                     )
                     currentPage++
+                } else {
+                    if (currentPage == 0) {
+                        _uiState.value = _uiState.value.copy(productList = emptyList(), isLoading = false)
+                    } else {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

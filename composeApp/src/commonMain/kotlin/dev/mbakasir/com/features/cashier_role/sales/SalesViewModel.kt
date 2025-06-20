@@ -31,7 +31,6 @@ class SalesViewModel(
 
     init {
         getDrafts()
-        fetchProducts()
     }
 
     fun onEvent(event: SalesUiEvent) {
@@ -43,7 +42,7 @@ class SalesViewModel(
         }
     }
 
-    private fun fetchProducts() {
+    fun fetchProducts() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 

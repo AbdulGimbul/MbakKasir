@@ -48,4 +48,8 @@ class ProductRepositoryImpl(
             urlPathSegments = listOf("api", "barang", "lastUpdate")
         )
     }
+
+    override suspend fun deleteAllProducts() {
+        return productDao.deleteAllProduct()
+    }
 }
