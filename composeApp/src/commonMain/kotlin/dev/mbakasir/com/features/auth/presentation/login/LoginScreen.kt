@@ -51,7 +51,6 @@ fun LoginScreen(
 
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
-            println("cek state ${state.role}")
             if (state.role == "Kasir") {
                 LaunchedEffect(Unit) {
                     navController.navigate(MainScreen.Cashier.route) {
@@ -93,6 +92,7 @@ fun Login(
             when(it){
                 "Invalid username or password." -> state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
                 "Access denied: Token has expired" -> ""
+                "Access denied: No token provided" -> ""
                 else -> state.addError(Exception(it))
             }
         }

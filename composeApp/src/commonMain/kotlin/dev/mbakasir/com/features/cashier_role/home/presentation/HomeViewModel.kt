@@ -41,7 +41,6 @@ class HomeViewModel(
             try {
                 val lastUpdateCache = homeRepository.getLastUpdateCache()
                 val getLastUpdateMaster = homeRepository.getLastUpdateMaster()
-                val getProducts = productRepository.getProducts()
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster.onSuccess {
@@ -49,9 +48,12 @@ class HomeViewModel(
                     }.onError { error ->
                         _uiState.value = _uiState.value.copy(errorMessage = error.message)
                     }
+                }
 
-                    if (lastUpdateCache.isEmpty() || lastUpdateCache != lastUpdate.value) {
-                        homeRepository.setLastUpdateCache(lastUpdate.value)
+                if (lastUpdateCache.isEmpty() || lastUpdateCache != lastUpdate.value) {
+                    homeRepository.setLastUpdateCache(lastUpdate.value)
+                    val getProducts = productRepository.getProducts()
+                    withContext(Dispatchers.Main) {
                         getProducts.onSuccess { data ->
                             data.barangs.forEach { barang ->
                                 productRepository.addProduct(barang.toProduct())
