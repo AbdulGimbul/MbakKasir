@@ -62,6 +62,7 @@ class SalesViewModel(
                     productRepository.setLastUpdateCache(lastUpdateMaster.value)
                     val getProducts = productRepository.getProducts()
                     withContext(Dispatchers.Main) {
+                        productRepository.deleteAllProducts()
                         getProducts.onSuccess { data ->
                             data.barangs.forEach { barang ->
                                 productRepository.addProduct(barang.toProduct())
