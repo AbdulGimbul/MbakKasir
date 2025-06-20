@@ -242,11 +242,13 @@ fun InfoRow(label: String, info: String) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = primary_text
         )
         Text(
+            modifier = Modifier.weight(1f),
             text = info,
             style = MaterialTheme.typography.bodyMedium,
             color = dark
