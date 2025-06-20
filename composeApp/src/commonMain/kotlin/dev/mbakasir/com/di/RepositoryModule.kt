@@ -46,7 +46,7 @@ val provideAuthRepositoryModule = module {
 
 val provideHomeRepositoryModule = module {
     single<HomeRepositoryImpl> {
-        HomeRepositoryImpl(productDao = get(), reqHandler = get(), sessionHandler = get())
+        HomeRepositoryImpl(productDao = get(), reqHandler = get())
     }.bind<HomeRepository>()
     viewModel {
         HomeViewModel(
@@ -59,7 +59,7 @@ val provideHomeRepositoryModule = module {
 
 val provideProductRepositoryModule = module {
     single<ProductRepositoryImpl> {
-        ProductRepositoryImpl(requestHandler = get(), productDao = get())
+        ProductRepositoryImpl(requestHandler = get(), productDao = get(), sessionHandler = get())
     }.bind<ProductRepository>()
     viewModel { ProductViewModel(productRepository = get()) }
 }
@@ -75,7 +75,7 @@ val provideSalesRepositoryModule = module {
     viewModel { EntrySalesViewModel(salesRepository = get(), authRepository = get()) }
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
-    viewModel { SalesViewModel(salesRepository = get()) }
+    viewModel { SalesViewModel(salesRepository = get(), productRepository = get()) }
     viewModel { HistoryViewModel(salesRepository = get()) }
 }
 

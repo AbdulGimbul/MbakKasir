@@ -2,6 +2,8 @@ package dev.mbakasir.com.features.cashier_role.sales
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
+import dev.mbakasir.com.features.cashier_role.product.domain.toProduct
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentRequest
 import dev.mbakasir.com.features.cashier_role.sales.domain.toDetailPayload
@@ -19,15 +21,17 @@ import kotlinx.coroutines.withContext
 
 class SalesViewModel(
     private val salesRepository: SalesRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SalesUiState())
     val uiState: StateFlow<SalesUiState> = _uiState
-
+    private val lastUpdateMaster = MutableStateFlow("")
     private var currentDraftId: String? = null
 
     init {
         getDrafts()
+        fetchProducts()
     }
 
     fun onEvent(event: SalesUiEvent) {
@@ -35,6 +39,43 @@ class SalesViewModel(
             is SalesUiEvent.SendDraftTrans -> {
                 currentDraftId = event.invoiceNumber
                 sendDraftTrans(event.invoiceNumber)
+            }
+        }
+    }
+
+    private fun fetchProducts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+            try {
+                val lastUpdateCache = productRepository.getLastUpdateCache()
+                val getLastUpdateMaster = productRepository.getLastUpdateMaster()
+
+                withContext(Dispatchers.Main) {
+                    getLastUpdateMaster.onSuccess {
+                        lastUpdateMaster.value = it.lastUpdate.toString()
+                    }.onError { error ->
+                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                    }
+                }
+
+                if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
+                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                    val getProducts = productRepository.getProducts()
+                    withContext(Dispatchers.Main) {
+                        getProducts.onSuccess { data ->
+                            data.barangs.forEach { barang ->
+                                productRepository.addProduct(barang.toProduct())
+                            }
+                        }.onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+            } finally {
+                _uiState.value = _uiState.value.copy(isLoading = false)
             }
         }
     }

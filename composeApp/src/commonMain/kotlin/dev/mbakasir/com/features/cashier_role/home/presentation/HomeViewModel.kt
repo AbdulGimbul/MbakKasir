@@ -24,7 +24,7 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val lastUpdate = MutableStateFlow("")
+    private val lastUpdateMaster = MutableStateFlow("")
 
     init {
         if (_uiState.value.user == null) {
@@ -39,19 +39,19 @@ class HomeViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             try {
-                val lastUpdateCache = homeRepository.getLastUpdateCache()
-                val getLastUpdateMaster = homeRepository.getLastUpdateMaster()
+                val lastUpdateCache = productRepository.getLastUpdateCache()
+                val getLastUpdateMaster = productRepository.getLastUpdateMaster()
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster.onSuccess {
-                        lastUpdate.value = it.lastUpdate
+                        lastUpdateMaster.value = it.lastUpdate.toString()
                     }.onError { error ->
                         _uiState.value = _uiState.value.copy(errorMessage = error.message)
                     }
                 }
 
-                if (lastUpdateCache.isEmpty() || lastUpdateCache != lastUpdate.value) {
-                    homeRepository.setLastUpdateCache(lastUpdate.value)
+                if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
+                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
                     val getProducts = productRepository.getProducts()
                     withContext(Dispatchers.Main) {
                         getProducts.onSuccess { data ->

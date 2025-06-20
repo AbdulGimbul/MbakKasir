@@ -90,7 +90,6 @@ fun Login(
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             when(it){
-                "Invalid username or password." -> state.addError(Exception("Ups, coba lagi! Username atau password-nya kurang tepat."))
                 "Access denied: Token has expired" -> ""
                 "Access denied: No token provided" -> ""
                 else -> state.addError(Exception(it))

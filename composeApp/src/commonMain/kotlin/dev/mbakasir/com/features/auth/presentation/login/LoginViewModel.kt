@@ -77,7 +77,6 @@ class LoginViewModel(
                         _uiState.value = LoginUiState.Authenticated(role = it.user.role)
                     }
                 }.onError { error ->
-                    println("cek error: $error")
                     updateState {
                         it.copy(errorMessage = error.message, isLoading = false)
                     }
