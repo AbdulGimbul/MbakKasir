@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.plusmobileapps.konnectivity.Konnectivity
 import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.auth.domain.LoginRequest
+import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
 import dev.mbakasir.com.storage.SessionHandler
@@ -17,9 +18,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginViewModel(
-    private val sessionHandler: SessionHandler,
     private val authRepository: AuthRepository,
-    private val konnectivity: Konnectivity
+    private val konnectivity: Konnectivity,
+    private val salesRepository: SalesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.NotAuthenticated())
@@ -65,15 +66,6 @@ class LoginViewModel(
             withContext(Dispatchers.Main) {
                 result.onSuccess {
                     if (it.code == "200") {
-                        sessionHandler.setUserData(
-                            username = it.user.username,
-                            nama = it.user.nama,
-                            role = it.user.role,
-                            namaToko = it.toko.nama,
-                            alamat = it.toko.alamat,
-                            telp = it.toko.telp,
-                            token = it.token
-                        )
                         _uiState.value = LoginUiState.Authenticated(role = it.user.role)
                     }
                 }.onError { error ->
@@ -91,9 +83,10 @@ class LoginViewModel(
             val result = authRepository.isTokenValid("", "", "1", "1")
             withContext(Dispatchers.Main) {
                 result.onSuccess {
-                    val role = sessionHandler.getRole().first()
+                    val role = authRepository.getRole()
                     _uiState.value = LoginUiState.Authenticated(role = role)
                 }.onError { error ->
+                    salesRepository.deleteAllDrafts()
                     updateState {
                         it.copy(errorMessage = error.message)
                     }

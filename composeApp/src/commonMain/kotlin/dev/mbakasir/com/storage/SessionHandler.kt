@@ -61,11 +61,7 @@ class SessionHandler(private val dataStore: DataStore<Preferences>) {
 
     suspend fun clearData() {
         dataStore.edit { preferences ->
-            val lastUpdateValue = preferences[_lastUpdate]
             preferences.clear()
-            if (lastUpdateValue != null) {
-                preferences[_lastUpdate] = lastUpdateValue
-            }
         }
     }
 

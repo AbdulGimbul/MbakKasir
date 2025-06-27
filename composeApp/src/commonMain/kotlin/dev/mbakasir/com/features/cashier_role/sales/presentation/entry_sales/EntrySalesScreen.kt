@@ -72,6 +72,7 @@ import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
 import kotlinx.serialization.json.Json
+import qrscanner.CameraLens
 import qrscanner.QrScanner
 import rememberMessageBarState
 
@@ -310,6 +311,7 @@ fun EntrySales(
                     },
                     openImagePicker = false,
                     imagePickerHandler = { onEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
+                    cameraLens = CameraLens.Back
                 )
             }
 
@@ -551,6 +553,7 @@ fun EntrySalesAndPayment(
                             },
                             openImagePicker = false,
                             imagePickerHandler = { entryOnEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
+                            cameraLens = CameraLens.Back
                         )
                     }
                 }

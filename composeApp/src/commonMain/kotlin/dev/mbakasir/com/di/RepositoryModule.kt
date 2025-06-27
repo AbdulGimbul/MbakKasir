@@ -36,12 +36,12 @@ val provideAuthRepositoryModule = module {
     single { Konnectivity() }
     viewModel {
         LoginViewModel(
-            sessionHandler = get(),
             authRepository = get(),
-            konnectivity = get()
+            konnectivity = get(),
+            salesRepository = get()
         )
     }
-    viewModel { ProfileViewModel(authRepository = get()) }
+    viewModel { ProfileViewModel(authRepository = get(), salesRepository = get()) }
 }
 
 val provideHomeRepositoryModule = module {

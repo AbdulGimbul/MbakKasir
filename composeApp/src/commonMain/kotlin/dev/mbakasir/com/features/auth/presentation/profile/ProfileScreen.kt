@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -112,7 +114,7 @@ fun Profile(
                 uiState.user?.storeInfo?.let { StoreInformationCard(it) }
                 Spacer(modifier = Modifier.height(32.dp))
                 OutlinedButton(
-                    onClick = { onEvent(ProfileUiEvent.Logout) },
+                    onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(
                         width = 1.dp,
@@ -165,6 +167,27 @@ fun Profile(
                 )
             }
         }
+    }
+
+    if (uiState.showDialog) {
+        AlertDialog(
+            onDismissRequest = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
+            title = { Text("Yakin ingin keluar?") },
+            text = { Text("Semua draft data akan hilang setelah logout. Pastikan semua transaksi telah diselesaikan ya!") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onEvent(ProfileUiEvent.OnShowAlertDialog)
+                    onEvent(ProfileUiEvent.Logout)
+                }) {
+                    Text("Ya")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }) {
+                    Text("Tidak")
+                }
+            }
+        )
     }
 }
 

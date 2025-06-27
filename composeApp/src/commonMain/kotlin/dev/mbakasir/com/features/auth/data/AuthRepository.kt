@@ -21,4 +21,5 @@ interface AuthRepository {
     suspend fun userInfo(): UserData
     suspend fun logout(): NetworkResult<LogoutApiModel, NetworkException>
     suspend fun getVersion(): NetworkResult<GetVersionApiModel, NetworkException>
+    suspend fun getRole(): String
 }

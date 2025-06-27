@@ -2,13 +2,14 @@ package dev.mbakasir.com.features.cashier_role.product.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 @Entity(tableName = "products")
-data class ProductEntity(
+data class ProductEntity @OptIn(ExperimentalTime::class) constructor(
     @PrimaryKey var idBarang: String,
     var kodeBarang: String = "",
     var barcode: String = "",

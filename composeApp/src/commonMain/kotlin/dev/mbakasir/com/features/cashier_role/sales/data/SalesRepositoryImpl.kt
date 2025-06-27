@@ -104,4 +104,8 @@ class SalesRepositoryImpl(
             urlPathSegments = listOf("api", "pelanggan", "p", "all")
         )
     }
+
+    override suspend fun deleteAllDrafts() {
+        return productTransDraftDao.deleteAllTransDrafts()
+    }
 }

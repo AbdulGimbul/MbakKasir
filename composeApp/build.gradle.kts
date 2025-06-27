@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -88,7 +89,7 @@ kotlin {
             implementation(libs.adaptive.navigation)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.lifecycle.runtime.compose)
-            implementation(libs.datetime)
+            api(libs.datetime)
             implementation(libs.material.icons.core)
         }
         nativeMain.dependencies {
