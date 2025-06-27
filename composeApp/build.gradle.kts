@@ -95,15 +95,6 @@ kotlin {
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.kotlin.test)
-            implementation(libs.koin.test)
-            implementation(libs.mokkery.runtime)
-            implementation(libs.mokkery.plugin)
-        }
     }
 }
 
