@@ -1,20 +1,22 @@
 package dev.mbakasir.com.utils
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 
 expect fun currencyFormat(amount: Double): String
 
 expect interface JavaSerializable
 
+@OptIn(ExperimentalTime::class)
 fun generateKodeInvoice(): String {
     val currentMoment = Clock.System.now()
     val currentDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -31,6 +33,7 @@ fun generateKodeInvoice(): String {
     return "POS$formattedDateTime"
 }
 
+@OptIn(ExperimentalTime::class)
 fun getCurrentFormattedDateTime(): String {
     val currentMoment = Clock.System.now()
     val dateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -72,6 +75,7 @@ fun formatDateTime(localDateTime: LocalDateTime): String {
 
 }
 
+@OptIn(ExperimentalTime::class)
 fun currentTimeCustom(): String {
     val currentMoment: Instant = Clock.System.now()
     val localDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -83,6 +87,7 @@ fun currentTimeCustom(): String {
     }"
 }
 
+@OptIn(ExperimentalTime::class)
 fun formatDateRange(startTimestamp: Long, endTimestamp: Long): String {
     val startInstant = Instant.fromEpochMilliseconds(startTimestamp)
     val endInstant = Instant.fromEpochMilliseconds(endTimestamp)
@@ -101,6 +106,7 @@ fun formatDateRange(startTimestamp: Long, endTimestamp: Long): String {
     return "$startFormatted - $endFormatted"
 }
 
+@OptIn(ExperimentalTime::class)
 fun formatDateForApi(timestamp: Long): String {
     val localDateTime = Instant.fromEpochMilliseconds(timestamp)
         .toLocalDateTime(TimeZone.currentSystemDefault())
@@ -109,6 +115,7 @@ fun formatDateForApi(timestamp: Long): String {
             "${localDateTime.date.year}"
 }
 
+@OptIn(ExperimentalTime::class)
 fun getTodayDate(): String {
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     return formatDateForApi(
@@ -116,6 +123,7 @@ fun getTodayDate(): String {
     )
 }
 
+@OptIn(ExperimentalTime::class)
 fun getLastWeekDate(): String {
     val lastWeek = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         .minus(DatePeriod(days = 7))

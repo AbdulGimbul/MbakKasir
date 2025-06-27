@@ -43,4 +43,6 @@ interface SalesRepository {
     ): NetworkResult<HistoryApiModel, NetworkException>
 
     suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
+
+    suspend fun deleteAllDrafts()
 }

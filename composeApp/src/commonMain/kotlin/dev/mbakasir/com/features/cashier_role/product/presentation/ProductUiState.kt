@@ -2,12 +2,13 @@ package dev.mbakasir.com.features.cashier_role.product.presentation
 
 import dev.mbakasir.com.features.cashier_role.product.data.ProductEntity
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentApiModel
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
-data class ProductUiState(
+data class ProductUiState @OptIn(ExperimentalTime::class) constructor(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val paymentResponse: CreatePaymentApiModel? = null,

@@ -441,7 +441,10 @@ fun Payment(
             selectorProperties = WheelPickerDefaults.selectorProperties(
                 borderColor = secondary,
             ),
-            dateTextColor = primary,
+            defaultDateTextStyle = MaterialTheme.typography.titleSmall.copy(
+                color = primary,
+                fontSize = 18.sp
+            ),
             rowCount = 5,
             height = 170.dp,
             onDoneClick = { date ->

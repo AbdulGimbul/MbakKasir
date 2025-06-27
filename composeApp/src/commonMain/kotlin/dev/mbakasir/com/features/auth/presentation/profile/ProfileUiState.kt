@@ -6,6 +6,7 @@ data class ProfileUiState(
     val user: UserData? = null,
     val version: String = "",
     val isLoading: Boolean = false,
+    val showDialog: Boolean = false,
     val errorMessage: String? = null,
     val isLogout: Boolean = false
 )

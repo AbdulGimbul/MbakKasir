@@ -21,10 +21,28 @@ class AuthRepositoryImpl(
     private val sessionHandler: SessionHandler
 ) : AuthRepository {
     override suspend fun login(request: LoginRequest): NetworkResult<LoginApiModel, NetworkException> {
-        return requestHandler.post(
+        val result = requestHandler.post<LoginRequest, LoginApiModel>(
             urlPathSegments = listOf("api", "login"),
             body = request
         )
+
+        if (result is NetworkResult.Success) {
+            if (result.data.code == "200") {
+                val user = result.data.user
+                val toko = result.data.toko
+                sessionHandler.setUserData(
+                    user.username,
+                    user.nama,
+                    user.role,
+                    toko.nama,
+                    toko.alamat,
+                    toko.telp,
+                    result.data.token
+                )
+            }
+        }
+
+        return result
     }
 
     override suspend fun isTokenValid(
@@ -33,7 +51,7 @@ class AuthRepositoryImpl(
         page: String,
         perPage: String
     ): NetworkResult<SalesHistoryApiModel, NetworkException> {
-        return requestHandler.get(
+        val result = requestHandler.get<SalesHistoryApiModel>(
             urlPathSegments = listOf("api", "penjualan", "get"),
             queryParams = mapOf(
                 "startDate" to starDate,
@@ -42,6 +60,12 @@ class AuthRepositoryImpl(
                 "perPage" to perPage
             )
         )
+
+        if (result is NetworkResult.Error) {
+            sessionHandler.clearData()
+        }
+
+        return result
     }
 
     override suspend fun userInfo(): UserData {
@@ -76,5 +100,9 @@ class AuthRepositoryImpl(
         return requestHandler.get(
             urlPathSegments = listOf("api", "version")
         )
+    }
+
+    override suspend fun getRole(): String {
+        return sessionHandler.getRole().first()
     }
 }

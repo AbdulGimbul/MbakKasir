@@ -3,17 +3,20 @@ package dev.mbakasir.com.features.auth.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.mbakasir.com.features.auth.data.AuthRepository
+import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProfileViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val salesRepository: SalesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -29,6 +32,7 @@ class ProfileViewModel(
     fun onEvent(event: ProfileUiEvent) {
         when (event) {
             is ProfileUiEvent.Logout -> logout()
+            is ProfileUiEvent.OnShowAlertDialog -> _uiState.update { it.copy(showDialog = !it.showDialog) }
         }
     }
 
@@ -53,6 +57,7 @@ class ProfileViewModel(
             val result = authRepository.logout()
             withContext(Dispatchers.Main) {
                 result.onSuccess {
+                    salesRepository.deleteAllDrafts()
                     _uiState.value = _uiState.value.copy(
                         isLogout = true,
                         isLoading = false

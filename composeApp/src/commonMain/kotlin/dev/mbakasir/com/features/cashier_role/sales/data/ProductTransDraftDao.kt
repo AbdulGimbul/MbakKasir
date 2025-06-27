@@ -133,4 +133,7 @@ interface ProductTransDraftDao {
 
     @Query("DELETE FROM product_trans_drafts WHERE draftId = :draftId")
     suspend fun deleteDraft(draftId: String)
+
+    @Query("DELETE  FROM product_trans_drafts")
+    suspend fun deleteAllTransDrafts()
 }

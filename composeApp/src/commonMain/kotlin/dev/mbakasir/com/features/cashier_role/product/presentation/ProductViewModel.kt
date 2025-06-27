@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 class ProductViewModel(
     private val productRepository: ProductRepository
@@ -78,6 +79,7 @@ class ProductViewModel(
     }
 
 
+    @OptIn(ExperimentalTime::class)
     fun getTopProduct() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
