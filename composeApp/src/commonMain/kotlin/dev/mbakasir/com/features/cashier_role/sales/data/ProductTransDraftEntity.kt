@@ -14,7 +14,8 @@ data class ProductTransDraftEntity(
     var isPrinted: Boolean = false,
     var amountPaid: Int = 0,
     var paymentMethod: String = "",
-    var dueDate: String = ""
+    var dueDate: String = "",
+    var description: String = ""
 )
 
 @Entity(tableName = "product_trans")

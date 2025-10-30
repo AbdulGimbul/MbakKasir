@@ -18,6 +18,7 @@ data class PaymentUiState(
     val showDatePicker: Boolean = false,
     val isConnected: Boolean = true,
     val paymentMethod: String = "",
+    val description: String = "",
     val noInvoice: String = "",
     val currentDate: String = "",
     val customers: List<Customer> = emptyList(),

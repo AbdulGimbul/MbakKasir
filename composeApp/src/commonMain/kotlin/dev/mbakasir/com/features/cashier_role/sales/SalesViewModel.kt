@@ -103,7 +103,8 @@ class SalesViewModel(
                     kasir = "3",
                     cus = data?.draft?.customer.toString(),
                     nominalPpn = "0",
-                    tempo = data?.draft?.dueDate.toString(),
+                    keterangan = data?.draft?.description.toString(),
+                    tempo = "",
                     detil = data?.items?.map { it.toSerializable().toDetailPayload() }
                         ?: emptyList()
                 )

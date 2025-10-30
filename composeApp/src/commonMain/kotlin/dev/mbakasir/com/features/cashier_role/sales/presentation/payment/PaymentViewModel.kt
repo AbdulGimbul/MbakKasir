@@ -37,6 +37,10 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                 _uiState.value = _uiState.value.copy(kembalian = kembalian)
             }
 
+            is PaymentUiEvent.DescriptionChanged -> {
+                _uiState.value = _uiState.value.copy(description = event.description, uangDiterima = _uiState.value.subtotal.toString())
+            }
+
             is PaymentUiEvent.DateIconClicked -> {
                 _uiState.value = _uiState.value.copy(showDatePicker = true)
             }
@@ -50,7 +54,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             }
 
             is PaymentUiEvent.PaymentMethodChanged -> {
-                _uiState.value = _uiState.value.copy(paymentMethod = event.method)
+                _uiState.value = _uiState.value.copy(paymentMethod = event.method.lowercase().replaceFirstChar { it.uppercaseChar() })
             }
 
             is PaymentUiEvent.NoInvoiceChanged -> {
@@ -100,6 +104,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                     kembali = _uiState.value.kembalian.toString(),
                     bayar = _uiState.value.uangDiterima,
                     metode = _uiState.value.paymentMethod,
+                    keterangan = _uiState.value.description,
                     kasir = "3",
                     cus = _uiState.value.searchCust,
                     nominalPpn = "0",
@@ -132,9 +137,9 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             viewModelScope.launch(Dispatchers.IO) {
                 salesRepository.updateProductTransInDraft(
                     draftId,
-                    amountPaid = _uiState.value.uangDiterima.toInt(),
+                    amountPaid = if (_uiState.value.uangDiterima.isEmpty()) 0 else _uiState.value.uangDiterima.toInt(),
                     paymentMethod = _uiState.value.paymentMethod,
-                    dueDate = _uiState.value.selectedDate,
+                    description = _uiState.value.description,
                     customer = _uiState.value.searchCust,
                     isPrinted = true
                 )

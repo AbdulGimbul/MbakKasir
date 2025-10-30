@@ -47,6 +47,7 @@ class SalesRepositoryImpl(
         qty: Int?,
         amountPaid: Int?,
         paymentMethod: String?,
+        description: String?,
         dueDate: String?,
         isPrinted: Boolean?,
         customer: String?
@@ -57,6 +58,7 @@ class SalesRepositoryImpl(
             qty,
             amountPaid,
             paymentMethod,
+            description,
             dueDate,
             isPrinted,
             customer

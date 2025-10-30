@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
@@ -29,7 +28,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -106,7 +104,7 @@ fun Payment(
     products: List<ProductTransSerializable>,
     draftId: String
 ) {
-    val radioOptions = listOf("Tunai", "Kredit")
+    val radioOptions = listOf("Tunai", "QRIS")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     val state = rememberMessageBarState()
     val (checkedStatePelangan, onStateChange) = remember { mutableStateOf(false) }
@@ -134,7 +132,7 @@ fun Payment(
     LaunchedEffect(uiState.paymentResponse) {
         uiState.paymentResponse?.let { response ->
             if (response.code == "200") {
-                uiState.products.forEach {
+                uiState.products.forEach { _ ->
                     onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
                 }
             }
@@ -308,70 +306,74 @@ fun Payment(
                         selectedOption = selectedOption,
                         onOptionSelected
                     )
-                    if (selectedOption == "Kredit") {
-                        Text(
-                            text = "Jatuh Tempo",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                            color = dark,
-                        )
-                        OutlinedTextField(
-                            value = uiState.selectedDate,
-                            onValueChange = {},
-                            textStyle = MaterialTheme.typography.bodyMedium,
-                            label = {
-                                Text(
-                                    "dd/mm/yyyy",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = secondary_text
-                                )
-                            },
-                            enabled = false,
-                            trailingIcon = {
-                                IconButton(onClick = { onEvent(PaymentUiEvent.DateIconClicked) }) {
-                                    Icon(
-                                        Icons.Default.DateRange,
-                                        contentDescription = "Date",
-                                        tint = stroke
-                                    )
-                                }
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                disabledPlaceholderColor = secondary_text,
-                                disabledBorderColor = stroke,
-                                disabledLabelColor = secondary_text,
-                                disabledTextColor = primary_text,
-                                disabledTrailingIconColor = icon,
-                            ),
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-                        )
-                    }
+//                    if (selectedOption == "Kredit") {
+//                        Text(
+//                            text = "Jatuh Tempo",
+//                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+//                            color = dark,
+//                        )
+//                        OutlinedTextField(
+//                            value = uiState.selectedDate,
+//                            onValueChange = {},
+//                            textStyle = MaterialTheme.typography.bodyMedium,
+//                            label = {
+//                                Text(
+//                                    "dd/mm/yyyy",
+//                                    style = MaterialTheme.typography.bodyMedium,
+//                                    color = secondary_text
+//                                )
+//                            },
+//                            enabled = false,
+//                            trailingIcon = {
+//                                IconButton(onClick = { onEvent(PaymentUiEvent.DateIconClicked) }) {
+//                                    Icon(
+//                                        Icons.Default.DateRange,
+//                                        contentDescription = "Date",
+//                                        tint = stroke
+//                                    )
+//                                }
+//                            },
+//                            shape = RoundedCornerShape(10.dp),
+//                            colors = OutlinedTextFieldDefaults.colors(
+//                                disabledPlaceholderColor = secondary_text,
+//                                disabledBorderColor = stroke,
+//                                disabledLabelColor = secondary_text,
+//                                disabledTextColor = primary_text,
+//                                disabledTrailingIconColor = icon,
+//                            ),
+//                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+//                        )
+//                    }
                     Text(
-                        text = "Uang Diterima",
+                        text = if (selectedOption == "QRIS") "Keterangan" else "Uang Diterima",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                         color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     DefaultTextField(
-                        value = uiState.uangDiterima,
+                        value = if (selectedOption == "QRIS") uiState.description else uiState.uangDiterima,
                         onValueChange = {
-                            onEvent(PaymentUiEvent.UangDiterimaChanged(it))
+                            if (selectedOption == "QRIS") onEvent(PaymentUiEvent.DescriptionChanged(it))
+                                else onEvent(PaymentUiEvent.UangDiterimaChanged(it))
                         },
-                        placehoder = "Nominal Uang",
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        placehoder = if (selectedOption == "QRIS") "Dari? (Mandiri/BNI/BRI dst)" else "Nominal Uang",
+                        keyboardOptions = if (selectedOption == "QRIS") KeyboardOptions(keyboardType = KeyboardType.Text)
+                            else KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                     )
-                    Text(
-                        text = "Kembalian",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = dark,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    DisabledTextField(
-                        value = uiState.kembalian.toString(),
-                        onValueChange = {},
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-                    )
+                    if (selectedOption != "QRIS") {
+                        Text(
+                            text = "Kembalian",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        DisabledTextField(
+                            value = uiState.kembalian.toString(),
+                            onValueChange = {},
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        )
+                    }
                 }
                 Column(
                     modifier = Modifier.imePadding()
@@ -401,15 +403,17 @@ fun Payment(
                         FooterButton(
                             onCancelClick = navigateBack,
                             onConfirmClick = {
-                                if (uiState.uangDiterima.isEmpty() || uiState.uangDiterima.toInt() < uiState.subtotal) {
-                                    state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
-                                    return@FooterButton
-                                }
-                                val customerExists =
-                                    uiState.customers.any { customer -> customer.kode == uiState.searchCust }
-                                if (checkedStatePelangan && !customerExists) {
-                                    state.addError(Exception("Hei, kode customer belum dipilih atau tidak valid!"))
-                                    return@FooterButton
+                                if (selectedOption != "QRIS") {
+                                    if (uiState.uangDiterima.isEmpty() || uiState.uangDiterima.toInt() < uiState.subtotal) {
+                                        state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
+                                        return@FooterButton
+                                    }
+                                    val customerExists =
+                                        uiState.customers.any { customer -> customer.kode == uiState.searchCust }
+                                    if (checkedStatePelangan && !customerExists) {
+                                        state.addError(Exception("Hei, kode customer belum dipilih atau tidak valid!"))
+                                        return@FooterButton
+                                    }
                                 }
                                 onEvent(PaymentUiEvent.ConfirmButtonClicked)
                             },

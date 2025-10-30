@@ -71,7 +71,7 @@ class EntrySalesViewModel(
 
             is EntrySalesUiEvent.DeleteProduct -> {
                 if (_uiState.value.scannedProducts.isNotEmpty()) {
-                    _uiState.value.scannedProducts.forEach {
+                    _uiState.value.scannedProducts.forEach { _ ->
                         deleteScannedProducts(event.draftId)
                     }
                 }

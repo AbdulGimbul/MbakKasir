@@ -35,6 +35,7 @@ interface ProductTransDraftDao {
                 isPrinted = draft.isPrinted,
                 amountPaid = draft.amountPaid,
                 paymentMethod = draft.paymentMethod,
+                description = draft.description,
                 dueDate = draft.dueDate,
                 customer = draft.customer
             )
@@ -55,12 +56,13 @@ interface ProductTransDraftDao {
     suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 
 
-    @Query("UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, customer = :customer WHERE draftId = :draftId")
+    @Query("UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, description = :description, customer = :customer WHERE draftId = :draftId")
     suspend fun updateDraft(
         draftId: String,
         isPrinted: Boolean?,
         amountPaid: Int?,
         paymentMethod: String?,
+        description: String?,
         dueDate: String?,
         customer: String?
     )
@@ -72,6 +74,7 @@ interface ProductTransDraftDao {
         qty: Int?,
         amountPaid: Int?,
         paymentMethod: String?,
+        description: String?,
         dueDate: String?,
         isPrinted: Boolean?,
         customer: String?
@@ -112,6 +115,7 @@ interface ProductTransDraftDao {
                 isPrinted = draft.isPrinted,
                 amountPaid = draft.amountPaid,
                 paymentMethod = draft.paymentMethod,
+                description = draft.description,
                 dueDate = draft.dueDate,
                 customer = draft.customer
             )

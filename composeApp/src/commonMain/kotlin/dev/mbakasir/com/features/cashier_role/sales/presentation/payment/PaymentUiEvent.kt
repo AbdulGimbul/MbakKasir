@@ -4,6 +4,7 @@ import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializa
 
 sealed class PaymentUiEvent {
     data class UangDiterimaChanged(val uangDiterima: String) : PaymentUiEvent()
+    data class DescriptionChanged(val description: String) : PaymentUiEvent()
     data class DeleteScannedProducts(val draftId: String) : PaymentUiEvent()
     data object DateIconClicked : PaymentUiEvent()
     data object ConfirmButtonClicked : PaymentUiEvent()

@@ -8,6 +8,7 @@ data class CreatePaymentRequest(
     val kembali: String,
     val bayar: String,
     val metode: String,
+    val keterangan: String,
     val kasir: String,
     val cus: String,
     @SerialName("nominal_ppn")
