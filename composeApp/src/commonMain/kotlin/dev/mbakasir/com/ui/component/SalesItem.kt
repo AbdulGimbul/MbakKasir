@@ -55,6 +55,7 @@ fun SalesItem(
                     text = product.draft.dateTime,
                     color = dev.mbakasir.com.ui.theme.secondary_text,
                     style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -99,12 +100,17 @@ fun ItemRowSales(label: String, value: String, color: Color) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label, color = color,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+            text = label, 
+            color = color,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+            maxLines = 1,
+            modifier = Modifier.weight(1f, fill = false)
         )
         Text(
-            text = value, color = dev.mbakasir.com.ui.theme.dark,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+            text = value, 
+            color = dev.mbakasir.com.ui.theme.dark,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+            maxLines = 1
         )
     }
 }

@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.AlertDialog
@@ -86,19 +88,22 @@ fun Profile(
             CircularProgressIndicator(color = primary)
         }
     } else {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
                     .weight(1f)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(bottom = 24.dp)
+                        .padding(bottom = 16.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(280.dp)
                             .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
                             .background(Color.White),
                     )
@@ -110,9 +115,13 @@ fun Profile(
                     )
                     uiState.user?.userInfo?.let { UserInfoHeader(it) }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                uiState.user?.storeInfo?.let { 
+                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        StoreInformationCard(it)
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
-                uiState.user?.storeInfo?.let { StoreInformationCard(it) }
-                Spacer(modifier = Modifier.height(32.dp))
                 OutlinedButton(
                     onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
@@ -129,11 +138,14 @@ fun Profile(
                         modifier = Modifier.padding(4.dp)
                     )
                     Text(
-                        "Logout",
+                        text = "Logout",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier.padding(4.dp),
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -240,15 +252,16 @@ fun StoreInformationCard(
             containerColor = Color.White
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = "Informasi Toko",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = dark
+                color = dark,
+                maxLines = 1
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             InfoRow(label = "Nama", info = store.nama)
             InfoRow(label = "Alamat", info = store.alamat)
             InfoRow(label = "Telp", info = store.telp)

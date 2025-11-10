@@ -114,12 +114,17 @@ fun Login(
                         .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(painter = painterResource(resource = Res.drawable.mbakasir_logo), contentDescription = null, modifier = Modifier.size(160.dp))
+                    Image(
+                        painter = painterResource(resource = Res.drawable.mbakasir_logo), 
+                        contentDescription = null, 
+                        modifier = Modifier.fillMaxWidth(0.4f)
+                    )
                     Text(
                         "Sederhana, Untung Maksimal",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 24.dp),
-                        color = secondary_text
+                        color = secondary_text,
+                        maxLines = 2
                     )
                     DefaultTextField(
                         value = uiState.username,

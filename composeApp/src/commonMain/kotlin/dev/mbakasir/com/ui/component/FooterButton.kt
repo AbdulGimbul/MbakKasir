@@ -45,9 +45,11 @@ fun FooterButton(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                cancelText,
+                text = cancelText,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp),
+                maxLines = 1,
+                softWrap = false
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -61,9 +63,11 @@ fun FooterButton(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                confirmText,
+                text = confirmText,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp),
+                maxLines = 1,
+                softWrap = false
             )
         }
     }

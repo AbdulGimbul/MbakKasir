@@ -102,7 +102,7 @@ fun HeaderSection(
         Image(
             painter = painterResource(resource = Res.drawable.account),
             contentDescription = null,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.weight(0.3f, fill = false)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {

@@ -204,7 +204,11 @@ private fun BottomBar(
                     )
                 },
                 label = {
-                    Text(text = item.title)
+                    Text(
+                        text = item.title,
+                        maxLines = 1,
+                        softWrap = false
+                    )
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = primary,

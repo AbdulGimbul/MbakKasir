@@ -1,5 +1,7 @@
 package dev.mbakasir.com.ui.component
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -10,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import dev.mbakasir.com.ui.theme.primary
 
 @Composable
@@ -26,14 +30,20 @@ fun DefaultButton(
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+        modifier = modifier.defaultMinSize(minHeight = 48.dp)
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                lineHeight = 1.2.em,
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.None
+                )
             ),
-            modifier = Modifier.padding(vertical = 8.dp)
+            maxLines = 1
         )
     }
 }
