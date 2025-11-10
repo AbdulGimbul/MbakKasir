@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
@@ -45,7 +46,9 @@ fun DefaultTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        textStyle = MaterialTheme.typography.bodyMedium,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            lineHeight = 1.2.em
+        ),
         label = if (label != null) {
             {
                 Text(text = label, color = secondary_text)

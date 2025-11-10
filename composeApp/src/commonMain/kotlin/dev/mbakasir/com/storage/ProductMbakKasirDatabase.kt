@@ -27,7 +27,6 @@ abstract class ProductMbakKasirDatabase : RoomDatabase() {
     }
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object ProductDatabaseConstructor : RoomDatabaseConstructor<ProductMbakKasirDatabase> {
     override fun initialize(): ProductMbakKasirDatabase
 }

@@ -50,12 +50,14 @@ fun ProductItem(
                     text = product.barcode,
                     color = primary_text,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    maxLines = 1
                 )
                 Text(
                     text = product.namaBarang,
                     color = dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 2
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -65,20 +67,26 @@ fun ProductItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    currencyFormat(product.hargaJual.toDouble()), color = dark,
+                    currencyFormat(product.hargaJual.toDouble()), 
+                    color = dark,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 1
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = product.stok, color = icon,
+                        text = product.stok, 
+                        color = icon,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 1
                     )
                     Text(
-                        text = product.satuan, color = icon,
+                        text = product.satuan, 
+                        color = icon,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 1
                     )
                 }
             }

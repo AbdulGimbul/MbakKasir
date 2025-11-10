@@ -111,24 +111,39 @@ fun Product(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text(
-                        "Terakhir Diperbaharui", color = dark,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        text = "Terakhir Diperbaharui", 
+                        color = dark,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 2
                     )
                     Text(
-                        text = formatDateTime(uiState.latestUpdate), color = primary,
-                        style = MaterialTheme.typography.titleMedium
+                        text = formatDateTime(uiState.latestUpdate), 
+                        color = primary,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1
                     )
                 }
-                Column {
+                Column(
+                    modifier = Modifier.weight(0.5f),
+                    horizontalAlignment = Alignment.End
+                ) {
                     Text(
-                        "Jumlah Barang", color = dark,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        text = "Jumlah Barang", 
+                        color = dark,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 2,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Text(
-                        uiState.totalProduct.toString(), color = primary,
-                        style = MaterialTheme.typography.titleMedium
+                        text = uiState.totalProduct.toString(), 
+                        color = primary,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
