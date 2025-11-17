@@ -3,6 +3,7 @@ package dev.mbakasir.com.di
 import dev.bluefalcon.BlueFalcon
 import dev.mbakasir.com.storage.DatabaseFactory
 import dev.mbakasir.com.storage.createDataStore
+import dev.mbakasir.com.utils.ShareManager
 import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
@@ -16,4 +17,5 @@ actual val platformModule: Module
         single { OkHttp.create() }
         single { BlueFalcon(context = androidApplication()) }
         single { DatabaseFactory(androidApplication()) }
+        single { ShareManager(androidContext()) }
     }

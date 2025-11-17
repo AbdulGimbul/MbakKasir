@@ -17,6 +17,7 @@ composeMultiplatformScreenCapture = "1.0.2"
 compottieDot = "2.0.2"
 datastorePreferences = "1.1.7"
 junit = "4.13.2"
+kmpCapturableCompose = "0.1.1"
 kmpDateTimePicker = "1.1.1"
 konnectivity = "0.1-alpha01"
 kotlin = "2.2.0"
@@ -48,6 +49,7 @@ room = "2.8.3"
 mokkery = "2.10.2"
 
 [libraries]
+kmp-capturable-compose = { module = "io.github.suwasto:kmp-capturable-compose", version.ref = "kmpCapturableCompose" }
 mokkery-runtime = { module = "dev.mokkery:mokkery-runtime", version.ref = "mokkery" }
 mokkery-plugin = { module = "dev.mokkery:mokkery-plugin", version.ref = "mokkery" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.HorizontalDivider
@@ -30,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -51,13 +53,16 @@ import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
+import dev.mbakasir.com.utils.ShareManager
 import dev.mbakasir.com.utils.currencyFormat
-import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
-import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
+import io.github.suwasto.capturablecompose.Capturable
+import io.github.suwasto.capturablecompose.rememberCaptureController
+import kotlinx.coroutines.launch
 
 @Composable
 fun InvoiceScreen(
     viewModel: InvoiceViewModel,
+    shareManager: ShareManager,
     navController: NavController,
     paymentData: PaymentUiState? = null,
     noInvoice: String? = null
@@ -67,6 +72,7 @@ fun InvoiceScreen(
     Invoice(
         uiState = uiState,
         onEvent = { viewModel.onEvent(it) },
+        shareManager = shareManager,
         paymentData = paymentData,
         noInvoice = noInvoice,
         navigateBack = {
@@ -83,11 +89,13 @@ fun InvoiceScreen(
 fun Invoice(
     uiState: InvoiceUiState,
     onEvent: (InvoiceUiEvent) -> Unit,
+    shareManager: ShareManager,
     paymentData: PaymentUiState? = null,
     noInvoice: String? = null,
     navigateBack: () -> Unit
 ) {
-    val captureController = rememberScreenCaptureController()
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(paymentData, noInvoice) {
         when {
@@ -112,16 +120,20 @@ fun Invoice(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
         ) {
-            ScreenCaptureComposable(
+            Capturable(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
-                screenCaptureController = captureController,
-                shareImage = true,
-                onCaptured = { img, throwable ->
-
-                }
+                captureController = captureController,
+                onCaptured = { imageBitmap ->
+                    scope.launch {
+                        shareManager.shareImage(
+                            imageBitmap = imageBitmap,
+                            fileName = "invoice_${uiState.invoiceNumber}.png"
+                        )
+                    }
+                },
             ) {
                 Column(
                     modifier = Modifier

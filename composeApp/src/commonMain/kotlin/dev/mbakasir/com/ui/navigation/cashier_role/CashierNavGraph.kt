@@ -55,6 +55,7 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.Payment
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.utils.generateKodeInvoice
 import kotlinx.serialization.json.Json
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -228,6 +229,7 @@ fun NavHostContent(
                 jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
             InvoiceScreen(
                 viewModel = koinViewModel<InvoiceViewModel>(),
+                shareManager = koinInject(),
                 paymentData = paymentData,
                 noInvoice = noInvoice,
                 navController = navController

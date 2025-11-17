@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,11 +59,13 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.Payment
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentUiState
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.PaymentViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.SummaryRow
+import dev.mbakasir.com.ui.component.CurrencyVisualTransformation
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DisabledTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.EntrySalesItem
 import dev.mbakasir.com.ui.component.FooterButton
+import dev.mbakasir.com.ui.component.formatCurrencyInput
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
@@ -625,14 +628,16 @@ fun EntrySalesAndPayment(
                         DefaultTextField(
                             value = paymentUiState.uangDiterima,
                             onValueChange = {
+                                val formatted = formatCurrencyInput(it)
                                 paymentOnEvent(
                                     PaymentUiEvent.UangDiterimaChanged(
-                                        it
+                                        formatted
                                     )
                                 )
                             },
                             placehoder = "Nominal Uang",
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            visualTransformation = CurrencyVisualTransformation(),
                             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
 
@@ -674,7 +679,8 @@ fun EntrySalesAndPayment(
                             FooterButton(
                                 onCancelClick = navigateBack,
                                 onConfirmClick = {
-                                    if (paymentUiState.uangDiterima.isEmpty() || paymentUiState.uangDiterima.toInt() < paymentUiState.subtotal) {
+                                    val uangDiterimaValue = paymentUiState.uangDiterima.replace(".", "").replace(",", "").toIntOrNull() ?: 0
+                                    if (paymentUiState.uangDiterima.isEmpty() || uangDiterimaValue < paymentUiState.subtotal) {
                                         paymentMessageBarState.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
                                         return@FooterButton
                                     }

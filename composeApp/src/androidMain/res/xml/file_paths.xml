@@ -1,8 +1,5 @@
 <paths>
-    <files-path
-        name="screen_shots"
-        path="share_images" />
-    <external-path
-        name="external_files"
+    <cache-path
+        name="invoice_cache"
         path="." />
 </paths>
