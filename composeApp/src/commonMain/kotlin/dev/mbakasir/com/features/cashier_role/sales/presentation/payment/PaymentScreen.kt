@@ -46,16 +46,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable
+import dev.mbakasir.com.ui.component.CurrencyVisualTransformation
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.DisabledTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.component.HeadlineText
+import dev.mbakasir.com.ui.component.formatCurrencyInput
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
@@ -353,12 +356,17 @@ fun Payment(
                     DefaultTextField(
                         value = if (selectedOption == "QRIS") uiState.description else uiState.uangDiterima,
                         onValueChange = {
-                            if (selectedOption == "QRIS") onEvent(PaymentUiEvent.DescriptionChanged(it))
-                                else onEvent(PaymentUiEvent.UangDiterimaChanged(it))
+                            if (selectedOption == "QRIS") {
+                                onEvent(PaymentUiEvent.DescriptionChanged(it))
+                            } else {
+                                val formatted = formatCurrencyInput(it)
+                                onEvent(PaymentUiEvent.UangDiterimaChanged(formatted))
+                            }
                         },
                         placehoder = if (selectedOption == "QRIS") "Dari? (Mandiri/BNI/BRI dst)" else "Nominal Uang",
                         keyboardOptions = if (selectedOption == "QRIS") KeyboardOptions(keyboardType = KeyboardType.Text)
                             else KeyboardOptions(keyboardType = KeyboardType.Number),
+                        visualTransformation = if (selectedOption != "QRIS") CurrencyVisualTransformation() else null,
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                     )
                     if (selectedOption != "QRIS") {
@@ -369,7 +377,7 @@ fun Payment(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         DisabledTextField(
-                            value = uiState.kembalian.toString(),
+                            value = if (uiState.kembalian < 0) "Rp 0" else currencyFormat(uiState.kembalian.toDouble()),
                             onValueChange = {},
                             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
@@ -404,7 +412,8 @@ fun Payment(
                             onCancelClick = navigateBack,
                             onConfirmClick = {
                                 if (selectedOption != "QRIS") {
-                                    if (uiState.uangDiterima.isEmpty() || uiState.uangDiterima.toInt() < uiState.subtotal) {
+                                    val uangDiterimaValue = uiState.uangDiterima.replace(".", "").replace(",", "").toIntOrNull() ?: 0
+                                    if (uiState.uangDiterima.isEmpty() || uangDiterimaValue < uiState.subtotal) {
                                         state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
                                         return@FooterButton
                                     }

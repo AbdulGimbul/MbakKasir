@@ -39,7 +39,8 @@ fun DefaultTextField(
     minLines: Int = 1,
     singleLine: Boolean = true,
     placehoder: String? = null,
-    keyboardOptions: KeyboardOptions? = null
+    keyboardOptions: KeyboardOptions? = null,
+    visualTransformation: VisualTransformation? = null
 ) {
     var passwordVisibility by remember { mutableStateOf(isPassword) }
 
@@ -87,7 +88,11 @@ fun DefaultTextField(
                 }
             }
         } else null,
-        visualTransformation = if (isPassword && passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = when {
+            isPassword && passwordVisibility -> PasswordVisualTransformation()
+            visualTransformation != null -> visualTransformation
+            else -> VisualTransformation.None
+        },
         minLines = minLines,
         singleLine = singleLine,
         placeholder = if (placehoder != null) {

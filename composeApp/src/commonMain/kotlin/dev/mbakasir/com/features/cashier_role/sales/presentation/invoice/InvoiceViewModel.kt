@@ -46,12 +46,12 @@ class InvoiceViewModel(
                 result.onSuccess { invoiceData ->
                     if (invoiceData.code == "200") {
                         _uiState.value = _uiState.value.copy(
-                            totalHarga = invoiceData.data.detil.sumOf { it.subtotal.toInt() }
-                                .toString()
-                                .toDoubleOrNull() ?: 0.0,
-                            diskon = invoiceData.data.detil.sumOf { it.diskon.toInt() }
-                                .toString()
-                                .toDoubleOrNull() ?: 0.0,
+                            totalHarga = invoiceData.data.detil.sumOf { 
+                                it.subtotal.replace(".", "").replace(",", "").toIntOrNull() ?: 0
+                            }.toDouble(),
+                            diskon = invoiceData.data.detil.sumOf { 
+                                it.diskon.replace(".", "").replace(",", "").toIntOrNull() ?: 0
+                            }.toDouble(),
                             subtotal = _uiState.value.totalHarga - _uiState.value.diskon,
                             invoiceNumber = invoiceData.data.invoice,
                             tanggal = invoiceData.data.tanggal,
@@ -76,9 +76,9 @@ class InvoiceViewModel(
     private fun handlePaymentLoaded(event: InvoiceUiEvent.ArgumentPaymentLoaded) {
         val detail = event.payment.products.map { it.toDetailPayment() }
         viewModelScope.launch {
-            val totalHarga = event.payment.products.sumOf { it.subtotal.toInt() }.toString()
+            val totalHarga = event.payment.products.sumOf { it.subtotal }.toString()
                 .toDoubleOrNull() ?: 0.0
-            val diskon = event.payment.products.sumOf { it.diskon.toInt() }.toString()
+            val diskon = event.payment.products.sumOf { it.diskon }.toString()
                 .toDoubleOrNull() ?: 0.0
             _uiState.value = _uiState.value.copy(
                 totalHarga = totalHarga,

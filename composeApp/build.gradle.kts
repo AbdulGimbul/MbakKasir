@@ -91,6 +91,9 @@ kotlin {
             implementation(libs.lifecycle.runtime.compose)
             api(libs.datetime)
             implementation(libs.material.icons.core)
+//            implementation(libs.kmpessentials)
+//            implementation(libs.androidx.fragment)
+            implementation(libs.kmp.capturable.compose)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -148,8 +151,8 @@ android {
         applicationId = "dev.mbakasir.com"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
     packaging {
         resources {

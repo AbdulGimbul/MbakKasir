@@ -31,10 +31,12 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     fun onEvent(event: PaymentUiEvent) {
         when (event) {
             is PaymentUiEvent.UangDiterimaChanged -> {
-                _uiState.value = _uiState.value.copy(uangDiterima = event.uangDiterima)
-                val kembalian =
-                    (_uiState.value.uangDiterima.toIntOrNull() ?: 0) - _uiState.value.subtotal
-                _uiState.value = _uiState.value.copy(kembalian = kembalian)
+                val uangDiterimaValue = event.uangDiterima.toIntOrNull() ?: 0
+                val kembalian = uangDiterimaValue - _uiState.value.subtotal
+                _uiState.value = _uiState.value.copy(
+                    uangDiterima = event.uangDiterima,
+                    kembalian = kembalian
+                )
             }
 
             is PaymentUiEvent.DescriptionChanged -> {
@@ -135,9 +137,10 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
     private fun updateTransDraftIsPrinted(draftId: String?) {
         if (draftId != null) {
             viewModelScope.launch(Dispatchers.IO) {
+                val uangDiterimaValue = _uiState.value.uangDiterima.toIntOrNull() ?: 0
                 salesRepository.updateProductTransInDraft(
                     draftId,
-                    amountPaid = if (_uiState.value.uangDiterima.isEmpty()) 0 else _uiState.value.uangDiterima.toInt(),
+                    amountPaid = if (_uiState.value.uangDiterima.isEmpty()) 0 else uangDiterimaValue,
                     paymentMethod = _uiState.value.paymentMethod,
                     description = _uiState.value.description,
                     customer = _uiState.value.searchCust,
