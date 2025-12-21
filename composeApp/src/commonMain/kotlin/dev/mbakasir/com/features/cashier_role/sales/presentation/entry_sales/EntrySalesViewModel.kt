@@ -6,6 +6,8 @@ import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.cashier_role.product.domain.toProductTrans
 import dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
+import dev.mbakasir.com.network.onError
+import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -25,6 +27,10 @@ class EntrySalesViewModel(
     val uiState: StateFlow<EntrySalesUiState> = _uiState
     private var searchJob: Job? = null
 
+    init {
+        getCustomers()
+    }
+
     fun onEvent(event: EntrySalesUiEvent) {
         when (event) {
             is EntrySalesUiEvent.LoadScannedProducts -> {
@@ -40,8 +46,12 @@ class EntrySalesViewModel(
                 _uiState.value = _uiState.value.copy(launchGallery = event.launchGallery)
             }
 
-            is EntrySalesUiEvent.OnTotalTagihanChanged -> {
-                _uiState.value = _uiState.value.copy(totalTagihan = event.totalTagihan)
+            is EntrySalesUiEvent.OnTotalsChanged -> {
+                _uiState.value = _uiState.value.copy(
+                    totalHarga = event.totalHarga,
+                    totalDiskon = event.totalDiskon,
+                    totalTagihan = event.totalTagihan
+                )
             }
 
             is EntrySalesUiEvent.OnInputUserChanged -> {
@@ -75,6 +85,14 @@ class EntrySalesViewModel(
                         deleteScannedProducts(event.draftId)
                     }
                 }
+            }
+
+            is EntrySalesUiEvent.OnSearchCustChanged -> {
+                _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
+            }
+
+            is EntrySalesUiEvent.OnCustomerCheckChanged -> {
+                _uiState.value = _uiState.value.copy(checkedStatePelanggan = event.checked)
             }
         }
     }
@@ -150,6 +168,17 @@ class EntrySalesViewModel(
     private fun deleteScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             salesRepository.deleteDraft(draftId)
+        }
+    }
+
+    private fun getCustomers() {
+        viewModelScope.launch {
+            val result = salesRepository.getCustomers()
+            result.onSuccess {
+                _uiState.value = _uiState.value.copy(customers = it.customers)
+            }.onError {
+                _uiState.value = _uiState.value.copy(errorMessage = it.message)
+            }
         }
     }
 }

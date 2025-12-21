@@ -200,20 +200,23 @@ fun NavHostContent(
             )
         }
         composable(
-            route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
+            route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}&customerCode={customerCode}",
             arguments = listOf(
                 navArgument("scannedProducts") { nullable = false },
-                navArgument("draftId") { nullable = false }
+                navArgument("draftId") { nullable = false },
+                navArgument("customerCode") { nullable = true; defaultValue = "" }
             )) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
+            val customerCode = backStackEntry.arguments?.getString("customerCode") ?: ""
             val scannedProducts =
                 jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
             PaymentScreen(
                 viewModel = koinViewModel<PaymentViewModel>(),
                 navController = navController,
                 products = scannedProducts ?: emptyList(),
-                draftId = draftId.toString()
+                draftId = draftId.toString(),
+                customerCode = customerCode
             )
         }
         composable(

@@ -15,5 +15,6 @@ data class Customer(
     val nama: String,
     val telp: String,
     val email: String,
-    val alamat: String
+    val alamat: String,
+    val jenis_cs: String = ""
 )

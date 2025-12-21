@@ -32,10 +32,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EntrySalesItem(
     product: dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity,
+    customerType: String = "",
     onIncreaseQty: (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
     onDecreaseQty: (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val specialPrice = when (customerType) {
+        "Pelanggan" -> product.hargaPelanggan
+        "Toko" -> product.hargaToko
+        "Sales" -> product.hargaSales
+        else -> 0
+    }
 
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),
@@ -71,11 +78,29 @@ fun EntrySalesItem(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    dev.mbakasir.com.utils.currencyFormat(product.hargaItem.toDouble()),
-                    color = dev.mbakasir.com.ui.theme.dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
+                if (specialPrice > 0 && specialPrice != product.hargaItem) {
+                    Column {
+                        Text(
+                            dev.mbakasir.com.utils.currencyFormat(product.hargaItem.toDouble()),
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough
+                            ),
+                            color = dev.mbakasir.com.ui.theme.secondary_text
+                        )
+                        Text(
+                            dev.mbakasir.com.utils.currencyFormat(specialPrice.toDouble()),
+                            color = dev.mbakasir.com.ui.theme.dark,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        )
+                    }
+                } else {
+                    Text(
+                        dev.mbakasir.com.utils.currencyFormat(product.hargaItem.toDouble()),
+                        color = dev.mbakasir.com.ui.theme.dark,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

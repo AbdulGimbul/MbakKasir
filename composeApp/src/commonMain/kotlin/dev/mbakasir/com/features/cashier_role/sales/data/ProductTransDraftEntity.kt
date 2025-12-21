@@ -29,6 +29,9 @@ data class ProductTransEntity(
     val jenis: String = "Produk",
     var qtyJual: Int = 1,
     val hargaItem: Int = 0,
+    val hargaPelanggan: Int = 0,
+    val hargaToko: Int = 0,
+    val hargaSales: Int = 0,
     val diskon: Int = 0,
     val subtotal: Int = 0
 )

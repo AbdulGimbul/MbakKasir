@@ -80,7 +80,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
 
             is PaymentUiEvent.ArgumentProductsLoaded -> {
                 _uiState.value = _uiState.value.copy(products = event.products)
-                val totalHarga = _uiState.value.products.sumOf { it.subtotal }
+                val totalHarga = _uiState.value.products.sumOf { it.qtyJual * it.hargaItem }
                 val diskon = _uiState.value.products.sumOf { it.diskon }
                 val subtotal = totalHarga - diskon
                 _uiState.value =
@@ -92,6 +92,10 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             }
 
             is PaymentUiEvent.OnSearchCustChanged -> {
+                _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
+            }
+
+            is PaymentUiEvent.CustomerReceived -> {
                 _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
             }
         }

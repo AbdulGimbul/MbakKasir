@@ -198,6 +198,13 @@ fun Invoice(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = dark
                             )
+                            if (uiState.pelangganType.isNotEmpty()) {
+                                Text(
+                                    text = uiState.pelangganType,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = dark
+                                )
+                            }
                         }
                     }
                     HorizontalDivider(

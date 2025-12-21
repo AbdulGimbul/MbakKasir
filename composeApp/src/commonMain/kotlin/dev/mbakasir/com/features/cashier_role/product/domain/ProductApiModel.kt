@@ -16,6 +16,9 @@ data class Barang(
     var nama_barang: String?,
     var satuan: String?,
     var harga_jual: String?,
+    var harga_pelanggan: String?,
+    var harga_toko: String?,
+    var harga_sales: String?,
     var stok: String?
 )
 
@@ -27,6 +30,9 @@ fun Barang.toProduct(): ProductEntity {
         namaBarang = this.nama_barang.toString(),
         satuan = this.satuan.toString(),
         hargaJual = this.harga_jual.toString(),
+        hargaPelanggan = this.harga_pelanggan.toString(),
+        hargaToko = this.harga_toko.toString(),
+        hargaSales = this.harga_sales.toString(),
         stok = this.stok.toString()
     )
 }

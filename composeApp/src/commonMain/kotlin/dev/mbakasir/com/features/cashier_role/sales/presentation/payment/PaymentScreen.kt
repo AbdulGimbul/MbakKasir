@@ -79,7 +79,8 @@ fun PaymentScreen(
     viewModel: PaymentViewModel,
     navController: NavController,
     products: List<ProductTransSerializable>,
-    draftId: String
+    draftId: String,
+    customerCode: String = ""
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -93,7 +94,8 @@ fun PaymentScreen(
             navController.navigateUp()
         },
         products = products,
-        draftId = draftId
+        draftId = draftId,
+        customerCode = customerCode
     )
 }
 
@@ -105,14 +107,18 @@ fun Payment(
     moveToInvoice: (String) -> Unit,
     navigateBack: () -> Unit,
     products: List<ProductTransSerializable>,
-    draftId: String
+    draftId: String,
+    customerCode: String = ""
 ) {
     val radioOptions = listOf("Tunai", "QRIS")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     val state = rememberMessageBarState()
-    val (checkedStatePelangan, onStateChange) = remember { mutableStateOf(false) }
-    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && uiState.customers.isNotEmpty()
+
+    LaunchedEffect(customerCode) {
+        if (customerCode.isNotEmpty()) {
+            onEvent(PaymentUiEvent.CustomerReceived(customerCode))
+        }
+    }
 
     LaunchedEffect(selectedOption) {
         onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
@@ -173,131 +179,19 @@ fun Payment(
                         text = "Pembayaran",
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
-                    Text(
-                        text = "Pelanggan",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = dark,
-                    )
-                    Row(
-                        Modifier.fillMaxWidth()
-                            .height(56.dp)
-                            .toggleable(
-                                value = checkedStatePelangan,
-                                onValueChange = { onStateChange(!checkedStatePelangan) },
-                                role = Role.Checkbox
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = checkedStatePelangan,
-                            onCheckedChange = null
-                        )
+                    if (uiState.searchCust.isNotEmpty()) {
                         Text(
                             text = "Pelanggan",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    }
-                    if (checkedStatePelangan) {
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = setExpanded
-                        ) {
-                            OutlinedTextField(
-                                value = uiState.searchCust,
-                                onValueChange = { newCust ->
-                                    onEvent(PaymentUiEvent.OnSearchCustChanged(newCust))
-                                },
-                                textStyle = MaterialTheme.typography.bodyMedium,
-                                label = {
-                                    Text(
-                                        "List Pelanggan",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = secondary_text
-                                    )
-                                },
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                                singleLine = true,
-                                shape = RoundedCornerShape(10.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = stroke,
-                                    unfocusedBorderColor = stroke,
-                                    cursorColor = primary_text,
-                                    focusedLabelColor = primary,
-                                    unfocusedLabelColor = secondary_text,
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
-                                    .menuAnchor(type = MenuAnchorType.PrimaryEditable)
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = {
-                                    setExpanded(false)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(max = 200.dp)
-                            ) {
-                                uiState.customers.forEach { customer ->
-                                    val displayText = when {
-                                        customer.nama.contains(
-                                            uiState.searchCust,
-                                            ignoreCase = true
-                                        ) -> customer.nama
-
-                                        customer.kode.contains(
-                                            uiState.searchCust,
-                                            ignoreCase = true
-                                        ) -> customer.kode
-
-                                        else -> ""
-                                    }
-
-                                    if (displayText.isNotEmpty()) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onEvent(PaymentUiEvent.OnSearchCustChanged(customer.kode))
-                                                setExpanded(false)
-                                            },
-                                            text = {
-                                                Column {
-                                                    Row(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.SpaceBetween
-                                                    ) {
-                                                        Text(
-                                                            text = customer.nama,
-                                                            style = MaterialTheme.typography.titleSmall
-                                                        )
-                                                        Text(
-                                                            text = customer.kode,
-                                                            style = MaterialTheme.typography.bodyMedium
-                                                        )
-                                                    }
-
-                                                    Text(
-                                                        text = customer.alamat,
-                                                        style = MaterialTheme.typography.bodySmall
-                                                    )
-                                                }
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.Person,
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        Text(
+                            text = uiState.searchCust,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primary,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
                     }
                     Text(
                         text = "Jenis Pembayaran",
@@ -415,12 +309,6 @@ fun Payment(
                                     val uangDiterimaValue = uiState.uangDiterima.replace(".", "").replace(",", "").toIntOrNull() ?: 0
                                     if (uiState.uangDiterima.isEmpty() || uangDiterimaValue < uiState.subtotal) {
                                         state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
-                                        return@FooterButton
-                                    }
-                                    val customerExists =
-                                        uiState.customers.any { customer -> customer.kode == uiState.searchCust }
-                                    if (checkedStatePelangan && !customerExists) {
-                                        state.addError(Exception("Hei, kode customer belum dipilih atau tidak valid!"))
                                         return@FooterButton
                                     }
                                 }

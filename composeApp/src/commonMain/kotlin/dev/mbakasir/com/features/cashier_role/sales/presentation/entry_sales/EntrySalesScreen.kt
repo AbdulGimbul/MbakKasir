@@ -1,6 +1,7 @@
 package dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales
 
 import ContentWithMessageBar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.AlertDialog
@@ -102,8 +104,8 @@ fun EntrySalesScreen(
         EntrySales(
             uiState = uiState,
             onEvent = { viewModel.onEvent(it) },
-            moveToPayment = { scannedProducts, draftId ->
-                navController.navigate("${CashierScreen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId") {
+            moveToPayment = { scannedProducts, draftId, customerCode ->
+                navController.navigate("${CashierScreen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId&customerCode=$customerCode") {
                     restoreState = true
                 }
             },
@@ -120,7 +122,7 @@ fun EntrySalesScreen(
 fun EntrySales(
     uiState: EntrySalesUiState,
     onEvent: (EntrySalesUiEvent) -> Unit,
-    moveToPayment: (String, String) -> Unit,
+    moveToPayment: (String, String, String) -> Unit,
     navigateBack: () -> Unit,
     draftId: String
 ) {
@@ -129,6 +131,8 @@ fun EntrySales(
     val state = rememberMessageBarState()
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
     val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
+    val (allowCustExpanded, setCustExpanded) = remember { mutableStateOf(false) }
+    val custExpanded = allowCustExpanded && uiState.customers.isNotEmpty()
 
     LaunchedEffect(draftId) {
         if (draftId != null) {
@@ -136,9 +140,29 @@ fun EntrySales(
         }
     }
 
-    LaunchedEffect(uiState.scannedProducts) {
-        val totalTagihan = uiState.scannedProducts.sumOf { it.hargaItem * it.qtyJual }
-        onEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
+    LaunchedEffect(uiState.scannedProducts, uiState.searchCust) {
+        val customer = uiState.customers.find { it.kode == uiState.searchCust }
+        val customerType = customer?.jenis_cs ?: ""
+        var totalHarga = 0
+        var totalDiskon = 0
+
+        uiState.scannedProducts.forEach { product ->
+            val specialPrice = when (customerType) {
+                "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
+                "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+                "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
+                else -> product.hargaItem
+            }
+            val originalPrice = product.hargaItem
+            val qty = product.qtyJual
+            val gross = originalPrice * qty
+            val discount = (originalPrice - specialPrice) * qty
+
+            totalHarga += gross
+            totalDiskon += discount
+        }
+        val totalTagihan = totalHarga - totalDiskon
+        onEvent(EntrySalesUiEvent.OnTotalsChanged(totalHarga, totalDiskon, totalTagihan))
     }
 
     LaunchedEffect(uiState.errorMessage) {
@@ -270,8 +294,11 @@ fun EntrySales(
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn {
                     items(uiState.scannedProducts) { product ->
+                        val customer = uiState.customers.find { it.kode == uiState.searchCust }
+                        val customerType = customer?.jenis_cs ?: ""
                         EntrySalesItem(
                             product = product,
+                            customerType = customerType,
                             onIncreaseQty = {
                                 onEvent(
                                     EntrySalesUiEvent.IncreaseProductQty(
@@ -329,15 +356,135 @@ fun EntrySales(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            "Total Tagihan", color = dark,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                        )
-                        Text(
-                            dev.mbakasir.com.utils.currencyFormat(uiState.totalTagihan.toDouble()),
+                            text = "Pelanggan",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = dark,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            if (uiState.searchCust.isNotEmpty()) {
+                                Text(
+                                    text = uiState.searchCust,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = primary,
+                                    modifier = Modifier.clickable { setCustExpanded(true) }
+                                )
+                                IconButton(
+                                    onClick = {
+                                        onEvent(EntrySalesUiEvent.OnSearchCustChanged(""))
+                                    },
+                                    modifier = Modifier.height(32.dp).width(32.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Clear,
+                                        contentDescription = "Clear customer",
+                                        tint = primary
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = "Pilih Pelanggan",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = secondary_text,
+                                    modifier = Modifier.clickable { setCustExpanded(true) }
+                                )
+                            }
+                        }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (custExpanded) {
+                        ExposedDropdownMenuBox(
+                            expanded = custExpanded,
+                            onExpandedChange = setCustExpanded
+                        ) {
+                            OutlinedTextField(
+                                value = "",
+                                onValueChange = {},
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                                label = {
+                                    Text(
+                                        "Cari Pelanggan",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = secondary_text
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                singleLine = true,
+                                shape = RoundedCornerShape(10.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = stroke,
+                                    unfocusedBorderColor = stroke,
+                                    cursorColor = primary_text,
+                                    focusedLabelColor = primary,
+                                    unfocusedLabelColor = secondary_text,
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                                    .menuAnchor(type = MenuAnchorType.PrimaryEditable)
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = custExpanded,
+                                onDismissRequest = {
+                                    setCustExpanded(false)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 200.dp)
+                            ) {
+                                uiState.customers.forEach { customer ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onEvent(EntrySalesUiEvent.OnSearchCustChanged(customer.kode))
+                                            setCustExpanded(false)
+                                        },
+                                        text = {
+                                            Column {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        text = customer.nama,
+                                                        style = MaterialTheme.typography.titleSmall
+                                                    )
+                                                    Text(
+                                                        text = customer.kode,
+                                                        style = MaterialTheme.typography.bodyMedium
+                                                    )
+                                                }
+
+                                                Text(
+                                                    text = customer.alamat,
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
+                                            }
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SummaryRow(
+                        label = "Total Harga",
+                        value = dev.mbakasir.com.utils.currencyFormat(uiState.totalHarga.toDouble())
+                    )
+                    SummaryRow(
+                        label = "Diskon",
+                        value = dev.mbakasir.com.utils.currencyFormat(uiState.totalDiskon.toDouble())
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    SummaryRow(
+                        label = "Total Tagihan",
+                        value = dev.mbakasir.com.utils.currencyFormat(uiState.totalTagihan.toDouble()),
+                        isBold = true
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     FooterButton(
                         onCancelClick = {
@@ -348,9 +495,26 @@ fun EntrySales(
                                 state.addError(Exception("Ekhm, barangnya ditambahkan dulu ya!"))
                                 return@FooterButton
                             }
+                            val customer = uiState.customers.find { it.kode == uiState.searchCust }
+                            val customerType = customer?.jenis_cs ?: ""
+                            val updatedProducts = uiState.scannedProducts.map { product ->
+                                val specialPrice = when (customerType) {
+                                    "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
+                                    "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+                                    "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
+                                    else -> product.hargaItem
+                                }
+                                val originalPrice = product.hargaItem
+                                val qty = product.qtyJual
+                                val discount = (originalPrice - specialPrice) * qty
+                                product.copy(
+                                    hargaItem = originalPrice,
+                                    diskon = discount
+                                )
+                            }
                             val scannedProductsJson =
-                                Json.encodeToString(uiState.scannedProducts.map { it.toSerializable() })
-                            moveToPayment(scannedProductsJson, draftId)
+                                Json.encodeToString(updatedProducts.map { it.toSerializable() })
+                            moveToPayment(scannedProductsJson, draftId, uiState.searchCust)
                         },
                         cancelText = "Batal",
                         confirmText = "Pembayaran"
@@ -416,9 +580,50 @@ fun EntrySalesAndPayment(
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
     val expanded = allowExpanded && entryUiState.searchResults.isNotEmpty()
 
-    LaunchedEffect(entryUiState.scannedProducts) {
-        val totalTagihan = entryUiState.scannedProducts.sumOf { it.hargaItem * it.qtyJual }
-        entryOnEvent(EntrySalesUiEvent.OnTotalTagihanChanged(totalTagihan))
+    LaunchedEffect(entryUiState.scannedProducts, entryUiState.searchCust) {
+        val customer = entryUiState.customers.find { it.kode == entryUiState.searchCust }
+        val customerType = customer?.jenis_cs ?: ""
+        val updatedProducts = entryUiState.scannedProducts.map { product ->
+            val specialPrice = when (customerType) {
+                "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
+                "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+                "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
+                else -> product.hargaItem
+            }
+            val originalPrice = product.hargaItem
+            val qty = product.qtyJual
+            val discount = (originalPrice - specialPrice) * qty
+            product.copy(
+                hargaItem = originalPrice,
+                diskon = discount
+            ).toSerializable()
+        }
+        paymentOnEvent(PaymentUiEvent.ArgumentProductsLoaded(updatedProducts))
+    }
+
+    LaunchedEffect(entryUiState.scannedProducts, entryUiState.searchCust) {
+        val customer = entryUiState.customers.find { it.kode == entryUiState.searchCust }
+        val customerType = customer?.jenis_cs ?: ""
+        var totalHarga = 0
+        var totalDiskon = 0
+
+        entryUiState.scannedProducts.forEach { product ->
+            val specialPrice = when (customerType) {
+                "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
+                "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+                "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
+                else -> product.hargaItem
+            }
+            val originalPrice = product.hargaItem
+            val qty = product.qtyJual
+            val gross = originalPrice * qty
+            val discount = (originalPrice - specialPrice) * qty
+
+            totalHarga += gross
+            totalDiskon += discount
+        }
+        val totalTagihan = totalHarga - totalDiskon
+        entryOnEvent(EntrySalesUiEvent.OnTotalsChanged(totalHarga, totalDiskon, totalTagihan))
     }
 
     LaunchedEffect(entryUiState.errorMessage) {
