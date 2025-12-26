@@ -53,29 +53,33 @@ class SalesViewModel(
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster.onSuccess {
                         lastUpdateMaster.value = it.lastUpdate.toString()
+
+                         if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
+                            productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                            fetchAndCacheProducts()
+                        }
                     }.onError { error ->
                         _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                    }
-                }
-
-                if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
-                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
-                    val getProducts = productRepository.getProducts()
-                    withContext(Dispatchers.Main) {
-                        productRepository.deleteAllProducts()
-                        getProducts.onSuccess { data ->
-                            data.barangs.forEach { barang ->
-                                productRepository.addProduct(barang.toProduct())
-                            }
-                        }.onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                        }
                     }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private suspend fun fetchAndCacheProducts() {
+        val getProducts = productRepository.getProducts()
+        withContext(Dispatchers.Main) {
+             getProducts.onSuccess { data ->
+                productRepository.deleteAllProducts()
+                data.barangs.forEach { barang ->
+                    productRepository.addProduct(barang.toProduct())
+                }
+            }.onError { error ->
+                _uiState.value = _uiState.value.copy(errorMessage = error.message)
             }
         }
     }
@@ -95,18 +99,39 @@ class SalesViewModel(
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch(Dispatchers.IO) {
+            // Resolve customer type for pricing
+            var customerType = ""
+            val customerCode = data?.draft?.customer ?: ""
+            if (customerCode.isNotEmpty()) {
+                val customerResult = salesRepository.getCustomers()
+                customerResult.onSuccess {
+                    customerType = it.customers.find { c -> c.kode == customerCode }?.jenis_cs ?: ""
+                }.onError {
+                    // Try to find in cache/offline if request failed effectively
+                    // getCustomers already handles fallback, but we rely on its result here.
+                    // If cached, it returns Success. If completely failed, empty string.
+                    // If getCustomers logic relies on `customerDao`, we should be good.
+                }
+            }
+
+            val serializableItems = data?.items?.map { it.toSerializable(customerType) } ?: emptyList()
+            val detilPayload = serializableItems.map { it.toDetailPayload() }
+
+            val totalAmount = serializableItems.sumOf { it.subtotal } // subtotal is (qty * price) - discount
+            val amountPaid = data?.draft?.amountPaid ?: 0
+            val realChange = amountPaid - totalAmount
+
             val result = salesRepository.createPayment(
                 CreatePaymentRequest(
-                    kembali = data?.change.toString(),
-                    bayar = data?.draft?.amountPaid.toString(),
+                    kembali = realChange.toString(),
+                    bayar = amountPaid.toString(),
                     metode = data?.draft?.paymentMethod.toString(),
                     kasir = "3",
                     cus = data?.draft?.customer.toString(),
                     nominalPpn = "0",
                     keterangan = data?.draft?.description.toString(),
                     tempo = "",
-                    detil = data?.items?.map { it.toSerializable().toDetailPayload() }
-                        ?: emptyList()
+                    detil = detilPayload
                 )
             )
             withContext(Dispatchers.Main) {

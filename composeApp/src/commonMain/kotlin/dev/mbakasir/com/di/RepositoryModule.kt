@@ -52,7 +52,8 @@ val provideHomeRepositoryModule = module {
         HomeViewModel(
             homeRepository = get(),
             productRepository = get(),
-            authRepository = get()
+            authRepository = get(),
+            salesRepository = get()
         )
     }
 }
@@ -69,6 +70,7 @@ val provideSalesRepositoryModule = module {
         SalesRepositoryImpl(
             productDao = get(),
             productTransDraftDao = get(),
+            customerDao = get(),
             requestHandler = get()
         )
     }.bind<SalesRepository>()

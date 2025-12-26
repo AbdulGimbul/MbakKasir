@@ -56,16 +56,20 @@ class ProfileViewModel(
 
             val result = authRepository.logout()
             withContext(Dispatchers.Main) {
+                // Perform local cleanup and navigation regardless of result
+                salesRepository.deleteAllDrafts()
+                
                 result.onSuccess {
-                    salesRepository.deleteAllDrafts()
                     _uiState.value = _uiState.value.copy(
                         isLogout = true,
                         isLoading = false
                     )
                 }.onError {
+                    // Even if API fails, we still consider the user logged out locally
                     _uiState.value = _uiState.value.copy(
-                        errorMessage = it.message,
-                        isLoading = false
+                        isLogout = true, 
+                        isLoading = false,
+                        errorMessage = it.message // Optional: show error briefly? But we are navigating away.
                     )
                 }
             }

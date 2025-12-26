@@ -12,8 +12,10 @@ val provideLocalStorageModule = module {
     single {
         get<DatabaseFactory>().create()
             .setDriver(BundledSQLiteDriver())
+            .fallbackToDestructiveMigration(true)
             .build()
     }
     single { get<ProductMbakKasirDatabase>().productDao }
     single { get<ProductMbakKasirDatabase>().productTransDraftDao }
+    single { get<ProductMbakKasirDatabase>().customerDao }
 }

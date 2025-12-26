@@ -98,7 +98,8 @@ fun EntrySalesScreen(
             paymentUiState = paymentUiState,
             entryOnEvent = { viewModel.onEvent(it) },
             paymentOnEvent = { paymentViewModel.onEvent(it) },
-            navigateBack = { navController.navigateUp() }
+            navigateBack = { navController.navigateUp() },
+            draftId = draftId
         )
     } else {
         EntrySales(
@@ -133,6 +134,7 @@ fun EntrySales(
     val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
     val (allowCustExpanded, setCustExpanded) = remember { mutableStateOf(false) }
     val custExpanded = allowCustExpanded && uiState.customers.isNotEmpty()
+    val (custFilter, setCustFilter) = remember { mutableStateOf("") }
 
     LaunchedEffect(draftId) {
         if (draftId != null) {
@@ -272,13 +274,14 @@ fun EntrySales(
                             if (displayText.isNotEmpty()) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        onEvent(EntrySalesUiEvent.OnInputUserChanged(product.barcode))
                                         onEvent(
                                             EntrySalesUiEvent.ScanProduct(
                                                 draftId.toString(),
                                                 product.barcode
                                             )
                                         )
+                                        onEvent(EntrySalesUiEvent.OnInputUserChanged(""))
+                                        onEvent(EntrySalesUiEvent.SearchProduct)
                                         setExpanded(false)
                                     },
                                     text = {
@@ -366,7 +369,7 @@ fun EntrySales(
                         ) {
                             if (uiState.searchCust.isNotEmpty()) {
                                 Text(
-                                    text = uiState.searchCust,
+                                    text = uiState.customers.find { it.kode == uiState.searchCust }?.nama ?: "Pelanggan Tidak Ditemukan",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = primary,
                                     modifier = Modifier.clickable { setCustExpanded(true) }
@@ -400,8 +403,8 @@ fun EntrySales(
                             onExpandedChange = setCustExpanded
                         ) {
                             OutlinedTextField(
-                                value = "",
-                                onValueChange = {},
+                                value = custFilter,
+                                onValueChange = { setCustFilter(it) },
                                 textStyle = MaterialTheme.typography.bodyMedium,
                                 label = {
                                     Text(
@@ -435,11 +438,17 @@ fun EntrySales(
                                     .fillMaxWidth()
                                     .heightIn(max = 200.dp)
                             ) {
-                                uiState.customers.forEach { customer ->
+                                uiState.customers.filter {
+                                    it.nama.contains(custFilter, ignoreCase = true) || it.kode.contains(
+                                        custFilter,
+                                        ignoreCase = true
+                                    )
+                                }.forEach { customer ->
                                     DropdownMenuItem(
                                         onClick = {
                                             onEvent(EntrySalesUiEvent.OnSearchCustChanged(customer.kode))
                                             setCustExpanded(false)
+                                            setCustFilter("")
                                         },
                                         text = {
                                             Column {
@@ -497,23 +506,8 @@ fun EntrySales(
                             }
                             val customer = uiState.customers.find { it.kode == uiState.searchCust }
                             val customerType = customer?.jenis_cs ?: ""
-                            val updatedProducts = uiState.scannedProducts.map { product ->
-                                val specialPrice = when (customerType) {
-                                    "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
-                                    "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
-                                    "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
-                                    else -> product.hargaItem
-                                }
-                                val originalPrice = product.hargaItem
-                                val qty = product.qtyJual
-                                val discount = (originalPrice - specialPrice) * qty
-                                product.copy(
-                                    hargaItem = originalPrice,
-                                    diskon = discount
-                                )
-                            }
                             val scannedProductsJson =
-                                Json.encodeToString(updatedProducts.map { it.toSerializable() })
+                                Json.encodeToString(uiState.scannedProducts.map { it.toSerializable(customerType) })
                             moveToPayment(scannedProductsJson, draftId, uiState.searchCust)
                         },
                         cancelText = "Batal",
@@ -574,7 +568,8 @@ fun EntrySalesAndPayment(
     paymentUiState: PaymentUiState,
     entryOnEvent: (EntrySalesUiEvent) -> Unit,
     paymentOnEvent: (PaymentUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    draftId: String
 ) {
     val messageBarState = rememberMessageBarState()
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
@@ -584,19 +579,7 @@ fun EntrySalesAndPayment(
         val customer = entryUiState.customers.find { it.kode == entryUiState.searchCust }
         val customerType = customer?.jenis_cs ?: ""
         val updatedProducts = entryUiState.scannedProducts.map { product ->
-            val specialPrice = when (customerType) {
-                "Pelanggan" -> if (product.hargaPelanggan > 0) product.hargaPelanggan else product.hargaItem
-                "Toko" -> if (product.hargaToko > 0) product.hargaToko else product.hargaItem
-                "Sales" -> if (product.hargaSales > 0) product.hargaSales else product.hargaItem
-                else -> product.hargaItem
-            }
-            val originalPrice = product.hargaItem
-            val qty = product.qtyJual
-            val discount = (originalPrice - specialPrice) * qty
-            product.copy(
-                hargaItem = originalPrice,
-                diskon = discount
-            ).toSerializable()
+            product.toSerializable(customerType)
         }
         paymentOnEvent(PaymentUiEvent.ArgumentProductsLoaded(updatedProducts))
     }
@@ -704,11 +687,13 @@ fun EntrySalesAndPayment(
                                     DropdownMenuItem(
                                         onClick = {
                                             entryOnEvent(
-                                                EntrySalesUiEvent.OnInputUserChanged(
+                                                EntrySalesUiEvent.ScanProduct(
+                                                    draftId.toString(),
                                                     product.barcode
                                                 )
                                             )
-//                                            entryOnEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), product.barcode))
+                                            entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(""))
+                                            entryOnEvent(EntrySalesUiEvent.SearchProduct)
                                             setExpanded(false)
                                         },
                                         text = { Text(displayText) }

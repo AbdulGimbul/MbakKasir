@@ -49,26 +49,27 @@ class ProductViewModel(
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster.onSuccess {
                         lastUpdateMaster.value = it.lastUpdate.toString()
+
+                        if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
+                            productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                            
+                            val getProducts = productRepository.getProducts()
+                            withContext(Dispatchers.Main) {
+                                // productRepository.deleteAllProducts() // Deleted only on success
+                                getProducts.onSuccess { data ->
+                                    productRepository.deleteAllProducts()
+                                    data.barangs.forEach { barang ->
+                                        productRepository.addProduct(barang.toProduct())
+                                    }
+                                    getTopProduct()
+                                }.onError { error ->
+                                    _uiState.value = _uiState.value.copy(errorMessage = error.message, isLoading = false)
+                                }
+                            }
+                        }
                     }.onError { error ->
                         _uiState.value = _uiState.value.copy(errorMessage = error.message)
                     }
-                }
-
-                if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
-                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
-                    val getProducts = productRepository.getProducts()
-                    withContext(Dispatchers.Main) {
-                        productRepository.deleteAllProducts()
-                        getProducts.onSuccess { data ->
-                            data.barangs.forEach { barang ->
-                                productRepository.addProduct(barang.toProduct())
-                            }
-                        }.onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message, isLoading = false)
-                        }
-                    }
-
-                    getTopProduct()
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)

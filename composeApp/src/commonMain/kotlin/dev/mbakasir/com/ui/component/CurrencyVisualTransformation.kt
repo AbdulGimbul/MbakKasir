@@ -4,9 +4,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
+
 
 class CurrencyVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
@@ -23,10 +21,9 @@ class CurrencyVisualTransformation : VisualTransformation {
             )
         }
         
-        val symbols = DecimalFormatSymbols(Locale("in", "ID"))
-        symbols.groupingSeparator = '.'
-        val formatter = DecimalFormat("#,###", symbols)
-        val formatted = "Rp " + formatter.format(digitsOnly.toLong())
+        val longVal = digitsOnly.toLongOrNull() ?: 0L
+        val formattedNumber = longVal.toString().reversed().chunked(3).joinToString(".").reversed()
+        val formatted = "Rp $formattedNumber"
         
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {

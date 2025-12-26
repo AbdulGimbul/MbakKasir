@@ -187,7 +187,7 @@ fun Payment(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
-                            text = uiState.searchCust,
+                            text = uiState.customers.find { it.kode == uiState.searchCust }?.nama ?: "",
                             style = MaterialTheme.typography.bodyMedium,
                             color = primary,
                             modifier = Modifier.padding(bottom = 16.dp)

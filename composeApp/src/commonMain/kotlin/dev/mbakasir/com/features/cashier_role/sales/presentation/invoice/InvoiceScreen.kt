@@ -222,7 +222,7 @@ fun Invoice(
                             name = it.namaBarang,
                             qty = it.qtyJual,
                             price = currencyFormat(
-                                it.subtotal.toDoubleOrNull() ?: 0.0
+                                it.hargaItem.toDoubleOrNull() ?: 0.0
                             ),
                             discount = currencyFormat(
                                 it.diskon.toDoubleOrNull() ?: 0.0

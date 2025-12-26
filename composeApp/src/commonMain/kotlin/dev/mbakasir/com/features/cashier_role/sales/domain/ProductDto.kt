@@ -16,7 +16,30 @@ data class ProductTransSerializable(
     val subtotal: Int
 )
 
-fun dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity.toSerializable(): ProductTransSerializable {
+fun dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity.toSerializable(customerType: String = ""): ProductTransSerializable {
+    if (customerType.isBlank()) {
+        return ProductTransSerializable(
+            idbarang = this.idBarang,
+            kodebarang = this.kodeBarang,
+            barcode = this.barcode,
+            namaBarang = this.namaBarang,
+            idKaryawan = this.idKaryawan,
+            jenis = this.jenis,
+            qtyJual = this.qtyJual,
+            hargaItem = this.hargaItem,
+            diskon = this.diskon,
+            subtotal = this.qtyJual * this.hargaItem - this.diskon
+        )
+    }
+
+    val specialPrice = when (customerType) {
+        "Pelanggan" -> if (this.hargaPelanggan > 0) this.hargaPelanggan else this.hargaItem
+        "Toko" -> if (this.hargaToko > 0) this.hargaToko else this.hargaItem
+        "Sales" -> if (this.hargaSales > 0) this.hargaSales else this.hargaItem
+        else -> this.hargaItem
+    }
+    val calculatedDiscount = (this.hargaItem - specialPrice) * this.qtyJual
+
     return ProductTransSerializable(
         idbarang = this.idBarang,
         kodebarang = this.kodeBarang,
@@ -26,8 +49,8 @@ fun dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity.toSeria
         jenis = this.jenis,
         qtyJual = this.qtyJual,
         hargaItem = this.hargaItem,
-        diskon = this.diskon,
-        subtotal = this.qtyJual * this.hargaItem - this.diskon
+        diskon = calculatedDiscount,
+        subtotal = this.qtyJual * this.hargaItem - calculatedDiscount
     )
 }
 

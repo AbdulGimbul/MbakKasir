@@ -50,7 +50,7 @@ class InvoiceViewModel(
                     if (invoiceData.code == "200") {
                         val customers = if (customerResult is NetworkResult.Success) customerResult.data.customers else emptyList()
                         val customer = customers.find { it.kode == invoiceData.data.customer || it.nama == invoiceData.data.customer }
-                        val pelangganType = customer?.jenis_cs.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
+                        val pelangganType = customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
 
                         _uiState.value = _uiState.value.copy(
                             totalHarga = invoiceData.data.detil.sumOf { 
@@ -84,13 +84,11 @@ class InvoiceViewModel(
     private fun handlePaymentLoaded(event: InvoiceUiEvent.ArgumentPaymentLoaded) {
         val detail = event.payment.products.map { it.toDetailPayment() }
         viewModelScope.launch {
-            val totalHarga = event.payment.products.sumOf { it.subtotal }.toString()
-                .toDoubleOrNull() ?: 0.0
-            val diskon = event.payment.products.sumOf { it.diskon }.toString()
-                .toDoubleOrNull() ?: 0.0
+            val totalHarga = event.payment.products.sumOf { it.qtyJual * it.hargaItem }.toDouble()
+            val diskon = event.payment.products.sumOf { it.diskon }.toDouble()
 
             val customer = event.payment.customers.find { it.kode == event.payment.searchCust }
-            val pelangganType = customer?.jenis_cs.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
+            val pelangganType = customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
 
             _uiState.value = _uiState.value.copy(
                 totalHarga = totalHarga,

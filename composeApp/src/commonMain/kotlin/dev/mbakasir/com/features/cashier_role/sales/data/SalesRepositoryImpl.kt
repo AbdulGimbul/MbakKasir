@@ -10,11 +10,14 @@ import dev.mbakasir.com.features.cashier_role.sales.domain.PelangganApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult
 import dev.mbakasir.com.network.RequestHandler
+import dev.mbakasir.com.network.onError
+import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.flow.Flow
 
 class SalesRepositoryImpl(
     private val productDao: ProductDao,
     private val productTransDraftDao: ProductTransDraftDao,
+    private val customerDao: CustomerDao,
     private val requestHandler: RequestHandler
 ) : SalesRepository {
 
@@ -102,9 +105,28 @@ class SalesRepositoryImpl(
     }
 
     override suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException> {
-        return requestHandler.get(
-            urlPathSegments = listOf("api", "pelanggan", "p", "all")
-        )
+        return try {
+            val result: NetworkResult<PelangganApiModel, NetworkException> = requestHandler.get(
+                urlPathSegments = listOf("api", "pelanggan", "p", "all")
+            )
+            result.onSuccess {
+                customerDao.deleteAllCustomers()
+                customerDao.insertCustomers(it.customers.map { customer -> customer.toEntity() })
+            }.onError {
+                val localCustomers = customerDao.getCustomersList()
+                if (localCustomers.isNotEmpty()) {
+                    return NetworkResult.Success(PelangganApiModel(localCustomers.map { it.toDomain() }))
+                }
+            }
+            result
+        } catch (e: Exception) {
+            val localCustomers = customerDao.getCustomersList()
+            if (localCustomers.isNotEmpty()) {
+                NetworkResult.Success(PelangganApiModel(localCustomers.map { it.toDomain() }))
+            } else {
+                NetworkResult.Error(NetworkException.UnknownException(message = e.message ?: "Unknown error", cause = e))
+            }
+        }
     }
 
     override suspend fun deleteAllDrafts() {

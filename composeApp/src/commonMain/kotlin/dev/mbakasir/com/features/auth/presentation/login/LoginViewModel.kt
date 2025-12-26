@@ -6,6 +6,7 @@ import com.plusmobileapps.konnectivity.Konnectivity
 import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.auth.domain.LoginRequest
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
+import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
 import dev.mbakasir.com.storage.SessionHandler
@@ -86,9 +87,21 @@ class LoginViewModel(
                     val role = authRepository.getRole()
                     _uiState.value = LoginUiState.Authenticated(role = role)
                 }.onError { error ->
-                    salesRepository.deleteAllDrafts()
-                    updateState {
-                        it.copy(errorMessage = error.message)
+                    if (error is NetworkException.UnauthorizedException) {
+                        salesRepository.deleteAllDrafts()
+                        updateState {
+                            it.copy(errorMessage = error.message)
+                        }
+                    } else {
+                        // Offline or other error: Check if we have a valid session locally
+                        val role = authRepository.getRole()
+                        if (role.isNotEmpty()) {
+                             _uiState.value = LoginUiState.Authenticated(role = role)
+                        } else {
+                            updateState {
+                                it.copy(errorMessage = error.message)
+                            }
+                        }
                     }
                 }
 

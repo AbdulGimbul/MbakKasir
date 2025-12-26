@@ -160,7 +160,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
             result.onSuccess {
                 _uiState.value = _uiState.value.copy(customers = it.customers)
             }.onError {
-                _uiState.value = _uiState.value.copy(errorMessage = it.message)
+                _uiState.value = _uiState.value.copy(customerLoadError = it.message)
             }
         }
     }
