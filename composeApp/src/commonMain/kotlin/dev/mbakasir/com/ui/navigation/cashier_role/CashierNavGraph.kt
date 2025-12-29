@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Domain
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
@@ -60,92 +61,115 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CashierNavHost(
-    navController: NavHostController,
-    windowSize: WindowWidthSizeClass,
-    parentNavController: NavHostController
+        navController: NavHostController,
+        windowSize: WindowWidthSizeClass,
+        parentNavController: NavHostController,
+        role: String
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val navigationType: MbakKasirNavigationType = when (windowSize) {
-        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-        else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-    }
+    val filteredNavigationItems =
+            if (role.equals("Guest", ignoreCase = true)) {
+                listOf(
+                        navigationItems[0], // Beranda
+                        CashierBottomRailNavItem(
+                                title = "Riwayat",
+                                icon = Icons.Outlined.History,
+                                screen = CashierScreen.History
+                        ),
+                        navigationItems[2], // Barang
+                        navigationItems[3] // Akun
+                )
+            } else {
+                navigationItems
+            }
+
+    val navigationType: MbakKasirNavigationType =
+            when (windowSize) {
+                WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+                WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+                else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+            }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
-                bottomBar = {
-                    if (currentRoute in listOf(
-                            CashierScreen.Home.route,
-                            CashierScreen.Sales.route,
-                            CashierScreen.Product.route,
-                            CashierScreen.Profile.route,
-                        )
-                    ) {
-                        BottomBar(navController)
-                    }
-                },
-                floatingActionButton = {
-                    if (currentRoute == CashierScreen.Sales.route) {
-                        val draftId = generateKodeInvoice()
-                        FloatingActionButton(
-                            onClick = {
-                                navController.navigate("${CashierScreen.EntrySales.route}/$draftId")
-                            },
-                            shape = CircleShape,
-                            containerColor = primary
+                    bottomBar = {
+                        if (currentRoute in
+                                        listOf(
+                                                CashierScreen.Home.route,
+                                                CashierScreen.Sales.route,
+                                                CashierScreen.Product.route,
+                                                CashierScreen.Profile.route,
+                                                CashierScreen.History.route,
+                                        )
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
-                                tint = Color.White
-                            )
+                            BottomBar(navController, items = filteredNavigationItems)
                         }
-                    }
-                }
-            ) { innerPadding ->
-                NavHostContent(
-                    navController = navController,
-                    innerPadding = innerPadding,
-                    navigationType = navigationType,
-                    parentNavController = parentNavController
-                )
-            }
-        }
-
-        MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
-            PermanentNavigationDrawer(
-                drawerContent = { SideBar(navController) },
-                content = {
-                    Scaffold(
-                        floatingActionButton = {
-                            if (currentRoute == CashierScreen.Sales.route) {
-                                FloatingActionButton(
+                    },
+                    floatingActionButton = {
+                        if (currentRoute == CashierScreen.Sales.route) {
+                            val draftId = generateKodeInvoice()
+                            FloatingActionButton(
                                     onClick = {
-                                        navController.navigate(CashierScreen.EntrySales.route)
+                                        navController.navigate(
+                                                "${CashierScreen.EntrySales.route}/$draftId"
+                                        )
                                     },
                                     shape = CircleShape,
                                     containerColor = primary
-                                ) {
-                                    Icon(
+                            ) {
+                                Icon(
                                         imageVector = Icons.Default.Add,
                                         contentDescription = "Add",
                                         tint = Color.White
-                                    )
-                                }
+                                )
                             }
                         }
-                    ) { innerPadding ->
-                        NavHostContent(
-                            navController = navController,
-                            innerPadding = innerPadding,
-                            navigationType = navigationType,
-                            parentNavController = parentNavController
-                        )
                     }
-                }
+            ) { innerPadding ->
+                NavHostContent(
+                        navController = navController,
+                        innerPadding = innerPadding,
+                        navigationType = navigationType,
+                        parentNavController = parentNavController
+                )
+            }
+        }
+        MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
+            PermanentNavigationDrawer(
+                    drawerContent = { SideBar(navController, items = filteredNavigationItems) },
+                    content = {
+                        Scaffold(
+                                floatingActionButton = {
+                                    if (currentRoute == CashierScreen.Sales.route) {
+                                        FloatingActionButton(
+                                                onClick = {
+                                                    navController.navigate(
+                                                            CashierScreen.EntrySales.route
+                                                    )
+                                                },
+                                                shape = CircleShape,
+                                                containerColor = primary
+                                        ) {
+                                            Icon(
+                                                    imageVector = Icons.Default.Add,
+                                                    contentDescription = "Add",
+                                                    tint = Color.White
+                                            )
+                                        }
+                                    }
+                                }
+                        ) { innerPadding ->
+                            NavHostContent(
+                                    navController = navController,
+                                    innerPadding = innerPadding,
+                                    navigationType = navigationType,
+                                    parentNavController = parentNavController
+                            )
+                        }
+                    }
             )
         }
     }
@@ -153,15 +177,15 @@ fun CashierNavHost(
 
 @Composable
 fun NavHostContent(
-    navController: NavHostController,
-    innerPadding: PaddingValues,
-    navigationType: MbakKasirNavigationType,
-    parentNavController: NavHostController
+        navController: NavHostController,
+        innerPadding: PaddingValues,
+        navigationType: MbakKasirNavigationType,
+        parentNavController: NavHostController
 ) {
     NavHost(
-        navController = navController,
-        startDestination = CashierScreen.Home.route,
-        modifier = Modifier.padding(innerPadding)
+            navController = navController,
+            startDestination = CashierScreen.Home.route,
+            modifier = Modifier.padding(innerPadding)
     ) {
         composable(CashierScreen.Home.route) {
             HomeScreen(viewModel = koinViewModel<HomeViewModel>())
@@ -170,72 +194,76 @@ fun NavHostContent(
             ProductScreen(viewModel = koinViewModel<ProductViewModel>())
         }
         composable(CashierScreen.Sales.route) {
-            SalesScreen(
-                viewModel = koinViewModel<SalesViewModel>(),
-                navController = navController
-            )
+            SalesScreen(viewModel = koinViewModel<SalesViewModel>(), navController = navController)
         }
         composable(CashierScreen.History.route) {
             HistoryScreen(
-                viewModel = koinViewModel<HistoryViewModel>(),
-                navController = navController
+                    viewModel = koinViewModel<HistoryViewModel>(),
+                    navController = navController
             )
         }
         composable(CashierScreen.Profile.route) {
             ProfileScreen(
-                viewModel = koinViewModel<ProfileViewModel>(),
-                navController = parentNavController
+                    viewModel = koinViewModel<ProfileViewModel>(),
+                    navController = parentNavController
             )
         }
         composable(
-            route = "${CashierScreen.EntrySales.route}/{draftId}",
+                route = "${CashierScreen.EntrySales.route}/{draftId}",
         ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             EntrySalesScreen(
-                viewModel = koinViewModel<EntrySalesViewModel>(),
-                navController = navController,
-                paymentViewModel = koinViewModel<PaymentViewModel>(),
-                navigationType = navigationType,
-                draftId = draftId.toString()
+                    viewModel = koinViewModel<EntrySalesViewModel>(),
+                    navController = navController,
+                    paymentViewModel = koinViewModel<PaymentViewModel>(),
+                    navigationType = navigationType,
+                    draftId = draftId.toString()
             )
         }
         composable(
-            route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}&customerCode={customerCode}",
-            arguments = listOf(
-                navArgument("scannedProducts") { nullable = false },
-                navArgument("draftId") { nullable = false },
-                navArgument("customerCode") { nullable = true; defaultValue = "" }
-            )) { backStackEntry ->
+                route =
+                        "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}&customerCode={customerCode}",
+                arguments =
+                        listOf(
+                                navArgument("scannedProducts") { nullable = false },
+                                navArgument("draftId") { nullable = false },
+                                navArgument("customerCode") {
+                                    nullable = true
+                                    defaultValue = ""
+                                }
+                        )
+        ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
             val customerCode = backStackEntry.arguments?.getString("customerCode") ?: ""
             val scannedProducts =
-                jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
+                    jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
             PaymentScreen(
-                viewModel = koinViewModel<PaymentViewModel>(),
-                navController = navController,
-                products = scannedProducts ?: emptyList(),
-                draftId = draftId.toString(),
-                customerCode = customerCode
+                    viewModel = koinViewModel<PaymentViewModel>(),
+                    navController = navController,
+                    products = scannedProducts ?: emptyList(),
+                    draftId = draftId.toString(),
+                    customerCode = customerCode
             )
         }
         composable(
-            route = "${CashierScreen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
-            arguments = listOf(
-                navArgument("paymentData") { nullable = true },
-                navArgument("noInvoice") { nullable = true }
-            )
+                route =
+                        "${CashierScreen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
+                arguments =
+                        listOf(
+                                navArgument("paymentData") { nullable = true },
+                                navArgument("noInvoice") { nullable = true }
+                        )
         ) { backStackEntry ->
             val jsonResponse = backStackEntry.arguments?.getString("paymentData")
             val noInvoice = backStackEntry.arguments?.getString("noInvoice")
-            val paymentData =
-                jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
+            val paymentData = jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
             InvoiceScreen(
-                viewModel = koinViewModel<InvoiceViewModel>(),
-                shareManager = koinInject(),
-                paymentData = paymentData,
-                noInvoice = noInvoice,
-                navController = navController
+                    viewModel = koinViewModel<InvoiceViewModel>(),
+                    shareManager = koinInject(),
+                    paymentData = paymentData,
+                    noInvoice = noInvoice,
+                    navController = navController
             )
         }
     }
@@ -243,79 +271,17 @@ fun NavHostContent(
 
 @Composable
 private fun BottomBar(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
+        navController: NavHostController,
+        items: List<CashierBottomRailNavItem>,
+        modifier: Modifier = Modifier
 ) {
-    NavigationBar(
-        modifier = modifier
-    ) {
+    NavigationBar(modifier = modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        navigationItems.map { item ->
+        items.map { item ->
             NavigationBarItem(
-                selected = currentRoute == item.screen.route,
-                onClick = {
-                    navController.navigate(item.screen.route) {
-                        navController.graph.startDestinationRoute?.let {
-                            popUpTo(CashierScreen.Home.route) {
-                                saveState = true
-                            }
-                            restoreState = true
-                            launchSingleTop = true
-                        }
-                    }
-                },
-                icon = {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title
-                    )
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = primary,
-                    selectedTextColor = primary,
-                    indicatorColor = Color.Transparent
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun SideBar(navController: NavHostController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    PermanentDrawerSheet(
-        modifier = Modifier
-            .width(240.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .fillMaxHeight()
-                .padding(24.dp)
-        ) {
-            navigationItems.forEach { item ->
-                NavigationDrawerItem(
                     selected = currentRoute == item.screen.route,
-                    label = {
-                        Text(text = item.title)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
-                        )
-                    },
                     onClick = {
                         navController.navigate(item.screen.route) {
                             navController.graph.startDestinationRoute?.let {
@@ -325,7 +291,41 @@ fun SideBar(navController: NavHostController) {
                             }
                         }
                     },
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                    label = { Text(text = item.title, maxLines = 1, softWrap = false) },
+                    colors =
+                            NavigationBarItemDefaults.colors(
+                                    selectedIconColor = primary,
+                                    selectedTextColor = primary,
+                                    indicatorColor = Color.Transparent
+                            )
+            )
+        }
+    }
+}
+
+@Composable
+fun SideBar(navController: NavHostController, items: List<CashierBottomRailNavItem>) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    PermanentDrawerSheet(modifier = Modifier.width(240.dp)) {
+        Column(modifier = Modifier.wrapContentWidth().fillMaxHeight().padding(24.dp)) {
+            items.forEach { item ->
+                NavigationDrawerItem(
+                        selected = currentRoute == item.screen.route,
+                        label = { Text(text = item.title) },
+                        icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                        onClick = {
+                            navController.navigate(item.screen.route) {
+                                navController.graph.startDestinationRoute?.let {
+                                    popUpTo(CashierScreen.Home.route) { saveState = true }
+                                    restoreState = true
+                                    launchSingleTop = true
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
         }
@@ -337,25 +337,26 @@ enum class MbakKasirNavigationType {
     PERMANENT_NAVIGATION_DRAWER
 }
 
-val navigationItems = listOf(
-    CashierBottomRailNavItem(
-        title = "Beranda",
-        icon = Icons.Outlined.Home,
-        screen = CashierScreen.Home
-    ),
-    CashierBottomRailNavItem(
-        title = "Penjualan",
-        icon = Icons.Outlined.ShoppingCart,
-        screen = CashierScreen.Sales
-    ),
-    CashierBottomRailNavItem(
-        title = "Barang",
-        icon = Icons.Outlined.Domain,
-        screen = CashierScreen.Product
-    ),
-    CashierBottomRailNavItem(
-        title = "Akun",
-        icon = Icons.Outlined.AccountCircle,
-        screen = CashierScreen.Profile
-    )
-)
+val navigationItems =
+        listOf(
+                CashierBottomRailNavItem(
+                        title = "Beranda",
+                        icon = Icons.Outlined.Home,
+                        screen = CashierScreen.Home
+                ),
+                CashierBottomRailNavItem(
+                        title = "Penjualan",
+                        icon = Icons.Outlined.ShoppingCart,
+                        screen = CashierScreen.Sales
+                ),
+                CashierBottomRailNavItem(
+                        title = "Barang",
+                        icon = Icons.Outlined.Domain,
+                        screen = CashierScreen.Product
+                ),
+                CashierBottomRailNavItem(
+                        title = "Akun",
+                        icon = Icons.Outlined.AccountCircle,
+                        screen = CashierScreen.Profile
+                )
+        )
