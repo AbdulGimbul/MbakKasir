@@ -42,14 +42,6 @@ class EntrySalesViewModel(
             is EntrySalesUiEvent.OnLaunchGallery -> {
                 _uiState.value = _uiState.value.copy(launchGallery = event.launchGallery)
             }
-            is EntrySalesUiEvent.OnTotalsChanged -> {
-                _uiState.value =
-                        _uiState.value.copy(
-                                totalHarga = event.totalHarga,
-                                totalDiskon = event.totalDiskon,
-                                totalTagihan = event.totalTagihan
-                        )
-            }
             is EntrySalesUiEvent.OnInputUserChanged -> {
                 _uiState.value = _uiState.value.copy(inputUser = event.inputUser)
             }
@@ -78,6 +70,7 @@ class EntrySalesViewModel(
             }
             is EntrySalesUiEvent.OnSearchCustChanged -> {
                 _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
+                calculateTotals()
             }
             is EntrySalesUiEvent.OnCustomerCheckChanged -> {
                 _uiState.value = _uiState.value.copy(checkedStatePelanggan = event.checked)
@@ -149,6 +142,7 @@ class EntrySalesViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             salesRepository.getProductsFromDraft(draftId).collectLatest { scannedProductsList ->
                 _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
+                calculateTotals()
             }
         }
     }
@@ -164,5 +158,43 @@ class EntrySalesViewModel(
                     .onSuccess { _uiState.value = _uiState.value.copy(customers = it.customers) }
                     .onError { _uiState.value = _uiState.value.copy(errorMessage = it.message) }
         }
+    }
+    private fun calculateTotals() {
+        val currentScanned = _uiState.value.scannedProducts
+        val customer = _uiState.value.customers.find { it.kode == _uiState.value.searchCust }
+        val customerType = customer?.jenis_cs ?: ""
+
+        var totalHarga = 0
+        var totalDiskon = 0
+
+        currentScanned.forEach { product ->
+            val specialPrice =
+                    when (customerType) {
+                        "Pelanggan" ->
+                                if (product.hargaPelanggan > 0) product.hargaPelanggan
+                                else product.hargaItem
+                        "Toko" ->
+                                if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+                        "Sales" ->
+                                if (product.hargaSales > 0) product.hargaSales
+                                else product.hargaItem
+                        else -> product.hargaItem
+                    }
+            val originalPrice = product.hargaItem
+            val qty = product.qtyJual
+            val gross = originalPrice * qty
+            val discount = (originalPrice - specialPrice) * qty
+
+            totalHarga += gross
+            totalDiskon += discount
+        }
+        val totalTagihan = totalHarga - totalDiskon
+
+        _uiState.value =
+                _uiState.value.copy(
+                        totalHarga = totalHarga,
+                        totalDiskon = totalDiskon,
+                        totalTagihan = totalTagihan
+                )
     }
 }
