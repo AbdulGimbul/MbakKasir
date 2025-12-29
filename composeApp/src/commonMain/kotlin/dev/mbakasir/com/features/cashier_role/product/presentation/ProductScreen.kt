@@ -40,122 +40,137 @@ import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.ProductItem
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.utils.formatDateTime
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import rememberMessageBarState
 
 @Composable
 fun ProductScreen(viewModel: ProductViewModel) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
-    val lifecycleOwner = LocalLifecycleOwner.current
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val listState = rememberLazyListState()
+        val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                .distinctUntilChanged()
-                .collect { index ->
-                    if (index == uiState.productList.lastIndex) {
-                        viewModel.getTopProduct()
-                    }
-                }
-    }
+        LaunchedEffect(listState) {
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                        .distinctUntilChanged()
+                        .collect { index ->
+                                if (index == uiState.productList.lastIndex) {
+                                        viewModel.getTopProduct()
+                                }
+                        }
+        }
 
-    Product(uiState = uiState, listState = listState, onRefresh = { viewModel.reloadData() })
+        Product(uiState = uiState, listState = listState, onRefresh = { viewModel.reloadData() })
 }
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> Unit = {}) {
-    var search by remember { mutableStateOf("") }
-    val state = rememberMessageBarState()
-    val pullToRefreshState = rememberPullToRefreshState()
+        var search by remember { mutableStateOf("") }
+        val state = rememberMessageBarState()
+        val pullToRefreshState = rememberPullToRefreshState()
 
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { state.addError(Exception(it)) }
-    }
-
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { onRefresh() }
-
-    ContentWithMessageBar(
-            messageBarState = state,
-            errorMaxLines = 2,
-            showCopyButton = false,
-            visibilityDuration = 3000L,
-            modifier = Modifier.statusBarsPadding()
-    ) {
-        PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = onRefresh,
-                state = pullToRefreshState,
-                modifier = Modifier.fillMaxSize()
-        ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Text(
-                        "Barang",
-                        style =
-                                MaterialTheme.typography.headlineLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                ),
-                        color = dark,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
-                )
-                DefaultTextField(
-                        value = search,
-                        onValueChange = { search = it },
-                        placehoder = "Search ...",
-                        leadingIcon = Icons.Default.Search,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
-                )
-                Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                                text = "Terakhir Diperbaharui",
-                                color = dark,
-                                style =
-                                        MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        ),
-                                maxLines = 2
-                        )
-                        Text(
-                                text = formatDateTime(uiState.latestUpdate),
-                                color = primary,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1
-                        )
-                    }
-                    Column(modifier = Modifier.weight(0.5f), horizontalAlignment = Alignment.End) {
-                        Text(
-                                text = "Jumlah Barang",
-                                color = dark,
-                                style =
-                                        MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        ),
-                                maxLines = 2,
-                                modifier = Modifier.fillMaxWidth()
-                        )
-                        Text(
-                                text = uiState.totalProduct.toString(),
-                                color = primary,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn(state = listState) {
-                    items(uiState.productList) { product ->
-                        ProductItem(product = product, modifier = Modifier.padding(vertical = 4.dp))
-                    }
-                }
-            }
+        LaunchedEffect(uiState.errorMessage) {
+                uiState.errorMessage?.let { state.addError(Exception(it)) }
         }
-    }
+
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { onRefresh() }
+
+        ContentWithMessageBar(
+                messageBarState = state,
+                errorMaxLines = 2,
+                showCopyButton = false,
+                visibilityDuration = 3000L,
+                modifier = Modifier.statusBarsPadding()
+        ) {
+                PullToRefreshBox(
+                        isRefreshing = uiState.isLoading,
+                        onRefresh = onRefresh,
+                        state = pullToRefreshState,
+                        modifier = Modifier.fillMaxSize()
+                ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                                Text(
+                                        "Barang",
+                                        style =
+                                                MaterialTheme.typography.headlineLarge.copy(
+                                                        fontWeight = FontWeight.Bold
+                                                ),
+                                        color = dark,
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
+                                )
+                                DefaultTextField(
+                                        value = search,
+                                        onValueChange = { search = it },
+                                        placehoder = "Search ...",
+                                        leadingIcon = Icons.Default.Search,
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                                )
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                        text = "Terakhir Diperbaharui",
+                                                        color = dark,
+                                                        style =
+                                                                MaterialTheme.typography.titleMedium
+                                                                        .copy(
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .SemiBold
+                                                                        ),
+                                                        maxLines = 2
+                                                )
+                                                Text(
+                                                        text = uiState.latestUpdate.ifEmpty { "-" },
+                                                        color = primary,
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .titleMedium,
+                                                        maxLines = 1
+                                                )
+                                        }
+                                        Column(
+                                                modifier = Modifier.weight(0.5f),
+                                                horizontalAlignment = Alignment.End
+                                        ) {
+                                                Text(
+                                                        text = "Jumlah Barang",
+                                                        color = dark,
+                                                        style =
+                                                                MaterialTheme.typography.titleMedium
+                                                                        .copy(
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .SemiBold
+                                                                        ),
+                                                        maxLines = 2,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                )
+                                                Text(
+                                                        text = uiState.totalProduct.toString(),
+                                                        color = primary,
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .titleMedium,
+                                                        maxLines = 1,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                )
+                                        }
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                LazyColumn(state = listState) {
+                                        items(uiState.productList) { product ->
+                                                ProductItem(
+                                                        product = product,
+                                                        modifier = Modifier.padding(vertical = 4.dp)
+                                                )
+                                        }
+                                }
+                        }
+                }
+        }
 }
