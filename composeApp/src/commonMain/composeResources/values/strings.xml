@@ -24,4 +24,8 @@
     <string name="payment_type">Jenis Pembayaran</string>
     <string name="ups_error">Ups, terjadi kesalahan!</string>
     <string name="internet_error">Awas, internetmu mati!</string>
+    <string name="title_penjualan">Penjualan</string>
+    <string name="msg_data_not_available">Data not available.</string>
+    <string name="placeholder_search">Search ...</string>
+    <string name="msg_payment_failed">Eh kirim data gagal, coba beberapa saat lagi ya!:')</string>
 </resources>

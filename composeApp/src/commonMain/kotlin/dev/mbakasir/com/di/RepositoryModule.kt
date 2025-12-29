@@ -15,9 +15,9 @@ import dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel
 import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
 import dev.mbakasir.com.features.cashier_role.product.data.ProductRepositoryImpl
 import dev.mbakasir.com.features.cashier_role.product.presentation.ProductViewModel
-import dev.mbakasir.com.features.cashier_role.sales.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepositoryImpl
+import dev.mbakasir.com.features.cashier_role.sales.presentation.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.invoice.InvoiceViewModel
@@ -28,52 +28,51 @@ import org.koin.dsl.module
 
 val provideAuthRepositoryModule = module {
     single<AuthRepositoryImpl> {
-        AuthRepositoryImpl(
-            requestHandler = get(),
-            sessionHandler = get()
-        )
-    }.bind<AuthRepository>()
+                AuthRepositoryImpl(requestHandler = get(), sessionHandler = get())
+            }
+            .bind<AuthRepository>()
     single { Konnectivity() }
     viewModel {
-        LoginViewModel(
-            authRepository = get(),
-            konnectivity = get(),
-            salesRepository = get()
-        )
+        LoginViewModel(authRepository = get(), konnectivity = get(), salesRepository = get())
     }
     viewModel { ProfileViewModel(authRepository = get(), salesRepository = get()) }
 }
 
 val provideHomeRepositoryModule = module {
-    single<HomeRepositoryImpl> {
-        HomeRepositoryImpl(productDao = get(), reqHandler = get())
-    }.bind<HomeRepository>()
+    single<HomeRepositoryImpl> { HomeRepositoryImpl(productDao = get(), reqHandler = get()) }
+            .bind<HomeRepository>()
     viewModel {
         HomeViewModel(
-            homeRepository = get(),
-            productRepository = get(),
-            authRepository = get(),
-            salesRepository = get()
+                homeRepository = get(),
+                productRepository = get(),
+                authRepository = get(),
+                salesRepository = get()
         )
     }
 }
 
 val provideProductRepositoryModule = module {
     single<ProductRepositoryImpl> {
-        ProductRepositoryImpl(requestHandler = get(), productDao = get(), sessionHandler = get())
-    }.bind<ProductRepository>()
+                ProductRepositoryImpl(
+                        requestHandler = get(),
+                        productDao = get(),
+                        sessionHandler = get()
+                )
+            }
+            .bind<ProductRepository>()
     viewModel { ProductViewModel(productRepository = get()) }
 }
 
 val provideSalesRepositoryModule = module {
     single<SalesRepositoryImpl> {
-        SalesRepositoryImpl(
-            productDao = get(),
-            productTransDraftDao = get(),
-            customerDao = get(),
-            requestHandler = get()
-        )
-    }.bind<SalesRepository>()
+                SalesRepositoryImpl(
+                        productDao = get(),
+                        productTransDraftDao = get(),
+                        customerDao = get(),
+                        requestHandler = get()
+                )
+            }
+            .bind<SalesRepository>()
     viewModel { EntrySalesViewModel(salesRepository = get(), authRepository = get()) }
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
@@ -83,8 +82,9 @@ val provideSalesRepositoryModule = module {
 
 val provideStockOpnameRepositoryModule = module {
     single<StockOpnameRepositoryImpl> {
-        StockOpnameRepositoryImpl(productDao = get(), requestHandler = get())
-    }.bind<StockOpnameRepository>()
+                StockOpnameRepositoryImpl(productDao = get(), requestHandler = get())
+            }
+            .bind<StockOpnameRepository>()
     viewModel { StockOpnameViewModel(stockOpnameRepository = get()) }
     viewModel { EntryStockOpnameViewModel(stockOpnameRepository = get(), authRepository = get()) }
 }
