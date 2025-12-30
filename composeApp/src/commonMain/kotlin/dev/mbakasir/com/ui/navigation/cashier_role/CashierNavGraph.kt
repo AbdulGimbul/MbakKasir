@@ -41,9 +41,9 @@ import dev.mbakasir.com.features.cashier_role.home.presentation.HomeScreen
 import dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel
 import dev.mbakasir.com.features.cashier_role.product.presentation.ProductScreen
 import dev.mbakasir.com.features.cashier_role.product.presentation.ProductViewModel
-import dev.mbakasir.com.features.cashier_role.sales.SalesScreen
-import dev.mbakasir.com.features.cashier_role.sales.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable
+import dev.mbakasir.com.features.cashier_role.sales.presentation.SalesScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryScreen
@@ -284,11 +284,8 @@ private fun BottomBar(
                     selected = currentRoute == item.screen.route,
                     onClick = {
                         navController.navigate(item.screen.route) {
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(CashierScreen.Home.route) { saveState = true }
-                                restoreState = true
-                                launchSingleTop = true
-                            }
+                            popUpTo(CashierScreen.Home.route) { inclusive = false }
+                            launchSingleTop = true
                         }
                     },
                     icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
@@ -318,11 +315,8 @@ fun SideBar(navController: NavHostController, items: List<CashierBottomRailNavIt
                         icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
                         onClick = {
                             navController.navigate(item.screen.route) {
-                                navController.graph.startDestinationRoute?.let {
-                                    popUpTo(CashierScreen.Home.route) { saveState = true }
-                                    restoreState = true
-                                    launchSingleTop = true
-                                }
+                                popUpTo(CashierScreen.Home.route) { inclusive = false }
+                                launchSingleTop = true
                             }
                         },
                         modifier = Modifier.padding(vertical = 8.dp)
