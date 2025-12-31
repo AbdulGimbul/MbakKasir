@@ -46,6 +46,7 @@ import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
+import dev.mbakasir.com.utils.currencyFormat
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.cancel
 import mbakkasir.composeapp.generated.resources.choose_customer
@@ -66,146 +67,32 @@ fun ProductSearchSection(
         draftId: String,
         onEvent: (EntrySalesUiEvent) -> Unit
 ) {
-    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
+        val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
+        val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
-        OutlinedTextField(
-                value = uiState.inputUser,
-                onValueChange = { newBarcode ->
-                    onEvent(EntrySalesUiEvent.OnInputUserChanged(newBarcode))
-                    onEvent(EntrySalesUiEvent.SearchProduct)
-                },
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = {
-                    Text(
-                            stringResource(Res.string.scan_barcode_label),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = secondary_text
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { onEvent(EntrySalesUiEvent.ScanIconClick) }) {
-                        Icon(Icons.Default.QrCodeScanner, contentDescription = "QR", tint = primary)
-                    }
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                colors =
-                        OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = stroke,
-                                unfocusedBorderColor = stroke,
-                                cursorColor = primary_text,
-                                focusedLabelColor = primary,
-                                unfocusedLabelColor = secondary_text,
-                        ),
-                modifier =
-                        Modifier.fillMaxWidth()
-                                .padding(bottom = 16.dp)
-                                .menuAnchor(type = MenuAnchorType.PrimaryEditable)
-        )
-
-        ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { setExpanded(false) },
-                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
-        ) {
-            uiState.searchResults.forEach { product ->
-                val displayText =
-                        when {
-                            product.barcode.contains(uiState.inputUser, ignoreCase = true) ->
-                                    product.barcode
-                            product.namaBarang.contains(uiState.inputUser, ignoreCase = true) ->
-                                    product.namaBarang
-                            product.kodeBarang.contains(uiState.inputUser, ignoreCase = true) ->
-                                    product.kodeBarang
-                            else -> ""
-                        }
-
-                if (displayText.isNotEmpty()) {
-                    DropdownMenuItem(
-                            onClick = {
-                                onEvent(EntrySalesUiEvent.ScanProduct(draftId, product.barcode))
-                                onEvent(EntrySalesUiEvent.OnInputUserChanged(""))
-                                onEvent(EntrySalesUiEvent.SearchProduct)
-                                setExpanded(false)
-                            },
-                            text = { Text(displayText) },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> Unit) {
-    val (allowCustExpanded, setCustExpanded) = remember { mutableStateOf(false) }
-    val custExpanded = allowCustExpanded && uiState.customers.isNotEmpty()
-    val (custFilter, setCustFilter) = remember { mutableStateOf("") }
-
-    Column {
-        Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                    text = stringResource(Res.string.customer_label),
-                    style =
-                            MaterialTheme.typography.titleSmall.copy(
-                                    fontWeight = FontWeight.SemiBold
-                            ),
-                    color = dark,
-            )
-            Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-            ) {
-                if (uiState.searchCust.isNotEmpty()) {
-                    Text(
-                            text = uiState.customers.find { it.kode == uiState.searchCust }?.nama
-                                            ?: stringResource(Res.string.customer_not_found),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = primary,
-                            modifier = Modifier.clickable { setCustExpanded(true) }
-                    )
-                    IconButton(
-                            onClick = { onEvent(EntrySalesUiEvent.OnSearchCustChanged("")) },
-                            modifier = Modifier.height(32.dp).width(32.dp)
-                    ) {
-                        Icon(
-                                Icons.Default.Clear,
-                                contentDescription = "Clear customer",
-                                tint = primary
-                        )
-                    }
-                } else {
-                    Text(
-                            text = stringResource(Res.string.choose_customer),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = secondary_text,
-                            modifier = Modifier.clickable { setCustExpanded(true) }
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        if (custExpanded) {
-            ExposedDropdownMenuBox(expanded = custExpanded, onExpandedChange = setCustExpanded) {
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
                 OutlinedTextField(
-                        value = custFilter,
-                        onValueChange = { setCustFilter(it) },
+                        value = uiState.inputUser,
+                        onValueChange = { newBarcode ->
+                                onEvent(EntrySalesUiEvent.OnInputUserChanged(newBarcode))
+                                onEvent(EntrySalesUiEvent.SearchProduct)
+                        },
                         textStyle = MaterialTheme.typography.bodyMedium,
                         label = {
-                            Text(
-                                    stringResource(Res.string.search_customer),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = secondary_text
-                            )
+                                Text(
+                                        stringResource(Res.string.scan_barcode_label),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = secondary_text
+                                )
+                        },
+                        trailingIcon = {
+                                IconButton(onClick = { onEvent(EntrySalesUiEvent.ScanIconClick) }) {
+                                        Icon(
+                                                Icons.Default.QrCodeScanner,
+                                                contentDescription = "QR",
+                                                tint = primary
+                                        )
+                                }
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         singleLine = true,
@@ -225,63 +112,240 @@ fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> 
                 )
 
                 ExposedDropdownMenu(
-                        expanded = custExpanded,
-                        onDismissRequest = { setCustExpanded(false) },
+                        expanded = expanded,
+                        onDismissRequest = { setExpanded(false) },
                         modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
                 ) {
-                    uiState.customers
-                            .filter {
-                                it.nama.contains(custFilter, ignoreCase = true) ||
-                                        it.kode.contains(custFilter, ignoreCase = true)
-                            }
-                            .forEach { customer ->
-                                DropdownMenuItem(
-                                        onClick = {
-                                            onEvent(
-                                                    EntrySalesUiEvent.OnSearchCustChanged(
-                                                            customer.kode
-                                                    )
-                                            )
-                                            setCustExpanded(false)
-                                            setCustFilter("")
-                                        },
-                                        text = {
-                                            Column {
-                                                Row(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment =
-                                                                Alignment.CenterVertically,
-                                                        horizontalArrangement =
-                                                                Arrangement.SpaceBetween
-                                                ) {
-                                                    Text(
-                                                            text = customer.nama,
-                                                            style =
-                                                                    MaterialTheme.typography
-                                                                            .titleSmall
-                                                    )
-                                                    Text(
-                                                            text = customer.kode,
-                                                            style =
-                                                                    MaterialTheme.typography
-                                                                            .bodyMedium
-                                                    )
-                                                }
+                        uiState.searchResults.forEach { product ->
+                                val displayText =
+                                        when {
+                                                product.barcode.contains(
+                                                        uiState.inputUser,
+                                                        ignoreCase = true
+                                                ) -> product.barcode
+                                                product.namaBarang.contains(
+                                                        uiState.inputUser,
+                                                        ignoreCase = true
+                                                ) -> product.namaBarang
+                                                product.kodeBarang.contains(
+                                                        uiState.inputUser,
+                                                        ignoreCase = true
+                                                ) -> product.kodeBarang
+                                                else -> ""
+                                        }
 
-                                                Text(
-                                                        text = customer.alamat,
-                                                        style = MaterialTheme.typography.bodySmall
-                                                )
-                                            }
-                                        },
-                                        contentPadding =
-                                                ExposedDropdownMenuDefaults.ItemContentPadding
-                                )
-                            }
+                                if (displayText.isNotEmpty()) {
+                                        DropdownMenuItem(
+                                                onClick = {
+                                                        onEvent(
+                                                                EntrySalesUiEvent.ScanProduct(
+                                                                        draftId,
+                                                                        product.barcode
+                                                                )
+                                                        )
+                                                        onEvent(
+                                                                EntrySalesUiEvent
+                                                                        .OnInputUserChanged("")
+                                                        )
+                                                        onEvent(EntrySalesUiEvent.SearchProduct)
+                                                        setExpanded(false)
+                                                },
+                                                text = { Text(displayText) },
+                                                contentPadding =
+                                                        ExposedDropdownMenuDefaults
+                                                                .ItemContentPadding
+                                        )
+                                }
+                        }
                 }
-            }
         }
-    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> Unit) {
+        val (allowCustExpanded, setCustExpanded) = remember { mutableStateOf(false) }
+        val custExpanded = allowCustExpanded && uiState.customers.isNotEmpty()
+        val (custFilter, setCustFilter) = remember { mutableStateOf("") }
+
+        Column {
+                Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                        Text(
+                                text = stringResource(Res.string.customer_label),
+                                style =
+                                        MaterialTheme.typography.titleSmall.copy(
+                                                fontWeight = FontWeight.SemiBold
+                                        ),
+                                color = dark,
+                        )
+                        Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.End
+                        ) {
+                                if (uiState.searchCust.isNotEmpty()) {
+                                        Text(
+                                                text =
+                                                        uiState.customers
+                                                                .find {
+                                                                        it.kode ==
+                                                                                uiState.searchCust
+                                                                }
+                                                                ?.nama
+                                                                ?: stringResource(
+                                                                        Res.string
+                                                                                .customer_not_found
+                                                                ),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = primary,
+                                                modifier =
+                                                        Modifier.clickable { setCustExpanded(true) }
+                                        )
+                                        IconButton(
+                                                onClick = {
+                                                        onEvent(
+                                                                EntrySalesUiEvent
+                                                                        .OnSearchCustChanged("")
+                                                        )
+                                                },
+                                                modifier = Modifier.height(32.dp).width(32.dp)
+                                        ) {
+                                                Icon(
+                                                        Icons.Default.Clear,
+                                                        contentDescription = "Clear customer",
+                                                        tint = primary
+                                                )
+                                        }
+                                } else {
+                                        Text(
+                                                text = stringResource(Res.string.choose_customer),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = secondary_text,
+                                                modifier =
+                                                        Modifier.clickable { setCustExpanded(true) }
+                                        )
+                                }
+                        }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                if (custExpanded) {
+                        ExposedDropdownMenuBox(
+                                expanded = custExpanded,
+                                onExpandedChange = setCustExpanded
+                        ) {
+                                OutlinedTextField(
+                                        value = custFilter,
+                                        onValueChange = { setCustFilter(it) },
+                                        textStyle = MaterialTheme.typography.bodyMedium,
+                                        label = {
+                                                Text(
+                                                        stringResource(Res.string.search_customer),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        color = secondary_text
+                                                )
+                                        },
+                                        keyboardOptions =
+                                                KeyboardOptions(imeAction = ImeAction.Done),
+                                        singleLine = true,
+                                        shape = RoundedCornerShape(10.dp),
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedBorderColor = stroke,
+                                                        unfocusedBorderColor = stroke,
+                                                        cursorColor = primary_text,
+                                                        focusedLabelColor = primary,
+                                                        unfocusedLabelColor = secondary_text,
+                                                ),
+                                        modifier =
+                                                Modifier.fillMaxWidth()
+                                                        .padding(bottom = 16.dp)
+                                                        .menuAnchor(
+                                                                type =
+                                                                        MenuAnchorType
+                                                                                .PrimaryEditable
+                                                        )
+                                )
+
+                                ExposedDropdownMenu(
+                                        expanded = custExpanded,
+                                        onDismissRequest = { setCustExpanded(false) },
+                                        modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
+                                ) {
+                                        uiState.customers
+                                                .filter {
+                                                        it.nama.contains(
+                                                                custFilter,
+                                                                ignoreCase = true
+                                                        ) ||
+                                                                it.kode.contains(
+                                                                        custFilter,
+                                                                        ignoreCase = true
+                                                                )
+                                                }
+                                                .forEach { customer ->
+                                                        DropdownMenuItem(
+                                                                onClick = {
+                                                                        onEvent(
+                                                                                EntrySalesUiEvent
+                                                                                        .OnSearchCustChanged(
+                                                                                                customer.kode
+                                                                                        )
+                                                                        )
+                                                                        setCustExpanded(false)
+                                                                        setCustFilter("")
+                                                                },
+                                                                text = {
+                                                                        Column {
+                                                                                Row(
+                                                                                        modifier =
+                                                                                                Modifier.fillMaxWidth(),
+                                                                                        verticalAlignment =
+                                                                                                Alignment
+                                                                                                        .CenterVertically,
+                                                                                        horizontalArrangement =
+                                                                                                Arrangement
+                                                                                                        .SpaceBetween
+                                                                                ) {
+                                                                                        Text(
+                                                                                                text =
+                                                                                                        customer.nama,
+                                                                                                style =
+                                                                                                        MaterialTheme
+                                                                                                                .typography
+                                                                                                                .titleSmall
+                                                                                        )
+                                                                                        Text(
+                                                                                                text =
+                                                                                                        customer.kode,
+                                                                                                style =
+                                                                                                        MaterialTheme
+                                                                                                                .typography
+                                                                                                                .bodyMedium
+                                                                                        )
+                                                                                }
+
+                                                                                Text(
+                                                                                        text =
+                                                                                                customer.alamat,
+                                                                                        style =
+                                                                                                MaterialTheme
+                                                                                                        .typography
+                                                                                                        .bodySmall
+                                                                                )
+                                                                        }
+                                                                },
+                                                                contentPadding =
+                                                                        ExposedDropdownMenuDefaults
+                                                                                .ItemContentPadding
+                                                        )
+                                                }
+                                }
+                        }
+                }
+        }
 }
 
 @Composable
@@ -290,27 +354,27 @@ fun TransactionSummaryFooter(
         onCancel: () -> Unit,
         onConfirm: () -> Unit
 ) {
-    Column {
-        SummaryRow(
-                label = stringResource(Res.string.total_price),
-                value = dev.mbakasir.com.utils.currencyFormat(uiState.totalHarga.toDouble())
-        )
-        SummaryRow(
-                label = stringResource(Res.string.discount),
-                value = dev.mbakasir.com.utils.currencyFormat(uiState.totalDiskon.toDouble())
-        )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-        SummaryRow(
-                label = stringResource(Res.string.total_bill),
-                value = dev.mbakasir.com.utils.currencyFormat(uiState.totalTagihan.toDouble()),
-                isBold = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        FooterButton(
-                onCancelClick = onCancel,
-                onConfirmClick = onConfirm,
-                cancelText = stringResource(Res.string.cancel),
-                confirmText = stringResource(Res.string.payment)
-        )
-    }
+        Column {
+                SummaryRow(
+                        label = stringResource(Res.string.total_price),
+                        value = currencyFormat(uiState.totalHarga.toDouble())
+                )
+                SummaryRow(
+                        label = stringResource(Res.string.discount),
+                        value = currencyFormat(uiState.totalDiskon.toDouble())
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                SummaryRow(
+                        label = stringResource(Res.string.total_bill),
+                        value = currencyFormat(uiState.totalTagihan.toDouble()),
+                        isBold = true
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                FooterButton(
+                        onCancelClick = onCancel,
+                        onConfirmClick = onConfirm,
+                        cancelText = stringResource(Res.string.cancel),
+                        confirmText = stringResource(Res.string.payment)
+                )
+        }
 }

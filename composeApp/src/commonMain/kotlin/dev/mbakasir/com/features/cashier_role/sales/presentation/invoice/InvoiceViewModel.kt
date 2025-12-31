@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class InvoiceViewModel(
-    private val sessionHandler: SessionHandler,
-    private val salesRepository: SalesRepository
+        private val sessionHandler: SessionHandler,
+        private val salesRepository: SalesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(InvoiceUiState())
@@ -31,7 +31,6 @@ class InvoiceViewModel(
             is InvoiceUiEvent.ArgumentPaymentLoaded -> {
                 handlePaymentLoaded(event)
             }
-
             is InvoiceUiEvent.ArgumentNoInvoiceLoaded -> {
                 getInvoice(event.noInvoice)
             }
@@ -46,35 +45,93 @@ class InvoiceViewModel(
             val customerResult = salesRepository.getCustomers()
 
             withContext(Dispatchers.Main) {
-                result.onSuccess { invoiceData ->
-                    if (invoiceData.code == "200") {
-                        val customers = if (customerResult is NetworkResult.Success) customerResult.data.customers else emptyList()
-                        val customer = customers.find { it.kode == invoiceData.data.customer || it.nama == invoiceData.data.customer }
-                        val pelangganType = customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
+                result
+                        .onSuccess { invoiceData ->
+                            if (invoiceData.code == "200") {
+                                val customers =
+                                        if (customerResult is NetworkResult.Success)
+                                                customerResult.data.customers
+                                        else emptyList()
+                                val customer =
+                                        customers.find {
+                                            it.kode == invoiceData.data.customer ||
+                                                    it.nama == invoiceData.data.customer
+                                        }
+                                val pelangganType =
+                                        customer?.nama.takeIf { !it.isNullOrEmpty() }
+                                                ?: "Pelanggan Umum"
 
-                        _uiState.value = _uiState.value.copy(
-                            totalHarga = invoiceData.data.detil.sumOf { 
-                                it.subtotal.replace(".", "").replace(",", "").toIntOrNull() ?: 0
-                            }.toDouble(),
-                            diskon = invoiceData.data.detil.sumOf { 
-                                it.diskon.replace(".", "").replace(",", "").toIntOrNull() ?: 0
-                            }.toDouble(),
-                            subtotal = _uiState.value.totalHarga - _uiState.value.diskon,
-                            invoiceNumber = invoiceData.data.invoice,
-                            tanggal = invoiceData.data.tanggal,
-                            method = invoiceData.data.method,
-                            kasir = invoiceData.data.kasir,
-                            pelangganType = pelangganType,
-                            ppn = invoiceData.data.ppn.toDoubleOrNull() ?: 0.0,
-                            bayar = invoiceData.data.bayar.toDoubleOrNull() ?: 0.0,
-                            kembali = invoiceData.data.kembali.toDoubleOrNull() ?: 0.0,
-                            detil = invoiceData.data.detil,
-                            store = getStoreInfo()
-                        )
-                    }
-                }.onError {
-                    _uiState.value = _uiState.value.copy(errorMessage = it.message)
-                }
+                                _uiState.value =
+                                        _uiState.value.copy(
+                                                totalHarga =
+                                                        invoiceData
+                                                                .data
+                                                                .detil
+                                                                .sumOf {
+                                                                    it.subtotal
+                                                                            .replace(".", "")
+                                                                            .replace(",", "")
+                                                                            .toIntOrNull()
+                                                                            ?: 0
+                                                                }
+                                                                .toDouble(),
+                                                diskon =
+                                                        invoiceData
+                                                                .data
+                                                                .detil
+                                                                .sumOf {
+                                                                    it.diskon
+                                                                            .replace(".", "")
+                                                                            .replace(",", "")
+                                                                            .toIntOrNull()
+                                                                            ?: 0
+                                                                }
+                                                                .toDouble(),
+                                                subtotal =
+                                                        invoiceData
+                                                                .data
+                                                                .detil
+                                                                .sumOf {
+                                                                    it.subtotal
+                                                                            .replace(".", "")
+                                                                            .replace(",", "")
+                                                                            .toIntOrNull()
+                                                                            ?: 0
+                                                                }
+                                                                .toDouble() -
+                                                                invoiceData
+                                                                        .data
+                                                                        .detil
+                                                                        .sumOf {
+                                                                            it.diskon
+                                                                                    .replace(
+                                                                                            ".",
+                                                                                            ""
+                                                                                    )
+                                                                                    .replace(
+                                                                                            ",",
+                                                                                            ""
+                                                                                    )
+                                                                                    .toIntOrNull()
+                                                                                    ?: 0
+                                                                        }
+                                                                        .toDouble(),
+                                                invoiceNumber = invoiceData.data.invoice,
+                                                tanggal = invoiceData.data.tanggal,
+                                                method = invoiceData.data.method,
+                                                kasir = invoiceData.data.kasir,
+                                                pelangganType = pelangganType,
+                                                ppn = invoiceData.data.ppn.toDoubleOrNull() ?: 0.0,
+                                                bayar = invoiceData.data.bayar.toDoubleOrNull()
+                                                                ?: 0.0,
+                                                kembali = invoiceData.data.kembali.toDoubleOrNull()
+                                                                ?: 0.0,
+                                                detil = invoiceData.data.detil,
+                                                store = getStoreInfo()
+                                        )
+                            }
+                        }
+                        .onError { _uiState.value = _uiState.value.copy(errorMessage = it.message) }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
@@ -90,37 +147,38 @@ class InvoiceViewModel(
             val customer = event.payment.customers.find { it.kode == event.payment.searchCust }
             val pelangganType = customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
 
-            _uiState.value = _uiState.value.copy(
-                totalHarga = totalHarga,
-                diskon = diskon,
-                subtotal = totalHarga - diskon,
-                invoiceNumber = event.payment.noInvoice,
-                tanggal = event.payment.currentDate,
-                method = event.payment.paymentMethod,
-                kasir = getUserInfo().nama,
-                pelangganType = pelangganType,
-                ppn = "event.payment.ppn".toDoubleOrNull() ?: 0.0,
-                bayar = event.payment.uangDiterima.toDoubleOrNull() ?: 0.0,
-                kembali = event.payment.kembalian.toString().toDoubleOrNull() ?: 0.0,
-                detil = detail,
-                store = getStoreInfo()
-            )
+            _uiState.value =
+                    _uiState.value.copy(
+                            totalHarga = totalHarga,
+                            diskon = diskon,
+                            subtotal = totalHarga - diskon,
+                            invoiceNumber = event.payment.noInvoice,
+                            tanggal = event.payment.currentDate,
+                            method = event.payment.paymentMethod,
+                            kasir = getUserInfo().nama,
+                            pelangganType = pelangganType,
+                            ppn = "event.payment.ppn".toDoubleOrNull() ?: 0.0,
+                            bayar = event.payment.uangDiterima.toDoubleOrNull() ?: 0.0,
+                            kembali = event.payment.kembalian.toString().toDoubleOrNull() ?: 0.0,
+                            detil = detail,
+                            store = getStoreInfo()
+                    )
         }
     }
 
     private suspend fun getStoreInfo(): Toko {
         return Toko(
-            nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
-            alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
-            telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
+                nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
+                alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
+                telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
         )
     }
 
     private suspend fun getUserInfo(): User {
         return User(
-            username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
-            nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
-            role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"
+                username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
+                nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
+                role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"
         )
     }
 }

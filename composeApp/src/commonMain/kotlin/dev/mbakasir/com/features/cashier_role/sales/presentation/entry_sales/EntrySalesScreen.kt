@@ -61,6 +61,7 @@ import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.utils.currencyFormat
 import kotlinx.serialization.json.Json
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.cancel_transaction_body
@@ -489,17 +490,11 @@ fun EntrySalesAndPayment(
                         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                             SummaryRow(
                                     label = "Total Harga:",
-                                    value =
-                                            dev.mbakasir.com.utils.currencyFormat(
-                                                    paymentUiState.totalHarga.toDouble()
-                                            ),
+                                    value = currencyFormat(paymentUiState.totalHarga.toDouble()),
                             )
                             SummaryRow(
                                     label = "Diskon:",
-                                    value =
-                                            dev.mbakasir.com.utils.currencyFormat(
-                                                    paymentUiState.diskon.toDouble()
-                                            )
+                                    value = currencyFormat(paymentUiState.diskon.toDouble())
                             )
                             HorizontalDivider(
                                     modifier =
@@ -509,10 +504,7 @@ fun EntrySalesAndPayment(
                             )
                             SummaryRow(
                                     label = "Totlal Tagihan",
-                                    value =
-                                            dev.mbakasir.com.utils.currencyFormat(
-                                                    paymentUiState.subtotal.toDouble()
-                                            ),
+                                    value = currencyFormat(paymentUiState.subtotal.toDouble()),
                                     isBold = true
                             )
                             Spacer(modifier = Modifier.height(16.dp))

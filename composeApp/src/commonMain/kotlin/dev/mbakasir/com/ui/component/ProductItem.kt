@@ -25,71 +25,81 @@ import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
-fun ProductItem(
-    product: ProductEntity,
-    modifier: Modifier = Modifier
-) {
+fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
 
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        border = CardDefaults.outlinedCardBorder(
-            enabled = true,
-        ),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = Color.White,
-
-            )
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp)
+        OutlinedCard(
+                modifier = modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                border =
+                        CardDefaults.outlinedCardBorder(
+                                enabled = true,
+                        ),
+                colors =
+                        CardDefaults.outlinedCardColors(
+                                containerColor = Color.White,
+                        )
         ) {
-            Column {
-                Text(
-                    text = product.barcode,
-                    color = primary_text,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    maxLines = 1
-                )
-                Text(
-                    text = product.namaBarang,
-                    color = dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    maxLines = 2
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    currencyFormat(product.hargaJual.toDouble()), 
-                    color = dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    maxLines = 1
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = product.stok, 
-                        color = icon,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        maxLines = 1
-                    )
-                    Text(
-                        text = product.satuan, 
-                        color = icon,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        maxLines = 1
-                    )
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Column {
+                                Text(
+                                        text = product.barcode,
+                                        color = primary_text,
+                                        style =
+                                                MaterialTheme.typography.bodySmall.copy(
+                                                        fontWeight = FontWeight.SemiBold
+                                                ),
+                                        modifier = Modifier.padding(bottom = 4.dp),
+                                        maxLines = 1
+                                )
+                                Text(
+                                        text = product.namaBarang,
+                                        color = dark,
+                                        style =
+                                                MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.SemiBold
+                                                ),
+                                        maxLines = 2
+                                )
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                                Text(
+                                        currencyFormat(product.hargaJual.toDouble()),
+                                        color = dark,
+                                        style =
+                                                MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.SemiBold
+                                                ),
+                                        maxLines = 1
+                                )
+                                Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                        Text(
+                                                text = product.stok,
+                                                color = icon,
+                                                style =
+                                                        MaterialTheme.typography.titleMedium.copy(
+                                                                fontWeight = FontWeight.SemiBold
+                                                        ),
+                                                maxLines = 1
+                                        )
+                                        Text(
+                                                text = product.satuan,
+                                                color = icon,
+                                                style =
+                                                        MaterialTheme.typography.titleMedium.copy(
+                                                                fontWeight = FontWeight.SemiBold
+                                                        ),
+                                                maxLines = 1
+                                        )
+                                }
+                        }
                 }
-            }
         }
-    }
 }

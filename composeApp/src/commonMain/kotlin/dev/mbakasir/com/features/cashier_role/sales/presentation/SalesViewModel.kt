@@ -136,12 +136,13 @@ class SalesViewModel(
             val result =
                     salesRepository.createPayment(
                             CreatePaymentRequest(
-                                    kembali = realChange.toString(),
-                                    bayar = amountPaid.toString(),
+                                    kembali = realChange,
+                                    bayar = amountPaid,
                                     metode = data?.draft?.paymentMethod.toString(),
-                                    kasir = "3",
+                                    kasir = 3,
                                     cus = data?.draft?.customer.toString(),
-                                    nominalPpn = "0",
+                                    ppnPercentage = 0,
+                                    nominalPpn = 0,
                                     keterangan = data?.draft?.description.toString(),
                                     tempo = "",
                                     detil = detilPayload
