@@ -1,6 +1,8 @@
 package dev.mbakasir.com.di
 
 import com.plusmobileapps.konnectivity.Konnectivity
+import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
+import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepositoryImpl
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
@@ -49,6 +51,14 @@ val provideHomeRepositoryModule = module {
                 salesRepository = get()
         )
     }
+    viewModel {
+        AdminHomeViewModel(
+                homeRepository = get(),
+                productRepository = get(),
+                authRepository = get(),
+                salesRepository = get()
+        )
+    }
 }
 
 val provideProductRepositoryModule = module {
@@ -61,6 +71,7 @@ val provideProductRepositoryModule = module {
             }
             .bind<ProductRepository>()
     viewModel { ProductViewModel(productRepository = get()) }
+    viewModel { AdminProductViewModel(productRepository = get()) }
 }
 
 val provideSalesRepositoryModule = module {
