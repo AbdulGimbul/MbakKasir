@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -152,7 +151,8 @@ fun NavHostContent(
                     navController = parentNavController
             )
         }
-        composable(AdminScreen.StockInOut.route) {
+        composable(AdminScreen.StockInOut.route) { StockOpnamePreviewScreen() }
+        composable(AdminScreen.Product.route) {
             ProductScreen(viewModel = koinViewModel<AdminProductViewModel>())
         }
         composable(AdminScreen.StockOpname.route) {
@@ -243,9 +243,9 @@ val navigationItems =
                         screen = AdminScreen.Home
                 ),
                 AdminBottomRailNavItem(
-                        title = "Stock In/Out",
-                        icon = Icons.Outlined.ShoppingCart,
-                        screen = AdminScreen.StockInOut
+                        title = "Barang",
+                        icon = Icons.Outlined.Domain,
+                        screen = AdminScreen.Product
                 ),
                 AdminBottomRailNavItem(
                         title = "Stock Opname",

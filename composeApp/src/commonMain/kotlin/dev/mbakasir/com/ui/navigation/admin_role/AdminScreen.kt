@@ -7,5 +7,5 @@ sealed class AdminScreen(val route: String) {
     data object StockOpname : AdminScreen("stock_opname")
     data object StockOpnamePreview : AdminScreen("stock_opname_preview")
     data object EntryStockOpname : AdminScreen("entry_stock_opname")
-
+    data object Product : AdminScreen("product")
 }
