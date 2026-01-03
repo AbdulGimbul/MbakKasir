@@ -41,9 +41,15 @@ class SalesRepositoryImpl(
     override suspend fun addProductTransToDraft(
             draftId: String,
             cashierName: String,
-            productTransEntity: ProductTransEntity
+            productTransEntity: ProductTransEntity,
+            username: String
     ) {
-        return productTransDraftDao.addProductToDraft(draftId, cashierName, productTransEntity)
+        return productTransDraftDao.addProductToDraft(
+                draftId,
+                cashierName,
+                productTransEntity,
+                username
+        )
     }
 
     override suspend fun updateProductTransInDraft(
@@ -87,8 +93,8 @@ class SalesRepositoryImpl(
         )
     }
 
-    override suspend fun getDrafts(): Flow<List<ProductDraftWithItems>> {
-        return productTransDraftDao.getAllDrafts()
+    override suspend fun getDrafts(username: String): Flow<List<ProductDraftWithItems>> {
+        return productTransDraftDao.getAllDrafts(username)
     }
 
     override suspend fun getHistory(
@@ -144,7 +150,7 @@ class SalesRepositoryImpl(
         }
     }
 
-    override suspend fun deleteAllDrafts() {
-        return productTransDraftDao.deleteAllTransDrafts()
+    override suspend fun deleteDraftsForUser(username: String) {
+        return productTransDraftDao.deleteDraftsForUser(username)
     }
 }

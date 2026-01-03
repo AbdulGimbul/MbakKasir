@@ -87,7 +87,9 @@ val provideSalesRepositoryModule = module {
     viewModel { EntrySalesViewModel(salesRepository = get(), authRepository = get()) }
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
-    viewModel { SalesViewModel(salesRepository = get(), productRepository = get()) }
+    viewModel {
+        SalesViewModel(salesRepository = get(), productRepository = get(), authRepository = get())
+    }
     viewModel { HistoryViewModel(salesRepository = get()) }
 }
 

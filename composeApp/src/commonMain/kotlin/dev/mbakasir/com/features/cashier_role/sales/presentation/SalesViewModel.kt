@@ -2,6 +2,7 @@ package dev.mbakasir.com.features.cashier_role.sales.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.mbakasir.com.features.auth.data.AuthRepository
 import dev.mbakasir.com.features.cashier_role.product.data.ProductRepository
 import dev.mbakasir.com.features.cashier_role.product.domain.toProduct
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
@@ -21,7 +22,8 @@ import kotlinx.coroutines.withContext
 
 class SalesViewModel(
         private val salesRepository: SalesRepository,
-        private val productRepository: ProductRepository
+        private val productRepository: ProductRepository,
+        private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SalesUiState())
@@ -93,7 +95,8 @@ class SalesViewModel(
 
     private fun getDrafts() {
         viewModelScope.launch {
-            salesRepository.getDrafts().collectLatest { drafts ->
+            val username = authRepository.userInfo().userInfo.username
+            salesRepository.getDrafts(username).collectLatest { drafts ->
                 _uiState.value = _uiState.value.copy(draftList = drafts)
             }
         }

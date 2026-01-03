@@ -32,42 +32,46 @@ fun StatCard(
         imageRes: DrawableResource,
         cardColor: Color
 ) {
-    Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = cardColor),
-            shape = RoundedCornerShape(10.dp)
-    ) {
-        Row(
-                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
-                verticalAlignment = Alignment.CenterVertically
+        Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = cardColor),
+                shape = RoundedCornerShape(10.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.bodySmall, color = secondary_text)
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                            value,
-                            color = dark,
-                            style =
-                                    MaterialTheme.typography.headlineSmall.copy(
-                                            fontWeight = FontWeight.SemiBold
-                                    )
-                    )
-                    if (suffix != null) {
-                        Text(
-                                "items",
-                                color = dark,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(start = 6.dp)
+                Row(
+                        modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                        title,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = secondary_text
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(verticalAlignment = Alignment.Bottom) {
+                                        Text(
+                                                value,
+                                                color = dark,
+                                                style =
+                                                        MaterialTheme.typography.headlineSmall.copy(
+                                                                fontWeight = FontWeight.SemiBold
+                                                        )
+                                        )
+                                        if (suffix != null) {
+                                                Text(
+                                                        suffix,
+                                                        color = dark,
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        modifier = Modifier.padding(start = 6.dp)
+                                                )
+                                        }
+                                }
+                        }
+                        Image(
+                                painterResource(resource = imageRes),
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 24.dp).size(68.dp)
                         )
-                    }
                 }
-            }
-            Image(
-                    painterResource(resource = imageRes),
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 24.dp).size(68.dp)
-            )
         }
-    }
 }

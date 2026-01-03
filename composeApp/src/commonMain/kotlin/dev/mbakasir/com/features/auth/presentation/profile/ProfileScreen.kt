@@ -56,210 +56,230 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    if (uiState.isLogout) {
-        LaunchedEffect(Unit) {
-            navController.navigate(MainScreen.Login.route) {
-                popUpTo(MainScreen.Login.route) { inclusive = true }
-                launchSingleTop = true
-            }
+        if (uiState.isLogout) {
+                LaunchedEffect(Unit) {
+                        navController.navigate(MainScreen.Login.route) {
+                                popUpTo(MainScreen.Login.route) { inclusive = true }
+                                launchSingleTop = true
+                        }
+                }
         }
-    }
 
-    Profile(uiState = uiState, onEvent = { viewModel.onEvent(it) })
+        Profile(uiState = uiState, onEvent = { viewModel.onEvent(it) })
 }
 
 @Composable
 fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
-    if (uiState.isLoading) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(color = primary)
-        }
-    } else {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Column(
-                    modifier =
-                            Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())
-            ) {
-                Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
-                    Box(
-                            modifier =
-                                    Modifier.fillMaxWidth()
-                                            .height(280.dp)
-                                            .clip(
-                                                    RoundedCornerShape(
-                                                            bottomEnd = 16.dp,
-                                                            bottomStart = 16.dp
-                                                    )
-                                            )
-                                            .background(Color.White),
-                    )
-                    Box(modifier = Modifier.fillMaxWidth().height(150.dp).background(primary))
-                    uiState.user?.userInfo?.let { UserInfoHeader(it) }
+        if (uiState.isLoading) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(color = primary)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                uiState.user?.storeInfo?.let {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        StoreInformationCard(it)
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(
-                        onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                        border = BorderStroke(width = 1.dp, color = red),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                ) {
-                    Icon(
-                            imageVector = Icons.AutoMirrored.Default.Logout,
-                            contentDescription = "Logout",
-                            modifier = Modifier.padding(4.dp)
-                    )
-                    Text(
-                            text = "Logout",
-                            style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.Bold
-                                    ),
-                            modifier = Modifier.padding(4.dp),
-                            maxLines = 1,
-                            softWrap = false
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                                text = "Supported by ",
-                                style = MaterialTheme.typography.bodyMedium.copy(primary_text),
-                        )
-                        Text(
-                                text = "Mbakasir.com",
-                                style =
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                color = primary_text
-                                        ),
+        } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                        Column(
                                 modifier =
-                                        Modifier.clickable(
-                                                interactionSource =
-                                                        remember { MutableInteractionSource() },
-                                                indication = null
-                                        ) {
-                                            getBrowserHelper().openBrowser("https://mbakasir.com/")
+                                        Modifier.fillMaxWidth()
+                                                .weight(1f)
+                                                .verticalScroll(rememberScrollState())
+                        ) {
+                                Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                                        Box(
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .height(280.dp)
+                                                                .clip(
+                                                                        RoundedCornerShape(
+                                                                                bottomEnd = 16.dp,
+                                                                                bottomStart = 16.dp
+                                                                        )
+                                                                )
+                                                                .background(Color.White),
+                                        )
+                                        Box(
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .height(150.dp)
+                                                                .background(primary)
+                                        )
+                                        uiState.user?.userInfo?.let { UserInfoHeader(it) }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                uiState.user?.storeInfo?.let {
+                                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                                StoreInformationCard(it)
                                         }
-                        )
-                    }
-                    Text(
-                            text = uiState.version,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = primary_text
-                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedButton(
+                                        onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
+                                        colors =
+                                                ButtonDefaults.outlinedButtonColors(
+                                                        contentColor = red
+                                                ),
+                                        border = BorderStroke(width = 1.dp, color = red),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier =
+                                                Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                                ) {
+                                        Icon(
+                                                imageVector = Icons.AutoMirrored.Default.Logout,
+                                                contentDescription = "Logout",
+                                                modifier = Modifier.padding(4.dp)
+                                        )
+                                        Text(
+                                                text = "Logout",
+                                                style =
+                                                        MaterialTheme.typography.titleMedium.copy(
+                                                                fontWeight = FontWeight.Bold
+                                                        ),
+                                                modifier = Modifier.padding(4.dp),
+                                                maxLines = 1,
+                                                softWrap = false
+                                        )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Column(
+                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                        Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center
+                                        ) {
+                                                Text(
+                                                        text = "Supported by ",
+                                                        style =
+                                                                MaterialTheme.typography.bodyMedium
+                                                                        .copy(primary_text),
+                                                )
+                                                Text(
+                                                        text = "Mbakasir.com",
+                                                        style =
+                                                                MaterialTheme.typography.bodyMedium
+                                                                        .copy(color = primary_text),
+                                                        modifier =
+                                                                Modifier.clickable(
+                                                                        interactionSource =
+                                                                                remember {
+                                                                                        MutableInteractionSource()
+                                                                                },
+                                                                        indication = null
+                                                                ) {
+                                                                        getBrowserHelper()
+                                                                                .openBrowser(
+                                                                                        "https://mbakasir.com/"
+                                                                                )
+                                                                }
+                                                )
+                                        }
+                                        Text(
+                                                text = uiState.version,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = primary_text
+                                        )
+                                }
+                        }
                 }
-            }
         }
-    }
 
-    if (uiState.showDialog) {
-        AlertDialog(
-                onDismissRequest = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
-                title = { Text("Yakin ingin keluar?") },
-                text = {
-                    Text(
-                            "Semua draft data akan hilang setelah logout. Pastikan semua transaksi telah diselesaikan ya!"
-                    )
-                },
-                confirmButton = {
-                    TextButton(
-                            onClick = {
-                                onEvent(ProfileUiEvent.OnShowAlertDialog)
-                                onEvent(ProfileUiEvent.Logout)
-                            }
-                    ) { Text("Ya") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }) {
-                        Text("Tidak")
-                    }
-                }
-        )
-    }
+        if (uiState.showDialog) {
+                AlertDialog(
+                        onDismissRequest = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
+                        title = { Text("Yakin ingin keluar?") },
+                        confirmButton = {
+                                TextButton(
+                                        onClick = {
+                                                onEvent(ProfileUiEvent.OnShowAlertDialog)
+                                                onEvent(ProfileUiEvent.Logout)
+                                        }
+                                ) { Text("Ya") }
+                        },
+                        dismissButton = {
+                                TextButton(
+                                        onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }
+                                ) { Text("Tidak") }
+                        }
+                )
+        }
 }
 
 @Composable
 fun UserInfoHeader(user: User) {
-    Column(
-            modifier = Modifier.fillMaxWidth().padding(top = 115.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-                painter = painterResource(resource = Res.drawable.account),
-                contentDescription = "User Avatar",
-                modifier = Modifier.size(80.dp)
-        )
-        Text(
-                text = user.nama,
-                style =
-                        MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                        ),
-                color = dark,
-                modifier = Modifier.padding(top = 8.dp)
-        )
-        Text(text = user.username, style = MaterialTheme.typography.bodyMedium, color = dark)
-        Text(text = user.role, style = MaterialTheme.typography.bodyMedium, color = primary_text)
-    }
+        Column(
+                modifier = Modifier.fillMaxWidth().padding(top = 115.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+                Image(
+                        painter = painterResource(resource = Res.drawable.account),
+                        contentDescription = "User Avatar",
+                        modifier = Modifier.size(80.dp)
+                )
+                Text(
+                        text = user.nama,
+                        style =
+                                MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                ),
+                        color = dark,
+                        modifier = Modifier.padding(top = 8.dp)
+                )
+                Text(
+                        text = user.username,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = dark
+                )
+                Text(
+                        text = user.role,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = primary_text
+                )
+        }
 }
 
 @Composable
 fun StoreInformationCard(store: Toko) {
-    Card(
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(
-                    text = "Informasi Toko",
-                    style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                            ),
-                    color = dark,
-                    maxLines = 1
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            InfoRow(label = "Nama", info = store.nama)
-            InfoRow(label = "Alamat", info = store.alamat)
-            InfoRow(label = "Telp", info = store.telp)
+        Card(
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                                text = "Informasi Toko",
+                                style =
+                                        MaterialTheme.typography.titleMedium.copy(
+                                                fontWeight = FontWeight.SemiBold
+                                        ),
+                                color = dark,
+                                maxLines = 1
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        InfoRow(label = "Nama", info = store.nama)
+                        InfoRow(label = "Alamat", info = store.alamat)
+                        InfoRow(label = "Telp", info = store.telp)
+                }
         }
-    }
 }
 
 @Composable
 fun InfoRow(label: String, info: String) {
-    Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-                modifier = Modifier.weight(1f),
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = primary_text
-        )
-        Text(
-                modifier = Modifier.weight(1f),
-                text = info,
-                style = MaterialTheme.typography.bodyMedium,
-                color = dark
-        )
-    }
+        Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+                Text(
+                        modifier = Modifier.weight(1f),
+                        text = label,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = primary_text
+                )
+                Text(
+                        modifier = Modifier.weight(1f),
+                        text = info,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = dark
+                )
+        }
 }

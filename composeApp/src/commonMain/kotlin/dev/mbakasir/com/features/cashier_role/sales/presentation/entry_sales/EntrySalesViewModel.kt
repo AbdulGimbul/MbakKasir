@@ -80,14 +80,21 @@ class EntrySalesViewModel(
 
     private fun scanProductByBarcode(draftId: String, barcode: String) {
         viewModelScope.launch(Dispatchers.Main) {
-            val cashier = authRepository.userInfo().userInfo.nama
+            val userInfo = authRepository.userInfo()
+            val cashier = userInfo.userInfo.nama
+            val username = userInfo.userInfo.username
             _uiState.value = _uiState.value.copy(errorMessage = null)
             salesRepository.getProductByBarcode(barcode).collectLatest { product ->
                 if (product != null) {
                     val currentList = _uiState.value.scannedProducts
                     if (!currentList.any { it.barcode == product.barcode }) {
                         val scannedProduct = product.toProductTrans(draftId)
-                        salesRepository.addProductTransToDraft(draftId, cashier, scannedProduct)
+                        salesRepository.addProductTransToDraft(
+                                draftId,
+                                cashier,
+                                scannedProduct,
+                                username
+                        )
                         loadScannedProducts(draftId)
                     } else {
                         _uiState.value =

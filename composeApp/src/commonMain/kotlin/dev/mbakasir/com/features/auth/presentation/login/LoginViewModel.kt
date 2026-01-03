@@ -9,19 +9,17 @@ import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
-import dev.mbakasir.com.storage.SessionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginViewModel(
-    private val authRepository: AuthRepository,
-    private val konnectivity: Konnectivity,
-    private val salesRepository: SalesRepository,
+        private val authRepository: AuthRepository,
+        private val konnectivity: Konnectivity,
+        private val salesRepository: SalesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.NotAuthenticated())
@@ -46,16 +44,16 @@ class LoginViewModel(
     private fun observeConnectivity() {
         viewModelScope.launch {
             konnectivity.isConnectedState.collect { isConnected ->
-                withContext(Dispatchers.Main) {
-                    updateState { it.copy(isConnected = isConnected) }
-                }
+                withContext(Dispatchers.Main) { updateState { it.copy(isConnected = isConnected) } }
             }
         }
     }
 
-    private fun updateState(update: (LoginUiState.NotAuthenticated) -> LoginUiState.NotAuthenticated) {
+    private fun updateState(
+            update: (LoginUiState.NotAuthenticated) -> LoginUiState.NotAuthenticated
+    ) {
         _uiState.value =
-            (_uiState.value as? LoginUiState.NotAuthenticated)?.let(update) ?: _uiState.value
+                (_uiState.value as? LoginUiState.NotAuthenticated)?.let(update) ?: _uiState.value
     }
 
     private fun login() {
@@ -65,15 +63,15 @@ class LoginViewModel(
 
             val result = authRepository.login(LoginRequest(ui.username, ui.password))
             withContext(Dispatchers.Main) {
-                result.onSuccess {
-                    if (it.code == "200") {
-                        _uiState.value = LoginUiState.Authenticated(role = it.user.role)
-                    }
-                }.onError { error ->
-                    updateState {
-                        it.copy(errorMessage = error.message, isLoading = false)
-                    }
-                }
+                result
+                        .onSuccess {
+                            if (it.code == "200") {
+                                _uiState.value = LoginUiState.Authenticated(role = it.user.role)
+                            }
+                        }
+                        .onError { error ->
+                            updateState { it.copy(errorMessage = error.message, isLoading = false) }
+                        }
             }
         }
     }
@@ -83,27 +81,26 @@ class LoginViewModel(
             updateState { it.copy(isLoading = true, errorMessage = null) }
             val result = authRepository.isTokenValid("", "", "1", "1")
             withContext(Dispatchers.Main) {
-                result.onSuccess {
-                    val role = authRepository.getRole()
-                    _uiState.value = LoginUiState.Authenticated(role = role)
-                }.onError { error ->
-                    if (error is NetworkException.UnauthorizedException) {
-                        salesRepository.deleteAllDrafts()
-                        updateState {
-                            it.copy(errorMessage = error.message)
+                result
+                        .onSuccess {
+                            val role = authRepository.getRole()
+                            _uiState.value = LoginUiState.Authenticated(role = role)
                         }
-                    } else {
-                        // Offline or other error: Check if we have a valid session locally
-                        val role = authRepository.getRole()
-                        if (role.isNotEmpty()) {
-                             _uiState.value = LoginUiState.Authenticated(role = role)
-                        } else {
-                            updateState {
-                                it.copy(errorMessage = error.message)
+                        .onError { error ->
+                            if (error is NetworkException.UnauthorizedException) {
+                                // salesRepository.deleteAllDrafts() // Removed to persist drafts
+                                // per user
+                                updateState { it.copy(errorMessage = error.message) }
+                            } else {
+                                // Offline or other error: Check if we have a valid session locally
+                                val role = authRepository.getRole()
+                                if (role.isNotEmpty()) {
+                                    _uiState.value = LoginUiState.Authenticated(role = role)
+                                } else {
+                                    updateState { it.copy(errorMessage = error.message) }
+                                }
                             }
                         }
-                    }
-                }
 
                 updateState { it.copy(isLoading = false) }
             }
@@ -114,13 +111,9 @@ class LoginViewModel(
         viewModelScope.launch {
             val result = authRepository.getVersion()
             withContext(Dispatchers.Main) {
-                result.onSuccess { data ->
-                    updateState { it.copy(version = data.version) }
-                }.onError { error ->
-                    updateState {
-                        it.copy(errorMessage = error.message)
-                    }
-                }
+                result
+                        .onSuccess { data -> updateState { it.copy(version = data.version) } }
+                        .onError { error -> updateState { it.copy(errorMessage = error.message) } }
             }
         }
     }

@@ -15,8 +15,13 @@ import dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity
 import dev.mbakasir.com.utils.DateTimeConverter
 
 @Database(
-    entities = [ProductEntity::class, ProductTransEntity::class, ProductTransDraftEntity::class, CustomerEntity::class],
-    version = 2
+        entities =
+                [
+                        ProductEntity::class,
+                        ProductTransEntity::class,
+                        ProductTransDraftEntity::class,
+                        CustomerEntity::class],
+        version = 3
 )
 @TypeConverters(DateTimeConverter::class)
 @ConstructedBy(ProductDatabaseConstructor::class)
