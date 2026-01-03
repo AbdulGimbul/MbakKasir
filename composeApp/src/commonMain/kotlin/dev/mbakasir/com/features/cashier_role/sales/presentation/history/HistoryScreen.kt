@@ -50,6 +50,7 @@ import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.formatDateForApi
+import kotlin.time.Clock
 
 @Composable
 fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
@@ -78,7 +79,7 @@ fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, kotlin.time.ExperimentalTime::class)
 @Composable
 fun History(
         uiState: HistoryUiState,
@@ -89,7 +90,15 @@ fun History(
 
     val state = rememberDateRangePickerState()
     var isDateRangePickerVisible by remember { mutableStateOf(false) }
-    var selectedDateRange by remember { mutableStateOf("") }
+
+    var selectedDateRange by remember {
+        mutableStateOf(
+                dev.mbakasir.com.utils.formatDateRange(
+                        Clock.System.now().toEpochMilliseconds(),
+                        Clock.System.now().toEpochMilliseconds()
+                )
+        )
+    }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp).imePadding().statusBarsPadding()) {
         HeadlineText("History", modifier = Modifier.padding(bottom = 32.dp))

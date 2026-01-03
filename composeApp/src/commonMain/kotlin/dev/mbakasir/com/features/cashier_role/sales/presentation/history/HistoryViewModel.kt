@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dev.mbakasir.com.features.cashier_role.sales.data.SalesRepository
 import dev.mbakasir.com.network.onError
 import dev.mbakasir.com.network.onSuccess
-import dev.mbakasir.com.utils.getLastWeekDate
 import dev.mbakasir.com.utils.getTodayDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -19,9 +18,7 @@ class HistoryViewModel(
 ) : ViewModel() {
 
     private val _uiState =
-            MutableStateFlow(
-                    HistoryUiState(startDate = getLastWeekDate(), endDate = getTodayDate())
-            )
+            MutableStateFlow(HistoryUiState(startDate = getTodayDate(), endDate = getTodayDate()))
     val uiState: StateFlow<HistoryUiState> = _uiState
 
     private var currentHistoryPage = 1
