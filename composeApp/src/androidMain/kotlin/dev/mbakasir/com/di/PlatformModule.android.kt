@@ -1,9 +1,9 @@
 package dev.mbakasir.com.di
 
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dev.bluefalcon.BlueFalcon
 import dev.mbakasir.com.storage.DatabaseFactory
 import dev.mbakasir.com.storage.createDataStore
-import dev.mbakasir.com.utils.ChuckerWrapper
 import dev.mbakasir.com.utils.ShareManager
 import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.android.ext.koin.androidApplication
@@ -16,8 +16,11 @@ actual val platformModule: Module
         single { createDataStore(context = androidContext()) }
         //        single { RemoteConfigManager() }
         single {
-            OkHttp.create { config { ChuckerWrapper.install(this, androidContext()) } }
-        } single { BlueFalcon(context = androidApplication()) }
+            OkHttp.create {
+                config { addInterceptor(ChuckerInterceptor.Builder(androidContext()).build()) }
+            }
+        }
+        single { BlueFalcon(context = androidApplication()) }
         single { DatabaseFactory(androidApplication()) }
         single { ShareManager(androidContext()) }
     }

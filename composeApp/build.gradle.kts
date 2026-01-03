@@ -174,7 +174,7 @@ android {
     dependencies {
         debugImplementation(compose.uiTooling)
         debugImplementation(libs.chucker.library)
-        releaseImplementation(libs.chucker.chuckerLibraryNoOp)
+        releaseImplementation(libs.chucker.library.no.op)
     }
 }
 
