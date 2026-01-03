@@ -47,6 +47,7 @@ ksp = "2.2.0-2.0.2"
 sqlite = "2.6.2"
 room = "2.8.4"
 mokkery = "2.10.2"
+chucker = "4.1.0"
 
 [libraries]
 kmp-capturable-compose = { module = "io.github.suwasto:kmp-capturable-compose", version.ref = "kmpCapturableCompose" }
@@ -111,6 +112,8 @@ moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", ve
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chucker-library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

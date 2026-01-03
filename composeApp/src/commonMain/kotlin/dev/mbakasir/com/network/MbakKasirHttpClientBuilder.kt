@@ -17,9 +17,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
-class MbakKasirHttpClientBuilder(
-    private val sessionHandler: SessionHandler
-) {
+class MbakKasirHttpClientBuilder(private val sessionHandler: SessionHandler) {
 
     private lateinit var protocol: URLProtocol
     private lateinit var host: String
@@ -33,7 +31,6 @@ class MbakKasirHttpClientBuilder(
 
     fun build(engine: HttpClientEngine): HttpClient {
         return HttpClient(engine) {
-
             expectSuccess = true
 
             defaultRequest {
@@ -48,20 +45,21 @@ class MbakKasirHttpClientBuilder(
 
             install(ContentNegotiation) {
                 json(
-                    Json {
-                        prettyPrint = true
-                        isLenient = true
-                        ignoreUnknownKeys = true
-                    }
+                        Json {
+                            prettyPrint = true
+                            isLenient = true
+                            ignoreUnknownKeys = true
+                        }
                 )
             }
 
             install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println(message)
-                    }
-                }
+                logger =
+                        object : Logger {
+                            override fun log(message: String) {
+                                println(message)
+                            }
+                        }
                 level = LogLevel.ALL
             }
 
@@ -69,8 +67,8 @@ class MbakKasirHttpClientBuilder(
                 bearer {
                     loadTokens {
                         BearerTokens(
-                            accessToken = sessionHandler.getToken().first(),
-                            refreshToken = ""
+                                accessToken = sessionHandler.getToken().first(),
+                                refreshToken = ""
                         )
                     }
                 }
