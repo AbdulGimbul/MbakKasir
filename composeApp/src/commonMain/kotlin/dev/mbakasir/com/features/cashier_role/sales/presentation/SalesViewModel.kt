@@ -134,14 +134,21 @@ class SalesViewModel(
             val totalAmount =
                     serializableItems.sumOf { it.subtotal } // subtotal is (qty * price) - discount
             val amountPaid = data?.draft?.amountPaid ?: 0
-            val realChange = amountPaid - totalAmount
+            val draftMethod = data?.draft?.paymentMethod.toString()
+            val finalAmountPaid =
+                    if (draftMethod.equals("Qris", ignoreCase = true) && amountPaid == 0) {
+                        totalAmount
+                    } else {
+                        amountPaid
+                    }
+            val realChange = finalAmountPaid - totalAmount
 
             val result =
                     salesRepository.createPayment(
                             CreatePaymentRequest(
                                     kembali = realChange,
-                                    bayar = amountPaid,
-                                    metode = data?.draft?.paymentMethod.toString(),
+                                    bayar = finalAmountPaid,
+                                    metode = draftMethod,
                                     kasir = 3,
                                     cus = data?.draft?.customer.toString(),
                                     ppnPercentage = 0,

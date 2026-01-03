@@ -56,12 +56,22 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                 createPayment()
             }
             is PaymentUiEvent.PaymentMethodChanged -> {
+                val method = event.method.lowercase().replaceFirstChar { it.uppercaseChar() }
+                val uangDiterima =
+                        if (method.equals("Qris", ignoreCase = true)) {
+                            _uiState.value.subtotal.toString()
+                        } else {
+                            _uiState.value.uangDiterima
+                        }
+
+                val uangDiterimaValue = uangDiterima.toIntOrNull() ?: 0
+                val kembalian = uangDiterimaValue - _uiState.value.subtotal
+
                 _uiState.value =
                         _uiState.value.copy(
-                                paymentMethod =
-                                        event.method.lowercase().replaceFirstChar {
-                                            it.uppercaseChar()
-                                        }
+                                paymentMethod = method,
+                                uangDiterima = uangDiterima,
+                                kembalian = kembalian
                         )
             }
             is PaymentUiEvent.NoInvoiceChanged -> {
