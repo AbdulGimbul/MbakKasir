@@ -19,9 +19,9 @@ data class ProductTransDraftEntity(
         var username: String = "" // Added for user ownership
 )
 
-@Entity(tableName = "product_trans")
+@Entity(tableName = "product_trans", primaryKeys = ["draftId", "idBarang"])
 data class ProductTransEntity(
-        @PrimaryKey val idBarang: String = "",
+        val idBarang: String = "",
         val draftId: String = "",
         val kodeBarang: String = "",
         val barcode: String = "",
@@ -42,8 +42,8 @@ data class ProductDraftWithItems(
         @Relation(parentColumn = "draftId", entityColumn = "draftId")
         val items: List<ProductTransEntity>
 ) {
-    val totalAmount: Int
-        get() = items.sumOf { it.qtyJual * it.hargaItem - it.diskon }
-    val change: Int
-        get() = draft.amountPaid - totalAmount
+        val totalAmount: Int
+                get() = items.sumOf { it.qtyJual * it.hargaItem - it.diskon }
+        val change: Int
+                get() = draft.amountPaid - totalAmount
 }

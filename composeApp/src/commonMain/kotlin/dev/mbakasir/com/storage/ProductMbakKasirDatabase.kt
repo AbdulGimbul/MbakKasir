@@ -21,7 +21,7 @@ import dev.mbakasir.com.utils.DateTimeConverter
                         ProductTransEntity::class,
                         ProductTransDraftEntity::class,
                         CustomerEntity::class],
-        version = 3
+        version = 4
 )
 @TypeConverters(DateTimeConverter::class)
 @ConstructedBy(ProductDatabaseConstructor::class)

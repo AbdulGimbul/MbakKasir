@@ -147,9 +147,20 @@ class EntrySalesViewModel(
 
     private fun loadScannedProducts(draftId: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            // Load products
             salesRepository.getProductsFromDraft(draftId).collectLatest { scannedProductsList ->
                 _uiState.value = _uiState.value.copy(scannedProducts = scannedProductsList)
                 calculateTotals()
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            // Load saved customer
+            val draft = salesRepository.getDraftById(draftId)
+            if (draft != null && draft.customer.isNotEmpty()) {
+                withContext(Dispatchers.Main) {
+                    _uiState.value = _uiState.value.copy(searchCust = draft.customer)
+                    calculateTotals()
+                }
             }
         }
     }
@@ -170,6 +181,15 @@ class EntrySalesViewModel(
         val currentScanned = _uiState.value.scannedProducts
         val customer = _uiState.value.customers.find { it.kode == _uiState.value.searchCust }
         val customerType = customer?.jenis_cs ?: ""
+
+        if (_uiState.value.searchCust.isNotEmpty()) {
+            val draftId = currentScanned.firstOrNull()?.draftId
+            if (draftId != null) {
+                viewModelScope.launch {
+                    salesRepository.updateDraftCustomer(draftId, _uiState.value.searchCust)
+                }
+            }
+        }
 
         var totalHarga = 0
         var totalDiskon = 0

@@ -145,6 +145,9 @@ interface ProductTransDraftDao {
     @Query("DELETE FROM product_trans_drafts WHERE draftId = :draftId")
     suspend fun deleteDraft(draftId: String)
 
+    @Query("UPDATE product_trans_drafts SET customer = :customer WHERE draftId = :draftId")
+    suspend fun updateDraftCustomer(draftId: String, customer: String)
+
     @Query("DELETE FROM product_trans_drafts WHERE username = :username")
     suspend fun deleteDraftsForUser(username: String)
 }

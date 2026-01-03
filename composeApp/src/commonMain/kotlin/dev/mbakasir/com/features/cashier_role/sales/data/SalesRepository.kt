@@ -49,4 +49,8 @@ interface SalesRepository {
         suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
 
         suspend fun deleteDraftsForUser(username: String)
+
+        suspend fun updateDraftCustomer(draftId: String, customer: String)
+
+        suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 }

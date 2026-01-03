@@ -153,4 +153,12 @@ class SalesRepositoryImpl(
     override suspend fun deleteDraftsForUser(username: String) {
         return productTransDraftDao.deleteDraftsForUser(username)
     }
+
+    override suspend fun updateDraftCustomer(draftId: String, customer: String) {
+        productTransDraftDao.updateDraftCustomer(draftId, customer)
+    }
+
+    override suspend fun getDraftById(draftId: String): ProductTransDraftEntity? {
+        return productTransDraftDao.getDraftById(draftId)
+    }
 }
