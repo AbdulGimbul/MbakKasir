@@ -18,4 +18,5 @@ sealed class PaymentUiEvent {
     data object DismissDialog : PaymentUiEvent()
 
     data class OnSearchCustChanged(val searchCust: String) : PaymentUiEvent()
+    data class CustomerReceived(val searchCust: String) : PaymentUiEvent()
 }

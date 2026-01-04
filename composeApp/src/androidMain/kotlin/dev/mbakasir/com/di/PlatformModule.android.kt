@@ -1,5 +1,6 @@
 package dev.mbakasir.com.di
 
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dev.bluefalcon.BlueFalcon
 import dev.mbakasir.com.storage.DatabaseFactory
 import dev.mbakasir.com.storage.createDataStore
@@ -13,8 +14,12 @@ import org.koin.dsl.module
 actual val platformModule: Module
     get() = module {
         single { createDataStore(context = androidContext()) }
-//        single { RemoteConfigManager() }
-        single { OkHttp.create() }
+        //        single { RemoteConfigManager() }
+        single {
+            OkHttp.create {
+                config { addInterceptor(ChuckerInterceptor.Builder(androidContext()).build()) }
+            }
+        }
         single { BlueFalcon(context = androidApplication()) }
         single { DatabaseFactory(androidApplication()) }
         single { ShareManager(androidContext()) }

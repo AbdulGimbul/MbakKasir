@@ -7,12 +7,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -25,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -33,7 +29,6 @@ import dev.mbakasir.com.ui.component.DefaultButton
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.navigation.MainScreen
-import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary_text
 import dev.mbakasir.com.utils.getBrowserHelper
@@ -43,53 +38,42 @@ import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
 
 @Composable
-fun LoginScreen(
-    viewModel: LoginViewModel,
-    navController: NavController
-) {
+fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
-            if (state.role == "Kasir") {
+            if (state.role == "Kasir" ||
+                state.role.equals("Guest", ignoreCase = true)
+            ) {
                 LaunchedEffect(Unit) {
-                    navController.navigate(MainScreen.Cashier.route) {
-                        popUpTo(MainScreen.Login.route) {
-                            inclusive = true
-                        }
+                    navController.navigate("${MainScreen.Cashier.route}/${state.role}") {
+                        popUpTo(MainScreen.Login.route) { inclusive = true }
                     }
                 }
             } else {
                 LaunchedEffect(Unit) {
                     navController.navigate(MainScreen.Admin.route) {
-                        popUpTo(MainScreen.Login.route) {
-                            inclusive = true
-                        }
+                        popUpTo(MainScreen.Login.route) { inclusive = true }
                     }
                 }
             }
         }
 
         is LoginUiState.NotAuthenticated -> {
-            Login(
-                uiState = state,
-                onEvent = { viewModel.onEvent(it) }
-            )
+            Login(uiState = state, onEvent = { viewModel.onEvent(it) })
         }
     }
 }
 
 @Composable
-fun Login(
-    uiState: LoginUiState.NotAuthenticated,
-    onEvent: (LoginUiEvent) -> Unit
+fun Login(uiState: LoginUiState.NotAuthenticated, onEvent: (LoginUiEvent) -> Unit) {
 
-) {
     val state = rememberMessageBarState()
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
-            when(it){
+            when (it) {
                 "Access denied: Token has expired" -> ""
                 "Access denied: No token provided" -> ""
                 else -> state.addError(Exception(it))
@@ -98,25 +82,23 @@ fun Login(
     }
 
     ContentWithMessageBar(
-        messageBarState = state, errorMaxLines = 2, showCopyButton = false,
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
         visibilityDuration = 4000L,
         modifier = Modifier.statusBarsPadding().navigationBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(resource = Res.drawable.mbakasir_logo), 
-                        contentDescription = null, 
+                        painter = painterResource(resource = Res.drawable.mbakasir_logo),
+                        contentDescription = null,
                         modifier = Modifier.fillMaxWidth(0.4f)
                     )
                     Text(
@@ -145,7 +127,9 @@ fun Login(
                         text = "Login",
                         onClick = {
                             if (uiState.username.isBlank() || uiState.password.isBlank()) {
-                                state.addError(Exception("Username dan passwordnya diisi dulu yaa!"))
+                                state.addError(
+                                    Exception("Username dan passwordnya diisi dulu yaa!")
+                                )
                                 return@DefaultButton
                             }
                             onEvent.invoke(LoginUiEvent.Login)
@@ -159,8 +143,7 @@ fun Login(
                 ) {
                     if (uiState.isConnected) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
@@ -169,13 +152,19 @@ fun Login(
                             )
                             Text(
                                 text = "Mbakasir.com",
-                                style = MaterialTheme.typography.bodyMedium.copy(color = primary_text),
-                                modifier = Modifier.clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    getBrowserHelper().openBrowser("https://mbakasir.com/")
-                                }
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        color = primary_text
+                                    ),
+                                modifier =
+                                    Modifier.clickable(
+                                        interactionSource =
+                                            remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) {
+                                        getBrowserHelper()
+                                            .openBrowser("https://mbakasir.com/")
+                                    }
                             )
                         }
                         Text(

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Domain
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
@@ -40,9 +41,9 @@ import dev.mbakasir.com.features.cashier_role.home.presentation.HomeScreen
 import dev.mbakasir.com.features.cashier_role.home.presentation.HomeViewModel
 import dev.mbakasir.com.features.cashier_role.product.presentation.ProductScreen
 import dev.mbakasir.com.features.cashier_role.product.presentation.ProductViewModel
-import dev.mbakasir.com.features.cashier_role.sales.SalesScreen
-import dev.mbakasir.com.features.cashier_role.sales.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.domain.ProductTransSerializable
+import dev.mbakasir.com.features.cashier_role.sales.presentation.SalesScreen
+import dev.mbakasir.com.features.cashier_role.sales.presentation.SalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesScreen
 import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.EntrySalesViewModel
 import dev.mbakasir.com.features.cashier_role.sales.presentation.history.HistoryScreen
@@ -62,29 +63,49 @@ import org.koin.compose.viewmodel.koinViewModel
 fun CashierNavHost(
     navController: NavHostController,
     windowSize: WindowWidthSizeClass,
-    parentNavController: NavHostController
+    parentNavController: NavHostController,
+    role: String
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val navigationType: MbakKasirNavigationType = when (windowSize) {
-        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-        else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-    }
+    val filteredNavigationItems =
+        if (role.equals("Guest", ignoreCase = true)) {
+            listOf(
+                navigationItems[0], // Beranda
+                CashierBottomRailNavItem(
+                    title = "Riwayat",
+                    icon = Icons.Outlined.History,
+                    screen = CashierScreen.History
+                ),
+                navigationItems[2], // Barang
+                navigationItems[3] // Akun
+            )
+        } else {
+            navigationItems
+        }
+
+    val navigationType: MbakKasirNavigationType =
+        when (windowSize) {
+            WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+            WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+            else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
                 bottomBar = {
-                    if (currentRoute in listOf(
+                    if (currentRoute in
+                        listOf(
                             CashierScreen.Home.route,
                             CashierScreen.Sales.route,
                             CashierScreen.Product.route,
                             CashierScreen.Profile.route,
+                            CashierScreen.History.route,
                         )
                     ) {
-                        BottomBar(navController)
+                        BottomBar(navController, items = filteredNavigationItems)
                     }
                 },
                 floatingActionButton = {
@@ -92,7 +113,9 @@ fun CashierNavHost(
                         val draftId = generateKodeInvoice()
                         FloatingActionButton(
                             onClick = {
-                                navController.navigate("${CashierScreen.EntrySales.route}/$draftId")
+                                navController.navigate(
+                                    "${CashierScreen.EntrySales.route}/$draftId"
+                                )
                             },
                             shape = CircleShape,
                             containerColor = primary
@@ -117,14 +140,16 @@ fun CashierNavHost(
 
         MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
             PermanentNavigationDrawer(
-                drawerContent = { SideBar(navController) },
+                drawerContent = { SideBar(navController, items = filteredNavigationItems) },
                 content = {
                     Scaffold(
                         floatingActionButton = {
                             if (currentRoute == CashierScreen.Sales.route) {
                                 FloatingActionButton(
                                     onClick = {
-                                        navController.navigate(CashierScreen.EntrySales.route)
+                                        navController.navigate(
+                                            CashierScreen.EntrySales.route
+                                        )
                                     },
                                     shape = CircleShape,
                                     containerColor = primary
@@ -170,10 +195,7 @@ fun NavHostContent(
             ProductScreen(viewModel = koinViewModel<ProductViewModel>())
         }
         composable(CashierScreen.Sales.route) {
-            SalesScreen(
-                viewModel = koinViewModel<SalesViewModel>(),
-                navController = navController
-            )
+            SalesScreen(viewModel = koinViewModel<SalesViewModel>(), navController = navController)
         }
         composable(CashierScreen.History.route) {
             HistoryScreen(
@@ -200,33 +222,43 @@ fun NavHostContent(
             )
         }
         composable(
-            route = "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}",
-            arguments = listOf(
-                navArgument("scannedProducts") { nullable = false },
-                navArgument("draftId") { nullable = false }
-            )) { backStackEntry ->
+            route =
+                "${CashierScreen.Payment.route}/?scannedProducts={scannedProducts}&draftId={draftId}&customerCode={customerCode}",
+            arguments =
+                listOf(
+                    navArgument("scannedProducts") { nullable = false },
+                    navArgument("draftId") { nullable = false },
+                    navArgument("customerCode") {
+                        nullable = true
+                        defaultValue = ""
+                    }
+                )
+        ) { backStackEntry ->
             val draftId = backStackEntry.arguments?.getString("draftId")
             val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
+            val customerCode = backStackEntry.arguments?.getString("customerCode") ?: ""
             val scannedProducts =
                 jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
             PaymentScreen(
                 viewModel = koinViewModel<PaymentViewModel>(),
                 navController = navController,
                 products = scannedProducts ?: emptyList(),
-                draftId = draftId.toString()
+                draftId = draftId.toString(),
+                customerCode = customerCode
             )
         }
         composable(
-            route = "${CashierScreen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
-            arguments = listOf(
-                navArgument("paymentData") { nullable = true },
-                navArgument("noInvoice") { nullable = true }
-            )
+            route =
+                "${CashierScreen.Invoice.route}?paymentData={paymentData}&noInvoice={noInvoice}",
+            arguments =
+                listOf(
+                    navArgument("paymentData") { nullable = true },
+                    navArgument("noInvoice") { nullable = true }
+                )
         ) { backStackEntry ->
             val jsonResponse = backStackEntry.arguments?.getString("paymentData")
             val noInvoice = backStackEntry.arguments?.getString("noInvoice")
-            val paymentData =
-                jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
+            val paymentData = jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
             InvoiceScreen(
                 viewModel = koinViewModel<InvoiceViewModel>(),
                 shareManager = koinInject(),
@@ -241,85 +273,51 @@ fun NavHostContent(
 @Composable
 private fun BottomBar(
     navController: NavHostController,
+    items: List<CashierBottomRailNavItem>,
     modifier: Modifier = Modifier
 ) {
-    NavigationBar(
-        modifier = modifier
-    ) {
+    NavigationBar(modifier = modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        navigationItems.map { item ->
+        items.map { item ->
             NavigationBarItem(
                 selected = currentRoute == item.screen.route,
                 onClick = {
                     navController.navigate(item.screen.route) {
-                        navController.graph.startDestinationRoute?.let {
-                            popUpTo(CashierScreen.Home.route) {
-                                saveState = true
-                            }
-                            restoreState = true
-                            launchSingleTop = true
-                        }
+                        popUpTo(CashierScreen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 },
-                icon = {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title
+                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                label = { Text(text = item.title, maxLines = 1, softWrap = false) },
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = primary,
+                        selectedTextColor = primary,
+                        indicatorColor = Color.Transparent
                     )
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = primary,
-                    selectedTextColor = primary,
-                    indicatorColor = Color.Transparent
-                )
             )
         }
     }
 }
 
 @Composable
-fun SideBar(navController: NavHostController) {
+fun SideBar(navController: NavHostController, items: List<CashierBottomRailNavItem>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    PermanentDrawerSheet(
-        modifier = Modifier
-            .width(240.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .fillMaxHeight()
-                .padding(24.dp)
-        ) {
-            navigationItems.forEach { item ->
+    PermanentDrawerSheet(modifier = Modifier.width(240.dp)) {
+        Column(modifier = Modifier.wrapContentWidth().fillMaxHeight().padding(24.dp)) {
+            items.forEach { item ->
                 NavigationDrawerItem(
                     selected = currentRoute == item.screen.route,
-                    label = {
-                        Text(text = item.title)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
-                        )
-                    },
+                    label = { Text(text = item.title) },
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
                     onClick = {
                         navController.navigate(item.screen.route) {
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(CashierScreen.Home.route) { saveState = true }
-                                restoreState = true
-                                launchSingleTop = true
-                            }
+                            popUpTo(CashierScreen.Home.route) { inclusive = false }
+                            launchSingleTop = true
                         }
                     },
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -334,25 +332,26 @@ enum class MbakKasirNavigationType {
     PERMANENT_NAVIGATION_DRAWER
 }
 
-val navigationItems = listOf(
-    CashierBottomRailNavItem(
-        title = "Beranda",
-        icon = Icons.Outlined.Home,
-        screen = CashierScreen.Home
-    ),
-    CashierBottomRailNavItem(
-        title = "Penjualan",
-        icon = Icons.Outlined.ShoppingCart,
-        screen = CashierScreen.Sales
-    ),
-    CashierBottomRailNavItem(
-        title = "Barang",
-        icon = Icons.Outlined.Domain,
-        screen = CashierScreen.Product
-    ),
-    CashierBottomRailNavItem(
-        title = "Akun",
-        icon = Icons.Outlined.AccountCircle,
-        screen = CashierScreen.Profile
+val navigationItems =
+    listOf(
+        CashierBottomRailNavItem(
+            title = "Beranda",
+            icon = Icons.Outlined.Home,
+            screen = CashierScreen.Home
+        ),
+        CashierBottomRailNavItem(
+            title = "Penjualan",
+            icon = Icons.Outlined.ShoppingCart,
+            screen = CashierScreen.Sales
+        ),
+        CashierBottomRailNavItem(
+            title = "Barang",
+            icon = Icons.Outlined.Domain,
+            screen = CashierScreen.Product
+        ),
+        CashierBottomRailNavItem(
+            title = "Akun",
+            icon = Icons.Outlined.AccountCircle,
+            screen = CashierScreen.Profile
+        )
     )
-)

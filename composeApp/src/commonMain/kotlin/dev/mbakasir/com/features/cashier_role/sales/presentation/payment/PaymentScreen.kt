@@ -8,30 +8,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,12 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,10 +47,8 @@ import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.ui.theme.secondary
 import dev.mbakasir.com.ui.theme.secondary_text
-import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.currencyFormat
 import kotlinx.serialization.json.Json
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
@@ -79,7 +61,8 @@ fun PaymentScreen(
     viewModel: PaymentViewModel,
     navController: NavController,
     products: List<ProductTransSerializable>,
-    draftId: String
+    draftId: String,
+    customerCode: String = ""
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -89,11 +72,10 @@ fun PaymentScreen(
         moveToInvoice = {
             navController.navigate("${CashierScreen.Invoice.route}?paymentData=$it")
         },
-        navigateBack = {
-            navController.navigateUp()
-        },
+        navigateBack = { navController.navigateUp() },
         products = products,
-        draftId = draftId
+        draftId = draftId,
+        customerCode = customerCode
     )
 }
 
@@ -105,24 +87,24 @@ fun Payment(
     moveToInvoice: (String) -> Unit,
     navigateBack: () -> Unit,
     products: List<ProductTransSerializable>,
-    draftId: String
+    draftId: String,
+    customerCode: String = ""
 ) {
     val radioOptions = listOf("Tunai", "QRIS")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     val state = rememberMessageBarState()
-    val (checkedStatePelangan, onStateChange) = remember { mutableStateOf(false) }
-    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && uiState.customers.isNotEmpty()
+
+    LaunchedEffect(customerCode) {
+        if (customerCode.isNotEmpty()) {
+            onEvent(PaymentUiEvent.CustomerReceived(customerCode))
+        }
+    }
 
     LaunchedEffect(selectedOption) {
         onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
     }
-    LaunchedEffect(products) {
-        onEvent(PaymentUiEvent.ArgumentProductsLoaded(products))
-    }
-    LaunchedEffect(draftId) {
-        onEvent(PaymentUiEvent.NoInvoiceChanged(draftId))
-    }
+    LaunchedEffect(products) { onEvent(PaymentUiEvent.ArgumentProductsLoaded(products)) }
+    LaunchedEffect(draftId) { onEvent(PaymentUiEvent.NoInvoiceChanged(draftId)) }
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             state.addError(Exception("Ups, Silahkan lakukan kirim ulang ya!"))
@@ -152,156 +134,60 @@ fun Payment(
     }
 
     ContentWithMessageBar(
-        messageBarState = state, errorMaxLines = 2, showCopyButton = false,
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
         visibilityDuration = 3000L,
         modifier = Modifier.statusBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
+                    modifier =
+                        Modifier.weight(1f)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState())
                 ) {
                     HeadlineText(
                         text = "Pembayaran",
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
-                    Text(
-                        text = "Pelanggan",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = dark,
-                    )
-                    Row(
-                        Modifier.fillMaxWidth()
-                            .height(56.dp)
-                            .toggleable(
-                                value = checkedStatePelangan,
-                                onValueChange = { onStateChange(!checkedStatePelangan) },
-                                role = Role.Checkbox
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = checkedStatePelangan,
-                            onCheckedChange = null
-                        )
+                    if (uiState.searchCust.isNotEmpty()) {
                         Text(
                             text = "Pelanggan",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
+                            style =
+                                MaterialTheme.typography.titleSmall
+                                    .copy(
+                                        fontWeight =
+                                            FontWeight
+                                                .SemiBold
+                                    ),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    }
-                    if (checkedStatePelangan) {
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = setExpanded
-                        ) {
-                            OutlinedTextField(
-                                value = uiState.searchCust,
-                                onValueChange = { newCust ->
-                                    onEvent(PaymentUiEvent.OnSearchCustChanged(newCust))
-                                },
-                                textStyle = MaterialTheme.typography.bodyMedium,
-                                label = {
-                                    Text(
-                                        "List Pelanggan",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = secondary_text
-                                    )
-                                },
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                                singleLine = true,
-                                shape = RoundedCornerShape(10.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = stroke,
-                                    unfocusedBorderColor = stroke,
-                                    cursorColor = primary_text,
-                                    focusedLabelColor = primary,
-                                    unfocusedLabelColor = secondary_text,
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
-                                    .menuAnchor(type = MenuAnchorType.PrimaryEditable)
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = {
-                                    setExpanded(false)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(max = 200.dp)
-                            ) {
-                                uiState.customers.forEach { customer ->
-                                    val displayText = when {
-                                        customer.nama.contains(
-                                            uiState.searchCust,
-                                            ignoreCase = true
-                                        ) -> customer.nama
-
-                                        customer.kode.contains(
-                                            uiState.searchCust,
-                                            ignoreCase = true
-                                        ) -> customer.kode
-
-                                        else -> ""
+                        Text(
+                            text =
+                                uiState.customers
+                                    .find {
+                                        it.kode ==
+                                                uiState.searchCust
                                     }
-
-                                    if (displayText.isNotEmpty()) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onEvent(PaymentUiEvent.OnSearchCustChanged(customer.kode))
-                                                setExpanded(false)
-                                            },
-                                            text = {
-                                                Column {
-                                                    Row(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.SpaceBetween
-                                                    ) {
-                                                        Text(
-                                                            text = customer.nama,
-                                                            style = MaterialTheme.typography.titleSmall
-                                                        )
-                                                        Text(
-                                                            text = customer.kode,
-                                                            style = MaterialTheme.typography.bodyMedium
-                                                        )
-                                                    }
-
-                                                    Text(
-                                                        text = customer.alamat,
-                                                        style = MaterialTheme.typography.bodySmall
-                                                    )
-                                                }
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.Person,
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                                    ?.nama
+                                    ?: "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primary,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
                     }
                     Text(
                         text = "Jenis Pembayaran",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                         color = dark,
                     )
                     PaymentOptions(
@@ -309,102 +195,177 @@ fun Payment(
                         selectedOption = selectedOption,
                         onOptionSelected
                     )
-//                    if (selectedOption == "Kredit") {
-//                        Text(
-//                            text = "Jatuh Tempo",
-//                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-//                            color = dark,
-//                        )
-//                        OutlinedTextField(
-//                            value = uiState.selectedDate,
-//                            onValueChange = {},
-//                            textStyle = MaterialTheme.typography.bodyMedium,
-//                            label = {
-//                                Text(
-//                                    "dd/mm/yyyy",
-//                                    style = MaterialTheme.typography.bodyMedium,
-//                                    color = secondary_text
-//                                )
-//                            },
-//                            enabled = false,
-//                            trailingIcon = {
-//                                IconButton(onClick = { onEvent(PaymentUiEvent.DateIconClicked) }) {
-//                                    Icon(
-//                                        Icons.Default.DateRange,
-//                                        contentDescription = "Date",
-//                                        tint = stroke
-//                                    )
-//                                }
-//                            },
-//                            shape = RoundedCornerShape(10.dp),
-//                            colors = OutlinedTextFieldDefaults.colors(
-//                                disabledPlaceholderColor = secondary_text,
-//                                disabledBorderColor = stroke,
-//                                disabledLabelColor = secondary_text,
-//                                disabledTextColor = primary_text,
-//                                disabledTrailingIconColor = icon,
-//                            ),
-//                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-//                        )
-//                    }
+                    //                    if (selectedOption == "Kredit") {
+                    //                        Text(
+                    //                            text = "Jatuh Tempo",
+                    //                            style =
+                    // MaterialTheme.typography.titleSmall.copy(fontWeight =
+                    // FontWeight.SemiBold),
+                    //                            color = dark,
+                    //                        )
+                    //                        OutlinedTextField(
+                    //                            value = uiState.selectedDate,
+                    //                            onValueChange = {},
+                    //                            textStyle =
+                    // MaterialTheme.typography.bodyMedium,
+                    //                            label = {
+                    //                                Text(
+                    //                                    "dd/mm/yyyy",
+                    //                                    style =
+                    // MaterialTheme.typography.bodyMedium,
+                    //                                    color = secondary_text
+                    //                                )
+                    //                            },
+                    //                            enabled = false,
+                    //                            trailingIcon = {
+                    //                                IconButton(onClick = {
+                    // onEvent(PaymentUiEvent.DateIconClicked) }) {
+                    //                                    Icon(
+                    //
+                    // Icons.Default.DateRange,
+                    //                                        contentDescription
+                    // = "Date",
+                    //                                        tint = stroke
+                    //                                    )
+                    //                                }
+                    //                            },
+                    //                            shape =
+                    // RoundedCornerShape(10.dp),
+                    //                            colors =
+                    // OutlinedTextFieldDefaults.colors(
+                    //                                disabledPlaceholderColor =
+                    // secondary_text,
+                    //                                disabledBorderColor =
+                    // stroke,
+                    //                                disabledLabelColor =
+                    // secondary_text,
+                    //                                disabledTextColor =
+                    // primary_text,
+                    //                                disabledTrailingIconColor
+                    // = icon,
+                    //                            ),
+                    //                            modifier =
+                    // Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                    //                        )
+                    //                    }
                     Text(
-                        text = if (selectedOption == "QRIS") "Keterangan" else "Uang Diterima",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                        text =
+                            if (selectedOption == "QRIS") "Keterangan"
+                            else "Uang Diterima",
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                         color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     DefaultTextField(
-                        value = if (selectedOption == "QRIS") uiState.description else uiState.uangDiterima,
+                        value =
+                            if (selectedOption == "QRIS")
+                                uiState.description
+                            else uiState.uangDiterima,
                         onValueChange = {
                             if (selectedOption == "QRIS") {
-                                onEvent(PaymentUiEvent.DescriptionChanged(it))
+                                onEvent(
+                                    PaymentUiEvent
+                                        .DescriptionChanged(
+                                            it
+                                        )
+                                )
                             } else {
-                                val formatted = formatCurrencyInput(it)
-                                onEvent(PaymentUiEvent.UangDiterimaChanged(formatted))
+                                val formatted =
+                                    formatCurrencyInput(it)
+                                onEvent(
+                                    PaymentUiEvent
+                                        .UangDiterimaChanged(
+                                            formatted
+                                        )
+                                )
                             }
                         },
-                        placehoder = if (selectedOption == "QRIS") "Dari? (Mandiri/BNI/BRI dst)" else "Nominal Uang",
-                        keyboardOptions = if (selectedOption == "QRIS") KeyboardOptions(keyboardType = KeyboardType.Text)
-                            else KeyboardOptions(keyboardType = KeyboardType.Number),
-                        visualTransformation = if (selectedOption != "QRIS") CurrencyVisualTransformation() else null,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        placehoder =
+                            if (selectedOption == "QRIS")
+                                "Dari? (Mandiri/BNI/BRI dst)"
+                            else "Nominal Uang",
+                        keyboardOptions =
+                            if (selectedOption == "QRIS")
+                                KeyboardOptions(
+                                    keyboardType =
+                                        KeyboardType.Text
+                                )
+                            else
+                                KeyboardOptions(
+                                    keyboardType =
+                                        KeyboardType.Number
+                                ),
+                        visualTransformation =
+                            if (selectedOption != "QRIS")
+                                CurrencyVisualTransformation()
+                            else null,
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .padding(bottom = 16.dp)
                     )
                     if (selectedOption != "QRIS") {
                         Text(
                             text = "Kembalian",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                            style =
+                                MaterialTheme.typography.titleSmall
+                                    .copy(
+                                        fontWeight =
+                                            FontWeight
+                                                .SemiBold
+                                    ),
                             color = dark,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         DisabledTextField(
-                            value = if (uiState.kembalian < 0) "Rp 0" else currencyFormat(uiState.kembalian.toDouble()),
+                            value =
+                                if (uiState.kembalian < 0) "Rp 0"
+                                else
+                                    currencyFormat(
+                                        uiState.kembalian
+                                            .toDouble()
+                                    ),
                             onValueChange = {},
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(bottom = 16.dp)
                         )
                     }
                 }
-                Column(
-                    modifier = Modifier.imePadding()
-                ) {
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp)
-                    ) {
+                Column(modifier = Modifier.imePadding()) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth().width(1.dp)
+                    )
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                         SummaryRow(
                             label = "Total Harga:",
-                            value = currencyFormat(uiState.totalHarga.toDouble()),
+                            value =
+                                currencyFormat(
+                                    uiState.totalHarga
+                                        .toDouble()
+                                ),
                         )
                         SummaryRow(
                             label = "Diskon:",
-                            value = currencyFormat(uiState.diskon.toDouble())
+                            value =
+                                currencyFormat(
+                                    uiState.diskon.toDouble()
+                                )
                         )
                         HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth().width(1.dp)
-                                .padding(vertical = 10.dp)
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .width(1.dp)
+                                    .padding(vertical = 10.dp)
                         )
                         SummaryRow(
                             label = "Totlal Tagihan",
-                            value = currencyFormat(uiState.subtotal.toDouble()),
+                            value =
+                                currencyFormat(
+                                    uiState.subtotal.toDouble()
+                                ),
                             isBold = true
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -412,19 +373,35 @@ fun Payment(
                             onCancelClick = navigateBack,
                             onConfirmClick = {
                                 if (selectedOption != "QRIS") {
-                                    val uangDiterimaValue = uiState.uangDiterima.replace(".", "").replace(",", "").toIntOrNull() ?: 0
-                                    if (uiState.uangDiterima.isEmpty() || uangDiterimaValue < uiState.subtotal) {
-                                        state.addError(Exception("Hei, uang diterima tidak bisa kurang dari total harga!"))
-                                        return@FooterButton
-                                    }
-                                    val customerExists =
-                                        uiState.customers.any { customer -> customer.kode == uiState.searchCust }
-                                    if (checkedStatePelangan && !customerExists) {
-                                        state.addError(Exception("Hei, kode customer belum dipilih atau tidak valid!"))
+                                    val uangDiterimaValue =
+                                        uiState.uangDiterima
+                                            .replace(
+                                                ".",
+                                                ""
+                                            )
+                                            .replace(
+                                                ",",
+                                                ""
+                                            )
+                                            .toIntOrNull()
+                                            ?: 0
+                                    if (uiState.uangDiterima
+                                            .isEmpty() ||
+                                        uangDiterimaValue <
+                                        uiState.subtotal
+                                    ) {
+                                        state.addError(
+                                            Exception(
+                                                "Hei, uang diterima tidak bisa kurang dari total harga!"
+                                            )
+                                        )
                                         return@FooterButton
                                     }
                                 }
-                                onEvent(PaymentUiEvent.ConfirmButtonClicked)
+                                onEvent(
+                                    PaymentUiEvent
+                                        .ConfirmButtonClicked
+                                )
                             },
                             cancelText = "Kembali",
                             confirmText = "Bayar",
@@ -442,32 +419,35 @@ fun Payment(
             modifier = Modifier.padding(top = 18.dp, bottom = 10.dp).fillMaxWidth(),
             showDatePicker = uiState.showDatePicker,
             title = "Pilih Tanggal",
-            titleStyle = TextStyle(
-                fontWeight = FontWeight.Bold,
-                color = dark,
-            ),
-            doneLabelStyle = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = primary,
-            ),
-            selectorProperties = WheelPickerDefaults.selectorProperties(
-                borderColor = secondary,
-            ),
-            defaultDateTextStyle = MaterialTheme.typography.titleSmall.copy(
-                color = primary,
-                fontSize = 18.sp
-            ),
+            titleStyle =
+                TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = dark,
+                ),
+            doneLabelStyle =
+                TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primary,
+                ),
+            selectorProperties =
+                WheelPickerDefaults.selectorProperties(
+                    borderColor = secondary,
+                ),
+            defaultDateTextStyle =
+                MaterialTheme.typography.titleSmall.copy(
+                    color = primary,
+                    fontSize = 18.sp
+                ),
             rowCount = 5,
             height = 170.dp,
             onDoneClick = { date ->
-                val formattedDate = "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
+                val formattedDate =
+                    "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
                 onEvent(PaymentUiEvent.SelectedDateChanged(formattedDate))
             },
             dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
-            onDismiss = {
-                onEvent(PaymentUiEvent.DismissDialog)
-            }
+            onDismiss = { onEvent(PaymentUiEvent.DismissDialog) }
         )
     }
 }
@@ -478,24 +458,20 @@ fun PaymentOptions(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         radioOptions.forEach { text ->
             Row(
-                modifier = Modifier
-                    .selectable(
+                modifier =
+                    Modifier.selectable(
                         selected = (text == selectedOption),
                         onClick = { onOptionSelected(text) },
-                    ).padding(end = 16.dp),
+                    )
+                        .padding(end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = (text == selectedOption),
-                    onClick = {
-                        onOptionSelected(text)
-                    }
+                    onClick = { onOptionSelected(text) }
                 )
                 Text(
                     text = text,
@@ -516,12 +492,22 @@ fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
     ) {
         Text(
             text = label,
-            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
             color = if (isBold) dark else secondary_text
         )
         Text(
             text = value,
-            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
             color = dark
         )
     }

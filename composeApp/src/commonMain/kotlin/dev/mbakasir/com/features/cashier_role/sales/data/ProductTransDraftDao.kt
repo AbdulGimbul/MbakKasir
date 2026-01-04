@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductTransDraftDao {
     @Transaction
-    @Query("SELECT * FROM product_trans_drafts ORDER BY draftId DESC")
-    fun getAllDrafts(): Flow<List<ProductDraftWithItems>>
+    @Query("SELECT * FROM product_trans_drafts WHERE username = :username ORDER BY draftId DESC")
+    fun getAllDrafts(username: String): Flow<List<ProductDraftWithItems>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraft(draft: ProductTransDraftEntity)
@@ -24,7 +24,8 @@ interface ProductTransDraftDao {
     suspend fun addProductToDraft(
         draftId: String,
         cashierName: String,
-        product: ProductTransEntity
+        product: ProductTransEntity,
+        username: String
     ) {
         val draft = getDraftById(draftId)
         if (draft != null) {
@@ -37,13 +38,16 @@ interface ProductTransDraftDao {
                 paymentMethod = draft.paymentMethod,
                 description = draft.description,
                 dueDate = draft.dueDate,
-                customer = draft.customer
+                customer = draft.customer,
+                username = username
             )
         } else {
-            val newDraft = ProductTransDraftEntity(
-                draftId = draftId,
-                cashier = cashierName,
-            )
+            val newDraft =
+                ProductTransDraftEntity(
+                    draftId = draftId,
+                    cashier = cashierName,
+                    username = username
+                )
             insertDraft(newDraft)
             insertProductTrans(product)
         }
@@ -55,8 +59,9 @@ interface ProductTransDraftDao {
     @Query("SELECT * FROM product_trans_drafts WHERE draftId = :draftId LIMIT 1")
     suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 
-
-    @Query("UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, description = :description, customer = :customer WHERE draftId = :draftId")
+    @Query(
+        "UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, description = :description, customer = :customer, username = :username WHERE draftId = :draftId"
+    )
     suspend fun updateDraft(
         draftId: String,
         isPrinted: Boolean?,
@@ -64,7 +69,8 @@ interface ProductTransDraftDao {
         paymentMethod: String?,
         description: String?,
         dueDate: String?,
-        customer: String?
+        customer: String?,
+        username: String?
     )
 
     @Transaction
@@ -117,9 +123,11 @@ interface ProductTransDraftDao {
                 paymentMethod = draft.paymentMethod,
                 description = draft.description,
                 dueDate = draft.dueDate,
-                customer = draft.customer
+                customer = draft.customer,
+                username = draft.username
             )
-        } ?: println("Draft not found for draftId: $draftId")
+        }
+            ?: println("Draft not found for draftId: $draftId")
     }
 
     @Update
@@ -138,6 +146,9 @@ interface ProductTransDraftDao {
     @Query("DELETE FROM product_trans_drafts WHERE draftId = :draftId")
     suspend fun deleteDraft(draftId: String)
 
-    @Query("DELETE  FROM product_trans_drafts")
-    suspend fun deleteAllTransDrafts()
+    @Query("UPDATE product_trans_drafts SET customer = :customer WHERE draftId = :draftId")
+    suspend fun updateDraftCustomer(draftId: String, customer: String)
+
+    @Query("DELETE FROM product_trans_drafts WHERE username = :username")
+    suspend fun deleteDraftsForUser(username: String)
 }

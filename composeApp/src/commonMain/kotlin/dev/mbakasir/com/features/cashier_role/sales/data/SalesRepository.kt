@@ -16,7 +16,8 @@ interface SalesRepository {
     suspend fun addProductTransToDraft(
         draftId: String,
         cashierName: String,
-        productTransEntity: ProductTransEntity
+        productTransEntity: ProductTransEntity,
+        username: String
     )
 
     suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>>
@@ -33,9 +34,12 @@ interface SalesRepository {
     )
 
     suspend fun deleteDraft(draftId: String)
-    suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException>
+    suspend fun createPayment(
+        paymentRequest: CreatePaymentRequest
+    ): NetworkResult<CreatePaymentApiModel, NetworkException>
+
     suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>
-    suspend fun getDrafts(): Flow<List<ProductDraftWithItems>>
+    suspend fun getDrafts(username: String): Flow<List<ProductDraftWithItems>>
     suspend fun getHistory(
         startDate: String,
         endDate: String,
@@ -45,5 +49,9 @@ interface SalesRepository {
 
     suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
 
-    suspend fun deleteAllDrafts()
+    suspend fun deleteDraftsForUser(username: String)
+
+    suspend fun updateDraftCustomer(draftId: String, customer: String)
+
+    suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 }

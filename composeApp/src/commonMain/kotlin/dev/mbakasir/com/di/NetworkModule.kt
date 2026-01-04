@@ -15,7 +15,7 @@ val provideHttpClientModule = module {
             .build(get())
     }
 
-    single { RequestHandler(get()) }
+    single { RequestHandler(get(), get()) }
 
     single { Konnectivity() }
 }

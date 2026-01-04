@@ -5,29 +5,29 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreatePaymentRequest(
-    val kembali: String,
-    val bayar: String,
+    val kembali: Int,
+    val bayar: Int,
     val metode: String,
     val keterangan: String,
-    val kasir: String,
+    val kasir: Int,
     val cus: String,
-    @SerialName("nominal_ppn")
-    val nominalPpn: String,
+    @SerialName("ppn_percentage") val ppnPercentage: Int,
+    @SerialName("nominal_ppn") val nominalPpn: Int,
     val tempo: String,
+    @SerialName("no_invoice") val noInvoice: String,
     val detil: List<DetailPayload>
 )
 
 @Serializable
 data class DetailPayload(
-    @SerialName("id_barang")
-    val idBarang: String,
-    @SerialName("id_karyawan")
-    val idKaryawan: String,
+    @SerialName("id_barang") val idBarang: Int,
+    @SerialName("id_karyawan") val idKaryawan: Int?,
     val jenis: String,
-    @SerialName("qty_jual")
-    val qtyJual: String,
-    @SerialName("harga_item")
-    val hargaItem: String,
-    val subtotal: String,
+    @SerialName("qty_jual") val qtyJual: Int,
+    @SerialName("harga_item") val hargaItem: Int,
+    @SerialName("item_subtotal") val itemSubtotal: Int,
+    @SerialName("discount_type") val discountType: String,
+    @SerialName("discount_value") val discountValue: Int,
+    @SerialName("item_total") val itemTotal: Int,
     val diskon: Int
 )

@@ -1,6 +1,5 @@
 package dev.mbakasir.com.features.cashier_role.home.data
 
-import dev.mbakasir.com.features.cashier_role.product.domain.LastUpdateBarangApiModel
 import dev.mbakasir.com.features.cashier_role.home.domain.SalesReportApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult

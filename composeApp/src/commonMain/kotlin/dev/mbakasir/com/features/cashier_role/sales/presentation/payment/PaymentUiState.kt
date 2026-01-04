@@ -25,4 +25,5 @@ data class PaymentUiState(
     val paymentResponse: CreatePaymentApiModel? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val customerLoadError: String? = null,
 )

@@ -32,7 +32,8 @@ class ProfileViewModel(
     fun onEvent(event: ProfileUiEvent) {
         when (event) {
             is ProfileUiEvent.Logout -> logout()
-            is ProfileUiEvent.OnShowAlertDialog -> _uiState.update { it.copy(showDialog = !it.showDialog) }
+            is ProfileUiEvent.OnShowAlertDialog ->
+                _uiState.update { it.copy(showDialog = !it.showDialog) }
         }
     }
 
@@ -56,18 +57,24 @@ class ProfileViewModel(
 
             val result = authRepository.logout()
             withContext(Dispatchers.Main) {
-                result.onSuccess {
-                    salesRepository.deleteAllDrafts()
-                    _uiState.value = _uiState.value.copy(
-                        isLogout = true,
-                        isLoading = false
-                    )
-                }.onError {
-                    _uiState.value = _uiState.value.copy(
-                        errorMessage = it.message,
-                        isLoading = false
-                    )
-                }
+                // Perform local cleanup and navigation regardless of result
+                // salesRepository.deleteAllDrafts() // Removed to persist drafts per user
+
+                result
+                    .onSuccess {
+                        _uiState.value = _uiState.value.copy(isLogout = true, isLoading = false)
+                    }
+                    .onError {
+                        // Even if API fails, we still consider the user logged out locally
+                        _uiState.value =
+                            _uiState.value.copy(
+                                isLogout = true,
+                                isLoading = false,
+                                errorMessage =
+                                    it.message // Optional: show error briefly? But
+                                // we are navigating away.
+                            )
+                    }
             }
         }
     }
@@ -77,11 +84,13 @@ class ProfileViewModel(
             viewModelScope.launch {
                 val result = authRepository.getVersion()
                 withContext(Dispatchers.Main) {
-                    result.onSuccess { data ->
-                        _uiState.value = _uiState.value.copy(version = data.version)
-                    }.onError { error ->
-                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                    }
+                    result
+                        .onSuccess { data ->
+                            _uiState.value = _uiState.value.copy(version = data.version)
+                        }
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
                 }
             }
         }

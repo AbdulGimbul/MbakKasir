@@ -62,7 +62,9 @@ class AuthRepositoryImpl(
         )
 
         if (result is NetworkResult.Error) {
-            sessionHandler.clearData()
+            if (result.exception is NetworkException.UnauthorizedException) {
+                sessionHandler.clearData()
+            }
         }
 
         return result
@@ -90,8 +92,10 @@ class AuthRepositoryImpl(
 
         if (result is NetworkResult.Success) {
             requestHandler.httpClient.authProvider<BearerAuthProvider>()?.clearToken()
-            sessionHandler.clearData()
         }
+
+        // Clear session data regardless of API result to ensure user is logged out locally
+        sessionHandler.clearData()
 
         return result
     }

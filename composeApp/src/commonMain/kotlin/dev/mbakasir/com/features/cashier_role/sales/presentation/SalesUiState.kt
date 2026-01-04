@@ -1,4 +1,4 @@
-package dev.mbakasir.com.features.cashier_role.sales
+package dev.mbakasir.com.features.cashier_role.sales.presentation
 
 import dev.mbakasir.com.features.cashier_role.sales.data.ProductDraftWithItems
 import dev.mbakasir.com.features.cashier_role.sales.domain.CreatePaymentApiModel

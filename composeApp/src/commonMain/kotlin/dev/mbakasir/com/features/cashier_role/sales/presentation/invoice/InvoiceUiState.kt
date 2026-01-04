@@ -12,6 +12,7 @@ data class InvoiceUiState(
     val ppn: Double = 0.0,
     val bayar: Double = 0.0,
     val kembali: Double = 0.0,
+    val pelangganType: String = "",
     val detil: List<dev.mbakasir.com.features.cashier_role.sales.domain.DetailPayment> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,

@@ -12,7 +12,10 @@ fun ProductEntity.toProductTrans(draftId: String): ProductTransEntity {
         barcode = this.barcode,
         namaBarang = this.namaBarang,
         qtyJual = 1,
-        hargaItem = this.hargaJual.toIntOrNull() ?: 0
+        hargaItem = this.hargaJual.toIntOrNull() ?: 0,
+        hargaPelanggan = this.hargaPelanggan.toIntOrNull() ?: 0,
+        hargaToko = this.hargaToko.toIntOrNull() ?: 0,
+        hargaSales = this.hargaSales.toIntOrNull() ?: 0
     )
 }
 

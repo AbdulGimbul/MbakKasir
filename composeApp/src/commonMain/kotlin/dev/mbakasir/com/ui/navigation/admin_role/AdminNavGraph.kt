@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,7 +32,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
+import dev.mbakasir.com.features.admin_role.home.presentation.HomeScreen
 import dev.mbakasir.com.features.admin_role.product.StockOpnamePreviewScreen
+import dev.mbakasir.com.features.admin_role.product.presentation.ProductScreen
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameScreen
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname.EntryStockOpnameScreen
@@ -42,6 +43,8 @@ import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
 import dev.mbakasir.com.ui.theme.primary
 import org.koin.compose.viewmodel.koinViewModel
+import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
+import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 
 @Composable
 fun AdminNavHost(
@@ -52,18 +55,17 @@ fun AdminNavHost(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val navigationType: MbakKasirNavigationType = when (windowSize) {
-        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-        else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-    }
+    val navigationType: MbakKasirNavigationType =
+        when (windowSize) {
+            WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+            WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+            else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
-                bottomBar = {
-                    BottomBar(navController)
-                },
+                bottomBar = { BottomBar(navController) },
                 floatingActionButton = {
                     if (currentRoute == AdminScreen.StockOpname.route) {
                         FloatingActionButton(
@@ -100,7 +102,9 @@ fun AdminNavHost(
                             if (currentRoute == AdminScreen.StockOpname.route) {
                                 FloatingActionButton(
                                     onClick = {
-                                        navController.navigate(AdminScreen.EntryStockOpname.route)
+                                        navController.navigate(
+                                            AdminScreen.EntryStockOpname.route
+                                        )
                                     },
                                     shape = CircleShape,
                                     containerColor = primary
@@ -136,14 +140,11 @@ fun NavHostContent(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AdminScreen.StockOpname.route,
+        startDestination = AdminScreen.Home.route,
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(AdminScreen.Home.route) {
-            ProfileScreen(
-                viewModel = koinViewModel<ProfileViewModel>(),
-                navController = parentNavController
-            )
+            HomeScreen(viewModel = koinViewModel<AdminHomeViewModel>())
         }
         composable(AdminScreen.Profile.route) {
             ProfileScreen(
@@ -151,8 +152,9 @@ fun NavHostContent(
                 navController = parentNavController
             )
         }
-        composable(AdminScreen.StockInOut.route) {
-            StockOpnamePreviewScreen()
+        composable(AdminScreen.StockInOut.route) { StockOpnamePreviewScreen() }
+        composable(AdminScreen.Product.route) {
+            ProductScreen(viewModel = koinViewModel<AdminProductViewModel>())
         }
         composable(AdminScreen.StockOpname.route) {
             StockOpnameScreen(
@@ -166,20 +168,13 @@ fun NavHostContent(
                 navController = navController
             )
         }
-        composable(AdminScreen.StockOpnamePreview.route) {
-            StockOpnamePreviewScreen()
-        }
+        composable(AdminScreen.StockOpnamePreview.route) { StockOpnamePreviewScreen() }
     }
 }
 
 @Composable
-private fun BottomBar(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    NavigationBar(
-        modifier = modifier
-    ) {
+private fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
+    NavigationBar(modifier = modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
@@ -189,32 +184,20 @@ private fun BottomBar(
                 onClick = {
                     navController.navigate(item.screen.route) {
                         navController.graph.startDestinationRoute?.let {
-                            popUpTo(AdminScreen.Home.route) {
-                                saveState = true
-                            }
+                            popUpTo(AdminScreen.Home.route) { saveState = true }
                             restoreState = true
                             launchSingleTop = true
                         }
                     }
                 },
-                icon = {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title
+                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                label = { Text(text = item.title, maxLines = 1, softWrap = false) },
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = primary,
+                        selectedTextColor = primary,
+                        indicatorColor = Color.Transparent
                     )
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = primary,
-                    selectedTextColor = primary,
-                    indicatorColor = Color.Transparent
-                )
             )
         }
     }
@@ -225,28 +208,13 @@ fun SideBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    PermanentDrawerSheet(
-        modifier = Modifier
-            .width(240.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .fillMaxHeight()
-                .padding(24.dp)
-        ) {
+    PermanentDrawerSheet(modifier = Modifier.width(240.dp)) {
+        Column(modifier = Modifier.wrapContentWidth().fillMaxHeight().padding(24.dp)) {
             navigationItems.forEach { item ->
                 NavigationDrawerItem(
                     selected = currentRoute == item.screen.route,
-                    label = {
-                        Text(text = item.title)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
-                        )
-                    },
+                    label = { Text(text = item.title) },
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
                     onClick = {
                         navController.navigate(item.screen.route) {
                             navController.graph.startDestinationRoute?.let {
@@ -268,25 +236,26 @@ enum class MbakKasirNavigationType {
     PERMANENT_NAVIGATION_DRAWER
 }
 
-val navigationItems = listOf(
-    AdminBottomRailNavItem(
-        title = "Beranda",
-        icon = Icons.Outlined.Home,
-        screen = AdminScreen.EntryStockOpname
-    ),
-    AdminBottomRailNavItem(
-        title = "Stock In/Out",
-        icon = Icons.Outlined.ShoppingCart,
-        screen = AdminScreen.StockOpnamePreview
-    ),
-    AdminBottomRailNavItem(
-        title = "Stock Opname",
-        icon = Icons.Outlined.Domain,
-        screen = AdminScreen.StockOpname
-    ),
-    AdminBottomRailNavItem(
-        title = "Akun",
-        icon = Icons.Outlined.AccountCircle,
-        screen = AdminScreen.Profile
+val navigationItems =
+    listOf(
+        AdminBottomRailNavItem(
+            title = "Beranda",
+            icon = Icons.Outlined.Home,
+            screen = AdminScreen.Home
+        ),
+        AdminBottomRailNavItem(
+            title = "Barang",
+            icon = Icons.Outlined.Domain,
+            screen = AdminScreen.Product
+        ),
+        AdminBottomRailNavItem(
+            title = "Stock Opname",
+            icon = Icons.Outlined.Domain,
+            screen = AdminScreen.StockOpname
+        ),
+        AdminBottomRailNavItem(
+            title = "Akun",
+            icon = Icons.Outlined.AccountCircle,
+            screen = AdminScreen.Profile
+        )
     )
-)

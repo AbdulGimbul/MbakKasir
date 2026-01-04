@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun SalesItem(
@@ -38,10 +39,7 @@ fun SalesItem(
         border = CardDefaults.outlinedCardBorder(enabled = true),
         colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -63,8 +61,11 @@ fun SalesItem(
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(
                 label = if (product.draft.isPrinted) "Belum posting" else "Draft",
-                value = dev.mbakasir.com.utils.currencyFormat(product.totalAmount.toDouble()),
-                color = if (product.draft.isPrinted) dev.mbakasir.com.ui.theme.yellow else dev.mbakasir.com.ui.theme.red
+                value = currencyFormat(product.totalAmount.toDouble()),
+                color =
+                    if (product.draft.isPrinted)
+                        dev.mbakasir.com.ui.theme.yellow
+                    else dev.mbakasir.com.ui.theme.red
             )
             Spacer(modifier = Modifier.height(16.dp))
             ItemRowSales(
@@ -75,17 +76,32 @@ fun SalesItem(
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = onClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (product.draft.isPrinted) dev.mbakasir.com.ui.theme.blue else dev.mbakasir.com.ui.theme.primary),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = if (product.draft.isPrinted) dev.mbakasir.com.ui.theme.blue else dev.mbakasir.com.ui.theme.primary
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        contentColor =
+                            if (product.draft.isPrinted)
+                                dev.mbakasir.com.ui.theme.blue
+                            else dev.mbakasir.com.ui.theme.primary
+                    ),
+                border =
+                    BorderStroke(
+                        width = 1.dp,
+                        color =
+                            if (product.draft.isPrinted)
+                                dev.mbakasir.com.ui.theme.blue
+                            else dev.mbakasir.com.ui.theme.primary
+                    ),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = if (product.draft.isPrinted) "Kirim ulang" else "Selesaikan",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    text =
+                        if (product.draft.isPrinted) "Kirim ulang"
+                        else "Selesaikan",
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                 )
             }
         }
@@ -100,16 +116,22 @@ fun ItemRowSales(label: String, value: String, color: Color) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label, 
+            text = label,
             color = color,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
             maxLines = 1,
             modifier = Modifier.weight(1f, fill = false)
         )
         Text(
-            text = value, 
+            text = value,
             color = dev.mbakasir.com.ui.theme.dark,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
             maxLines = 1
         )
     }

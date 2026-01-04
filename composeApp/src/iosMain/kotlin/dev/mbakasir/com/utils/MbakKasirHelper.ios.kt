@@ -1,13 +1,18 @@
 package dev.mbakasir.com.utils
 
-actual fun currencyFormat(
-    amount: Double
-): String {
-    val formatter = NSNumberFormatter().apply {
-        numberStyle = NSNumberFormatterCurrencyStyle
-        locale = NSLocale("in_ID")
-    }
-    return formatter.stringFromNumber(amount) ?: "$amount"
+import platform.Foundation.NSLocale
+import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSNumberFormatterCurrencyStyle
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
+
+actual fun currencyFormat(value: Double): String {
+    val formatter =
+        NSNumberFormatter().apply {
+            numberStyle = NSNumberFormatterCurrencyStyle
+            locale = NSLocale("in_ID")
+        }
+    return formatter.stringFromNumber(value) ?: "$value"
 }
 
 actual interface JavaSerializable

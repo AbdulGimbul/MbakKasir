@@ -15,12 +15,13 @@ data class ProductTransDraftEntity(
     var amountPaid: Int = 0,
     var paymentMethod: String = "",
     var dueDate: String = "",
-    var description: String = ""
+    var description: String = "",
+    var username: String = "" // Added for user ownership
 )
 
-@Entity(tableName = "product_trans")
+@Entity(tableName = "product_trans", primaryKeys = ["draftId", "idBarang"])
 data class ProductTransEntity(
-    @PrimaryKey val idBarang: String = "",
+    val idBarang: String = "",
     val draftId: String = "",
     val kodeBarang: String = "",
     val barcode: String = "",
@@ -29,16 +30,16 @@ data class ProductTransEntity(
     val jenis: String = "Produk",
     var qtyJual: Int = 1,
     val hargaItem: Int = 0,
+    val hargaPelanggan: Int = 0,
+    val hargaToko: Int = 0,
+    val hargaSales: Int = 0,
     val diskon: Int = 0,
     val subtotal: Int = 0
 )
 
 data class ProductDraftWithItems(
     @Embedded val draft: ProductTransDraftEntity,
-    @Relation(
-        parentColumn = "draftId",
-        entityColumn = "draftId"
-    )
+    @Relation(parentColumn = "draftId", entityColumn = "draftId")
     val items: List<ProductTransEntity>
 ) {
     val totalAmount: Int

@@ -14,14 +14,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.time.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.ExperimentalTime
 
-class ProductViewModel(
-    private val productRepository: ProductRepository
-) : ViewModel() {
+class ProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductUiState())
     val uiState: StateFlow<ProductUiState> = _uiState
@@ -31,7 +25,7 @@ class ProductViewModel(
 
     private val lastUpdateMaster = MutableStateFlow("")
 
-    fun reloadData(){
+    fun reloadData() {
         currentPage = 0
         fetchProducts()
         getTopProduct()
@@ -44,31 +38,49 @@ class ProductViewModel(
 
             try {
                 val lastUpdateCache = productRepository.getLastUpdateCache()
+                _uiState.value = _uiState.value.copy(latestUpdate = lastUpdateCache)
                 val getLastUpdateMaster = productRepository.getLastUpdateMaster()
 
                 withContext(Dispatchers.Main) {
-                    getLastUpdateMaster.onSuccess {
-                        lastUpdateMaster.value = it.lastUpdate.toString()
-                    }.onError { error ->
-                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                    }
-                }
+                    getLastUpdateMaster
+                        .onSuccess {
+                            lastUpdateMaster.value = it.lastUpdate.toString()
+                            _uiState.value =
+                                _uiState.value.copy(latestUpdate = lastUpdateMaster.value)
 
-                if (lastUpdateCache.isEmpty() || lastUpdateCache == "null" || lastUpdateCache != lastUpdateMaster.value) {
-                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
-                    val getProducts = productRepository.getProducts()
-                    withContext(Dispatchers.Main) {
-                        productRepository.deleteAllProducts()
-                        getProducts.onSuccess { data ->
-                            data.barangs.forEach { barang ->
-                                productRepository.addProduct(barang.toProduct())
+                            if (lastUpdateCache.isEmpty() ||
+                                lastUpdateCache == "null" ||
+                                lastUpdateCache != lastUpdateMaster.value
+                            ) {
+                                productRepository.setLastUpdateCache(lastUpdateMaster.value)
+
+                                val getProducts = productRepository.getProducts()
+                                withContext(Dispatchers.Main) {
+                                    // productRepository.deleteAllProducts() // Deleted only on
+                                    // success
+                                    getProducts
+                                        .onSuccess { data ->
+                                            productRepository.deleteAllProducts()
+                                            data.barangs.forEach { barang ->
+                                                productRepository.addProduct(
+                                                    barang.toProduct()
+                                                )
+                                            }
+                                            getTopProduct()
+                                        }
+                                        .onError { error ->
+                                            _uiState.value =
+                                                _uiState.value.copy(
+                                                    errorMessage = error.message,
+                                                    isLoading = false
+                                                )
+                                        }
+                                }
                             }
-                        }.onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message, isLoading = false)
                         }
-                    }
-
-                    getTopProduct()
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -78,34 +90,30 @@ class ProductViewModel(
         }
     }
 
-
-    @OptIn(ExperimentalTime::class)
     fun getTopProduct() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch {
             try {
-                val product = productRepository
-                    .getTopProductByStock(pageSize, currentPage * pageSize)
-                    .first()
+                val product =
+                    productRepository
+                        .getTopProductByStock(pageSize, currentPage * pageSize)
+                        .first()
 
                 if (product.isNotEmpty()) {
-                    val updatedList = if (currentPage == 0) {
-                        product
-                    } else {
-                        _uiState.value.productList + product
-                    }
-                    val latestCreatedAt = updatedList.maxByOrNull { it.createdAt }?.createdAt
-                    _uiState.value = _uiState.value.copy(
-                        productList = updatedList,
-                        latestUpdate = latestCreatedAt ?: Clock.System.now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault()),
-                        isLoading = false
-                    )
+                    val updatedList =
+                        if (currentPage == 0) {
+                            product
+                        } else {
+                            _uiState.value.productList + product
+                        }
+                    _uiState.value =
+                        _uiState.value.copy(productList = updatedList, isLoading = false)
                     currentPage++
                 } else {
                     if (currentPage == 0) {
-                        _uiState.value = _uiState.value.copy(productList = emptyList(), isLoading = false)
+                        _uiState.value =
+                            _uiState.value.copy(productList = emptyList(), isLoading = false)
                     } else {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     }
@@ -122,9 +130,7 @@ class ProductViewModel(
     fun getTotalProduct() {
         viewModelScope.launch {
             productRepository.calculateTotalProducts().collectLatest { product ->
-                _uiState.value = _uiState.value.copy(
-                    totalProduct = product
-                )
+                _uiState.value = _uiState.value.copy(totalProduct = product)
             }
         }
     }

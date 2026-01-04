@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name">ComposeApp</string>
+    <string name="entry_sales_add">Tambah</string>
+    <string name="entry_sales_title">Penjualan</string>
+    <string name="entry_sales_label">Entry:</string>
+    <string name="scan_barcode_label">Scan Barcode</string>
+    <string name="customer_label">Pelanggan</string>
+    <string name="customer_not_found">Pelanggan Tidak Ditemukan</string>
+    <string name="choose_customer">Pilih Pelanggan</string>
+    <string name="search_customer">Cari Pelanggan</string>
+    <string name="total_price">Total Harga</string>
+    <string name="discount">Diskon</string>
+    <string name="total_bill">Total Tagihan</string>
+    <string name="cancel">Batal</string>
+    <string name="payment">Pembayaran</string>
+    <string name="cancel_transaction_title">Batalkan Transaksi</string>
+    <string name="cancel_transaction_body">Apakah anda yakini? Data yang sudah ditambahkan akan hilang!</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="items_empty_error">Ekhm, barangnya ditambahkan dulu ya!</string>
+    <string name="invalid_qr">Invalid qr code</string>
+    <string name="payment_title">Pembayaran</string>
+    <string name="payment_type">Jenis Pembayaran</string>
+    <string name="ups_error">Ups, terjadi kesalahan!</string>
+    <string name="internet_error">Awas, internetmu mati!</string>
+    <string name="title_penjualan">Penjualan</string>
+    <string name="msg_data_not_available">Data not available.</string>
+    <string name="placeholder_search">Search ...</string>
+    <string name="msg_payment_failed">Eh kirim data gagal, coba beberapa saat lagi ya!:')</string>
 </resources>

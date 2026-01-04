@@ -10,11 +10,14 @@ import dev.mbakasir.com.features.cashier_role.sales.domain.PelangganApiModel
 import dev.mbakasir.com.network.NetworkException
 import dev.mbakasir.com.network.NetworkResult
 import dev.mbakasir.com.network.RequestHandler
+import dev.mbakasir.com.network.onError
+import dev.mbakasir.com.network.onSuccess
 import kotlinx.coroutines.flow.Flow
 
 class SalesRepositoryImpl(
     private val productDao: ProductDao,
     private val productTransDraftDao: ProductTransDraftDao,
+    private val customerDao: CustomerDao,
     private val requestHandler: RequestHandler
 ) : SalesRepository {
 
@@ -22,7 +25,9 @@ class SalesRepositoryImpl(
         return productDao.getProductByBarcode(barcode)
     }
 
-    override suspend fun createPayment(paymentRequest: CreatePaymentRequest): NetworkResult<CreatePaymentApiModel, NetworkException> {
+    override suspend fun createPayment(
+        paymentRequest: CreatePaymentRequest
+    ): NetworkResult<CreatePaymentApiModel, NetworkException> {
         return requestHandler.post(
             urlPathSegments = listOf("api", "penjualan", "create"),
             body = paymentRequest
@@ -36,9 +41,15 @@ class SalesRepositoryImpl(
     override suspend fun addProductTransToDraft(
         draftId: String,
         cashierName: String,
-        productTransEntity: ProductTransEntity
+        productTransEntity: ProductTransEntity,
+        username: String
     ) {
-        return productTransDraftDao.addProductToDraft(draftId, cashierName, productTransEntity)
+        return productTransDraftDao.addProductToDraft(
+            draftId,
+            cashierName,
+            productTransEntity,
+            username
+        )
     }
 
     override suspend fun updateProductTransInDraft(
@@ -73,15 +84,17 @@ class SalesRepositoryImpl(
         return productTransDraftDao.getProductsByDraftId(draftId)
     }
 
-    override suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException> {
+    override suspend fun getInvoice(
+        invoice: String
+    ): NetworkResult<InvoiceApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "getByInvoice"),
             queryParams = mapOf("invoice" to invoice)
         )
     }
 
-    override suspend fun getDrafts(): Flow<List<ProductDraftWithItems>> {
-        return productTransDraftDao.getAllDrafts()
+    override suspend fun getDrafts(username: String): Flow<List<ProductDraftWithItems>> {
+        return productTransDraftDao.getAllDrafts(username)
     }
 
     override suspend fun getHistory(
@@ -92,22 +105,60 @@ class SalesRepositoryImpl(
     ): NetworkResult<HistoryApiModel, NetworkException> {
         return requestHandler.get(
             urlPathSegments = listOf("api", "penjualan", "get"),
-            queryParams = mapOf(
-                "startDate" to startDate,
-                "endDate" to endDate,
-                "page" to page,
-                "perPage" to perPage
-            )
+            queryParams =
+                mapOf(
+                    "startDate" to startDate,
+                    "endDate" to endDate,
+                    "page" to page,
+                    "perPage" to perPage
+                )
         )
     }
 
     override suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException> {
-        return requestHandler.get(
-            urlPathSegments = listOf("api", "pelanggan", "p", "all")
-        )
+        return try {
+            val result: NetworkResult<PelangganApiModel, NetworkException> =
+                requestHandler.get(urlPathSegments = listOf("api", "pelanggan", "p", "all"))
+            result
+                .onSuccess {
+                    customerDao.deleteAllCustomers()
+                    customerDao.insertCustomers(
+                        it.customers.map { customer -> customer.toEntity() }
+                    )
+                }
+                .onError {
+                    val localCustomers = customerDao.getCustomersList()
+                    if (localCustomers.isNotEmpty()) {
+                        return NetworkResult.Success(
+                            PelangganApiModel(localCustomers.map { it.toDomain() })
+                        )
+                    }
+                }
+            result
+        } catch (e: Exception) {
+            val localCustomers = customerDao.getCustomersList()
+            if (localCustomers.isNotEmpty()) {
+                NetworkResult.Success(PelangganApiModel(localCustomers.map { it.toDomain() }))
+            } else {
+                NetworkResult.Error(
+                    NetworkException.UnknownException(
+                        message = e.message ?: "Unknown error",
+                        cause = e
+                    )
+                )
+            }
+        }
     }
 
-    override suspend fun deleteAllDrafts() {
-        return productTransDraftDao.deleteAllTransDrafts()
+    override suspend fun deleteDraftsForUser(username: String) {
+        return productTransDraftDao.deleteDraftsForUser(username)
+    }
+
+    override suspend fun updateDraftCustomer(draftId: String, customer: String) {
+        productTransDraftDao.updateDraftCustomer(draftId, customer)
+    }
+
+    override suspend fun getDraftById(draftId: String): ProductTransDraftEntity? {
+        return productTransDraftDao.getDraftById(draftId)
     }
 }

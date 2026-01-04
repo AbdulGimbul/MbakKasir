@@ -1,4 +1,4 @@
-package dev.mbakasir.com.features.cashier_role.sales
+package dev.mbakasir.com.features.cashier_role.sales.presentation
 
 import ContentWithMessageBar
 import androidx.compose.foundation.Image
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,8 +46,12 @@ import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_notes
+import mbakkasir.composeapp.generated.resources.msg_data_not_available
+import mbakkasir.composeapp.generated.resources.placeholder_search
+import mbakkasir.composeapp.generated.resources.title_penjualan
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import rememberMessageBarState
 
 @Composable
@@ -65,12 +68,8 @@ fun SalesScreen(viewModel: SalesViewModel, navController: NavController) {
     Sales(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        moveToEntrySales = {
-            navController.navigate("${CashierScreen.EntrySales.route}/$it")
-        },
-        moveToHistory = {
-            navController.navigate(CashierScreen.History.route)
-        }
+        moveToEntrySales = { navController.navigate("${CashierScreen.EntrySales.route}/$it") },
+        moveToHistory = { navController.navigate(CashierScreen.History.route) }
     )
 }
 
@@ -84,44 +83,40 @@ fun Sales(
 ) {
     var search by remember { mutableStateOf("") }
     val composition by rememberLottieComposition {
-        LottieCompositionSpec.JsonString(
-            Res.readBytes("files/nodata.json").decodeToString()
-        )
+        LottieCompositionSpec.JsonString(Res.readBytes("files/nodata.json").decodeToString())
     }
     val state = rememberMessageBarState()
 
     LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let {
-            state.addError(Exception(it))
-        }
+        uiState.errorMessage?.let { state.addError(Exception(it)) }
     }
 
     ContentWithMessageBar(
-        messageBarState = state, errorMaxLines = 2, showCopyButton = false,
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
         visibilityDuration = 3000L,
         modifier = Modifier.statusBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "Penjualan",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                        stringResource(Res.string.title_penjualan),
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
                         color = dark,
                         maxLines = 1
                     )
-                    IconButton(
-                        onClick = moveToHistory
-                    ) {
+                    IconButton(onClick = moveToHistory) {
                         Icon(
                             painter = painterResource(Res.drawable.ic_notes),
                             tint = primary,
@@ -133,7 +128,7 @@ fun Sales(
                 DefaultTextField(
                     value = search,
                     onValueChange = { search = it },
-                    placehoder = "Search ...",
+                    placehoder = stringResource(Res.string.placeholder_search),
                     leadingIcon = Icons.Default.Search,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                 )
@@ -145,7 +140,11 @@ fun Sales(
                                 product = product,
                                 onClick = {
                                     if (product.draft.isPrinted) {
-                                        onEvent(SalesUiEvent.SendDraftTrans(product.draft.draftId))
+                                        onEvent(
+                                            SalesUiEvent.SendDraftTrans(
+                                                product.draft.draftId
+                                            )
+                                        )
                                     } else {
                                         moveToEntrySales(product.draft.draftId)
                                     }
@@ -161,15 +160,16 @@ fun Sales(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
-                            painter = rememberLottiePainter(
-                                composition = composition,
-                                iterations = Compottie.IterateForever
-                            ),
+                            painter =
+                                rememberLottiePainter(
+                                    composition = composition,
+                                    iterations = Compottie.IterateForever
+                                ),
                             contentDescription = "Lottie animation",
                             modifier = Modifier.size(170.dp)
                         )
                         Text(
-                            "Data not available.",
+                            stringResource(Res.string.msg_data_not_available),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }

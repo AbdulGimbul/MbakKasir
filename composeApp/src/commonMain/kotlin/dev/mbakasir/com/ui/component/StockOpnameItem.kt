@@ -50,18 +50,13 @@ fun StockOpnameItem(
         border = CardDefaults.outlinedCardBorder(enabled = true),
         colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(12.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.AccessTime,
                         tint = icon,
@@ -70,15 +65,19 @@ fun StockOpnameItem(
                     )
                     Text(
                         text = date,
-                        style = MaterialTheme.typography.bodyMedium.copy(color = primary_text)
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(
+                                color = primary_text
+                            )
                     )
                 }
                 Text(
                     text = currencyFormat(price.toDouble()),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = dark,
-                    )
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = dark,
+                        )
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -87,17 +86,19 @@ fun StockOpnameItem(
             Column {
                 Text(
                     text = barcode,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = primary_text
-                    )
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = primary_text
+                        )
                 )
                 Text(
                     text = productName,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = dark,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    style =
+                        MaterialTheme.typography.bodyLarge.copy(
+                            color = dark,
+                            fontWeight = FontWeight.SemiBold
+                        )
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -107,28 +108,25 @@ fun StockOpnameItem(
             ) {
                 Button(
                     onClick = onPreviewClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = blue,
-                        contentColor = Color.White
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = blue,
+                            contentColor = Color.White
+                        ),
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.weight(1f)
-                ) {
-                    Text("Preview")
-                }
+                ) { Text("Preview") }
                 Spacer(modifier = Modifier.width(10.dp))
                 OutlinedButton(
                     onClick = onDeleteClick,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = red
-                    ),
+                    colors =
+                        ButtonDefaults.outlinedButtonColors(
+                            contentColor = red
+                        ),
+                    border = BorderStroke(width = 1.dp, color = red),
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.weight(1f)
-                ) {
-                    Text("Delete")
-                }
+                ) { Text("Delete") }
             }
         }
     }

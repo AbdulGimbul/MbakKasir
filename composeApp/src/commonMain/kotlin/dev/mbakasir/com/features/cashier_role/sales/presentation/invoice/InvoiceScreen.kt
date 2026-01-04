@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Print
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.HorizontalDivider
@@ -76,9 +75,11 @@ fun InvoiceScreen(
         paymentData = paymentData,
         noInvoice = noInvoice,
         navigateBack = {
-            navController.navigate(CashierScreen.Sales.route) {
-                popUpTo(CashierScreen.Sales.route) {
-                    inclusive = true
+            if (noInvoice != null) {
+                navController.popBackStack()
+            } else {
+                navController.navigate(CashierScreen.Sales.route) {
+                    popUpTo(CashierScreen.Sales.route) { inclusive = true }
                 }
             }
         }
@@ -113,59 +114,83 @@ fun Invoice(
         EnhancedLoading()
     } else {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .imePadding()
-                .statusBarsPadding()
-                .navigationBarsPadding(),
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(Color.White)
+                    .imePadding()
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
         ) {
             Capturable(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
                 captureController = captureController,
                 onCaptured = { imageBitmap ->
                     scope.launch {
                         shareManager.shareImage(
                             imageBitmap = imageBitmap,
-                            fileName = "invoice_${uiState.invoiceNumber}.png"
+                            fileName =
+                                "invoice_${uiState.invoiceNumber}.png"
                         )
                     }
                 },
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(16.dp)
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .background(Color.White)
+                            .padding(16.dp)
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0XFFDBFFF6), RoundedCornerShape(10.dp))
-                            .padding(16.dp),
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(
+                                    Color(0XFFDBFFF6),
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .padding(16.dp),
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment =
+                                Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = uiState.store?.nama.toString(),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                                text =
+                                    uiState.store?.nama
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .titleMedium.copy(
+                                            fontWeight =
+                                                FontWeight
+                                                    .SemiBold
+                                        ),
                                 color = dark,
                                 modifier = Modifier.padding(8.dp),
                             )
                             Text(
-                                text = uiState.store?.alamat.toString(),
-                                style = MaterialTheme.typography.bodyMedium,
+                                text =
+                                    uiState.store?.alamat
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier =
+                                    Modifier.padding(
+                                        bottom = 8.dp
+                                    )
                             )
                             Text(
-                                text = uiState.store?.telp.toString(),
-                                style = MaterialTheme.typography.bodyMedium,
+                                text =
+                                    uiState.store?.telp
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark
                             )
                         }
@@ -178,26 +203,45 @@ fun Invoice(
                         Column {
                             Text(
                                 text = uiState.invoiceNumber,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark
                             )
                             Text(
                                 text = uiState.tanggal,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark
                             )
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
                                 text = uiState.method,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark
                             )
                             Text(
                                 text = uiState.kasir,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
                                 color = dark
                             )
+                            if (uiState.pelangganType.isNotEmpty()) {
+                                Text(
+                                    text =
+                                        uiState.pelangganType,
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .bodyMedium,
+                                    color = dark
+                                )
+                            }
                         }
                     }
                     HorizontalDivider(
@@ -206,7 +250,10 @@ fun Invoice(
                     )
                     Text(
                         text = "Produk:",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                         color = dark,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -214,12 +261,17 @@ fun Invoice(
                         ItemRow(
                             name = it.namaBarang,
                             qty = it.qtyJual,
-                            price = currencyFormat(
-                                it.subtotal.toDoubleOrNull() ?: 0.0
-                            ),
-                            discount = currencyFormat(
-                                it.diskon.toDoubleOrNull() ?: 0.0
-                            )
+                            price =
+                                currencyFormat(
+                                    (it.hargaItem
+                                        .toDoubleOrNull()
+                                        ?: 0.0)
+                                ),
+                            discount =
+                                currencyFormat(
+                                    (it.diskon.toDoubleOrNull()
+                                        ?: 0.0)
+                                )
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -266,7 +318,8 @@ fun Invoice(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
+                        text =
+                            "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
                         color = secondary_text,
@@ -283,7 +336,8 @@ fun Invoice(
                 ) {
                     TextButton(onClick = { captureController.capture() }) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment =
+                                Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Icon(
@@ -296,40 +350,58 @@ fun Invoice(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 18.sp,
                                 color = primary,
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier =
+                                    Modifier.padding(
+                                        start = 4.dp
+                                    )
                             )
                         }
                     }
                     TextButton(onClick = { navigateBack() }) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment =
+                                Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             if (noInvoice != null) {
                                 Icon(
-                                    imageVector = Icons.Outlined.ArrowBackIosNew,
-                                    contentDescription = "Kembali",
+                                    imageVector =
+                                        Icons.Outlined
+                                            .ArrowBackIosNew,
+                                    contentDescription =
+                                        "Kembali",
                                     tint = icon
                                 )
                                 Text(
                                     "Kembali",
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontWeight =
+                                        FontWeight.SemiBold,
                                     fontSize = 18.sp,
                                     color = icon,
-                                    modifier = Modifier.padding(start = 4.dp)
+                                    modifier =
+                                        Modifier.padding(
+                                            start = 4.dp
+                                        )
                                 )
                             } else {
                                 Icon(
-                                    imageVector = Icons.Outlined.CheckCircle,
-                                    contentDescription = "Selesai",
+                                    imageVector =
+                                        Icons.Outlined
+                                            .CheckCircle,
+                                    contentDescription =
+                                        "Selesai",
                                     tint = icon
                                 )
                                 Text(
                                     "Selesai",
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontWeight =
+                                        FontWeight.SemiBold,
                                     fontSize = 18.sp,
                                     color = icon,
-                                    modifier = Modifier.padding(start = 4.dp)
+                                    modifier =
+                                        Modifier.padding(
+                                            start = 4.dp
+                                        )
                                 )
                             }
                         }
@@ -339,7 +411,6 @@ fun Invoice(
         }
     }
 }
-
 
 @Composable
 fun ItemRow(name: String, qty: String, price: String, discount: String) {
@@ -378,18 +449,25 @@ fun ItemRow(name: String, qty: String, price: String, discount: String) {
 
 @Composable
 fun TotalRow(label: String, amount: String, isBold: Boolean = false) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
             text = label,
-            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
             color = dark
         )
         Text(
             text = amount,
-            style = if (isBold) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodyMedium,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
             color = dark
         )
     }
@@ -407,9 +485,7 @@ fun DashedDivider(
 ) {
     val pathEffect = PathEffect.dashPathEffect(intervals, phase)
 
-    Canvas(
-        modifier = modifier
-    ) {
+    Canvas(modifier = modifier) {
         val dividerHeight = thickness.toPx()
         val startX = startMargin.toPx()
         val endX = size.width - endMargin.toPx()

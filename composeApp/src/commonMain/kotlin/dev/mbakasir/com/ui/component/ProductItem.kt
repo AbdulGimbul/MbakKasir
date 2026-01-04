@@ -25,38 +25,39 @@ import dev.mbakasir.com.ui.theme.primary_text
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
-fun ProductItem(
-    product: ProductEntity,
-    modifier: Modifier = Modifier
-) {
+fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
 
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        border = CardDefaults.outlinedCardBorder(
-            enabled = true,
-        ),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = Color.White,
-
+        border =
+            CardDefaults.outlinedCardBorder(
+                enabled = true,
+            ),
+        colors =
+            CardDefaults.outlinedCardColors(
+                containerColor = Color.White,
             )
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Column {
                 Text(
                     text = product.barcode,
                     color = primary_text,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                     modifier = Modifier.padding(bottom = 4.dp),
                     maxLines = 1
                 )
                 Text(
                     text = product.namaBarang,
                     color = dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                     maxLines = 2
                 )
             }
@@ -67,9 +68,12 @@ fun ProductItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    currencyFormat(product.hargaJual.toDouble()), 
+                    currencyFormat(product.hargaJual.toDouble()),
                     color = dark,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                     maxLines = 1
                 )
                 Row(
@@ -77,15 +81,21 @@ fun ProductItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = product.stok, 
+                        text = product.stok,
                         color = icon,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                         maxLines = 1
                     )
                     Text(
-                        text = product.satuan, 
+                        text = product.satuan,
                         color = icon,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                         maxLines = 1
                     )
                 }

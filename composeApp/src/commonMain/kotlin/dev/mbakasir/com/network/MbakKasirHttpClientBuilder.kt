@@ -17,9 +17,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
-class MbakKasirHttpClientBuilder(
-    private val sessionHandler: SessionHandler
-) {
+class MbakKasirHttpClientBuilder(private val sessionHandler: SessionHandler) {
 
     private lateinit var protocol: URLProtocol
     private lateinit var host: String
@@ -33,7 +31,6 @@ class MbakKasirHttpClientBuilder(
 
     fun build(engine: HttpClientEngine): HttpClient {
         return HttpClient(engine) {
-
             expectSuccess = true
 
             defaultRequest {
@@ -57,11 +54,12 @@ class MbakKasirHttpClientBuilder(
             }
 
             install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println(message)
+                logger =
+                    object : Logger {
+                        override fun log(message: String) {
+                            println(message)
+                        }
                     }
-                }
                 level = LogLevel.ALL
             }
 
