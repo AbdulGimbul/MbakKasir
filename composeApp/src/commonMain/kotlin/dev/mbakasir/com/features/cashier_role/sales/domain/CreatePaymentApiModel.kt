@@ -7,26 +7,27 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreatePaymentApiModel(
         val message: String,
-        val data: DataPayment,
+        val data: DataPayment? = null,
         val code: String,
-        @SerialName("total_harga") val totalHarga: Int,
-        @SerialName("total_diskon") val totalDiskon: Int,
-        @SerialName("ppn") val ppn: Int,
-        @SerialName("total_tagihan") val totalTagihan: Int
+        @SerialName("total_harga") val totalHarga: Int? = null,
+        @SerialName("total_diskon") val totalDiskon: Int? = null,
+        @SerialName("ppn") val ppn: Int? = null,
+        @SerialName("total_tagihan") val totalTagihan: Int? = null
 ) : JavaSerializable
 
 @Serializable
 data class DataPayment(
-        val invoice: String,
-        val customer: String,
-        val kasir: String,
-        val method: String,
-        val bayar: String,
-        val kembali: String,
-        val ppn: String,
-        val device: String,
-        val tanggal: String,
-        val detil: List<DetailPayment>
+        val invoice: String? = null,
+        val customer: String? = null,
+        val kasir: String? = null,
+        val method: String? = null,
+        val bayar: String? = null,
+        val kembali: String? = null,
+        val ppn: String? = null,
+        val device: String? = null,
+        val tanggal: String? = null,
+        val detil: List<DetailPayment> = emptyList(),
+        @SerialName("no_invoice") val noInvoice: String? = null
 ) : JavaSerializable
 
 @Serializable

@@ -126,6 +126,7 @@ class PaymentViewModel(private val salesRepository: SalesRepository) : ViewModel
                                     ppnPercentage = 0,
                                     nominalPpn = 0,
                                     tempo = _uiState.value.selectedDate,
+                                    noInvoice = _uiState.value.noInvoice,
                                     detil = _uiState.value.products.map { it.toDetailPayload() }
                             )
                     )

@@ -14,6 +14,7 @@ data class CreatePaymentRequest(
         @SerialName("ppn_percentage") val ppnPercentage: Int,
         @SerialName("nominal_ppn") val nominalPpn: Int,
         val tempo: String,
+        @SerialName("no_invoice") val noInvoice: String,
         val detil: List<DetailPayload>
 )
 

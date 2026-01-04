@@ -155,6 +155,7 @@ class SalesViewModel(
                                     nominalPpn = 0,
                                     keterangan = data?.draft?.description.toString(),
                                     tempo = "",
+                                    noInvoice = invoiceNumber,
                                     detil = detilPayload
                             )
                     )
