@@ -21,9 +21,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SalesViewModel(
-        private val salesRepository: SalesRepository,
-        private val productRepository: ProductRepository,
-        private val authRepository: AuthRepository
+    private val salesRepository: SalesRepository,
+    private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SalesUiState())
@@ -54,20 +54,20 @@ class SalesViewModel(
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster
-                            .onSuccess {
-                                lastUpdateMaster.value = it.lastUpdate.toString()
+                        .onSuccess {
+                            lastUpdateMaster.value = it.lastUpdate.toString()
 
-                                if (lastUpdateCache.isEmpty() ||
-                                                lastUpdateCache == "null" ||
-                                                lastUpdateCache != lastUpdateMaster.value
-                                ) {
-                                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
-                                    fetchAndCacheProducts()
-                                }
+                            if (lastUpdateCache.isEmpty() ||
+                                lastUpdateCache == "null" ||
+                                lastUpdateCache != lastUpdateMaster.value
+                            ) {
+                                productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                                fetchAndCacheProducts()
                             }
-                            .onError { error ->
-                                _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                            }
+                        }
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -81,15 +81,15 @@ class SalesViewModel(
         val getProducts = productRepository.getProducts()
         withContext(Dispatchers.Main) {
             getProducts
-                    .onSuccess { data ->
-                        productRepository.deleteAllProducts()
-                        data.barangs.forEach { barang ->
-                            productRepository.addProduct(barang.toProduct())
-                        }
+                .onSuccess { data ->
+                    productRepository.deleteAllProducts()
+                    data.barangs.forEach { barang ->
+                        productRepository.addProduct(barang.toProduct())
                     }
-                    .onError { error ->
-                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                    }
+                }
+                .onError { error ->
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                }
         }
     }
 
@@ -113,70 +113,70 @@ class SalesViewModel(
             if (customerCode.isNotEmpty()) {
                 val customerResult = salesRepository.getCustomers()
                 customerResult
-                        .onSuccess {
-                            customerType =
-                                    it.customers.find { c -> c.kode == customerCode }?.jenis_cs
-                                            ?: ""
-                        }
-                        .onError {
-                            // Try to find in cache/offline if request failed effectively
-                            // getCustomers already handles fallback, but we rely on its result
-                            // here.
-                            // If cached, it returns Success. If completely failed, empty string.
-                            // If getCustomers logic relies on `customerDao`, we should be good.
-                        }
+                    .onSuccess {
+                        customerType =
+                            it.customers.find { c -> c.kode == customerCode }?.jenis_cs
+                                ?: ""
+                    }
+                    .onError {
+                        // Try to find in cache/offline if request failed effectively
+                        // getCustomers already handles fallback, but we rely on its result
+                        // here.
+                        // If cached, it returns Success. If completely failed, empty string.
+                        // If getCustomers logic relies on `customerDao`, we should be good.
+                    }
             }
 
             val serializableItems =
-                    data?.items?.map { it.toSerializable(customerType) } ?: emptyList()
+                data?.items?.map { it.toSerializable(customerType) } ?: emptyList()
             val detilPayload = serializableItems.map { it.toDetailPayload() }
 
             val totalAmount =
-                    serializableItems.sumOf { it.subtotal } // subtotal is (qty * price) - discount
+                serializableItems.sumOf { it.subtotal } // subtotal is (qty * price) - discount
             val amountPaid = data?.draft?.amountPaid ?: 0
             val draftMethod = data?.draft?.paymentMethod.toString()
             val finalAmountPaid =
-                    if (draftMethod.equals("Qris", ignoreCase = true) && amountPaid == 0) {
-                        totalAmount
-                    } else {
-                        amountPaid
-                    }
+                if (draftMethod.equals("Qris", ignoreCase = true) && amountPaid == 0) {
+                    totalAmount
+                } else {
+                    amountPaid
+                }
             val realChange = finalAmountPaid - totalAmount
 
             val result =
-                    salesRepository.createPayment(
-                            CreatePaymentRequest(
-                                    kembali = realChange,
-                                    bayar = finalAmountPaid,
-                                    metode = draftMethod,
-                                    kasir = 3,
-                                    cus = data?.draft?.customer.toString(),
-                                    ppnPercentage = 0,
-                                    nominalPpn = 0,
-                                    keterangan = data?.draft?.description.toString(),
-                                    tempo = "",
-                                    noInvoice = invoiceNumber,
-                                    detil = detilPayload
-                            )
+                salesRepository.createPayment(
+                    CreatePaymentRequest(
+                        kembali = realChange,
+                        bayar = finalAmountPaid,
+                        metode = draftMethod,
+                        kasir = 3,
+                        cus = data?.draft?.customer.toString(),
+                        ppnPercentage = 0,
+                        nominalPpn = 0,
+                        keterangan = data?.draft?.description.toString(),
+                        tempo = "",
+                        noInvoice = invoiceNumber,
+                        detil = detilPayload
                     )
+                )
             withContext(Dispatchers.Main) {
                 result
-                        .onSuccess {
-                            if (it.code == "200") {
-                                _uiState.value = _uiState.value.copy(paymentResponse = it)
-                                currentDraftId?.let { deleteDraftId ->
-                                    deleteScannedProducts(deleteDraftId)
-                                    currentDraftId = null
-                                }
+                    .onSuccess {
+                        if (it.code == "200") {
+                            _uiState.value = _uiState.value.copy(paymentResponse = it)
+                            currentDraftId?.let { deleteDraftId ->
+                                deleteScannedProducts(deleteDraftId)
+                                currentDraftId = null
                             }
                         }
-                        .onError {
-                            _uiState.value =
-                                    _uiState.value.copy(
-                                            errorMessage =
-                                                    "Eh kirim data gagal, coba beberapa saat lagi ya!:')"
-                                    )
-                        }
+                    }
+                    .onError {
+                        _uiState.value =
+                            _uiState.value.copy(
+                                errorMessage =
+                                    "Eh kirim data gagal, coba beberapa saat lagi ya!:')"
+                            )
+                    }
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
@@ -188,7 +188,7 @@ class SalesViewModel(
             salesRepository.deleteDraft(draftId)
             _uiState.update { currentState ->
                 currentState.copy(
-                        draftList = currentState.draftList.filterNot { it.draft.draftId == draftId }
+                    draftList = currentState.draftList.filterNot { it.draft.draftId == draftId }
                 )
             }
         }

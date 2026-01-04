@@ -1,8 +1,6 @@
 package dev.mbakasir.com.di
 
 import com.plusmobileapps.konnectivity.Konnectivity
-import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
-import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepository
 import dev.mbakasir.com.features.admin_role.stock_opname.data.StockOpnameRepositoryImpl
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
@@ -27,12 +25,14 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.Payment
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
+import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 
 val provideAuthRepositoryModule = module {
     single<AuthRepositoryImpl> {
-                AuthRepositoryImpl(requestHandler = get(), sessionHandler = get())
-            }
-            .bind<AuthRepository>()
+        AuthRepositoryImpl(requestHandler = get(), sessionHandler = get())
+    }
+        .bind<AuthRepository>()
     single { Konnectivity() }
     viewModel {
         LoginViewModel(authRepository = get(), konnectivity = get(), salesRepository = get())
@@ -42,48 +42,48 @@ val provideAuthRepositoryModule = module {
 
 val provideHomeRepositoryModule = module {
     single<HomeRepositoryImpl> { HomeRepositoryImpl(productDao = get(), reqHandler = get()) }
-            .bind<HomeRepository>()
+        .bind<HomeRepository>()
     viewModel {
         HomeViewModel(
-                homeRepository = get(),
-                productRepository = get(),
-                authRepository = get(),
-                salesRepository = get()
+            homeRepository = get(),
+            productRepository = get(),
+            authRepository = get(),
+            salesRepository = get()
         )
     }
     viewModel {
         AdminHomeViewModel(
-                homeRepository = get(),
-                productRepository = get(),
-                authRepository = get(),
-                salesRepository = get()
+            homeRepository = get(),
+            productRepository = get(),
+            authRepository = get(),
+            salesRepository = get()
         )
     }
 }
 
 val provideProductRepositoryModule = module {
     single<ProductRepositoryImpl> {
-                ProductRepositoryImpl(
-                        requestHandler = get(),
-                        productDao = get(),
-                        sessionHandler = get()
-                )
-            }
-            .bind<ProductRepository>()
+        ProductRepositoryImpl(
+            requestHandler = get(),
+            productDao = get(),
+            sessionHandler = get()
+        )
+    }
+        .bind<ProductRepository>()
     viewModel { ProductViewModel(productRepository = get()) }
     viewModel { AdminProductViewModel(productRepository = get()) }
 }
 
 val provideSalesRepositoryModule = module {
     single<SalesRepositoryImpl> {
-                SalesRepositoryImpl(
-                        productDao = get(),
-                        productTransDraftDao = get(),
-                        customerDao = get(),
-                        requestHandler = get()
-                )
-            }
-            .bind<SalesRepository>()
+        SalesRepositoryImpl(
+            productDao = get(),
+            productTransDraftDao = get(),
+            customerDao = get(),
+            requestHandler = get()
+        )
+    }
+        .bind<SalesRepository>()
     viewModel { EntrySalesViewModel(salesRepository = get(), authRepository = get()) }
     viewModel { PaymentViewModel(salesRepository = get()) }
     viewModel { InvoiceViewModel(sessionHandler = get(), salesRepository = get()) }
@@ -95,9 +95,9 @@ val provideSalesRepositoryModule = module {
 
 val provideStockOpnameRepositoryModule = module {
     single<StockOpnameRepositoryImpl> {
-                StockOpnameRepositoryImpl(productDao = get(), requestHandler = get())
-            }
-            .bind<StockOpnameRepository>()
+        StockOpnameRepositoryImpl(productDao = get(), requestHandler = get())
+    }
+        .bind<StockOpnameRepository>()
     viewModel { StockOpnameViewModel(stockOpnameRepository = get()) }
     viewModel { EntryStockOpnameViewModel(stockOpnameRepository = get(), authRepository = get()) }
 }

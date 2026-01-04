@@ -58,457 +58,457 @@ import rememberMessageBarState
 
 @Composable
 fun PaymentScreen(
-        viewModel: PaymentViewModel,
-        navController: NavController,
-        products: List<ProductTransSerializable>,
-        draftId: String,
-        customerCode: String = ""
+    viewModel: PaymentViewModel,
+    navController: NavController,
+    products: List<ProductTransSerializable>,
+    draftId: String,
+    customerCode: String = ""
 ) {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        Payment(
-                uiState = uiState,
-                onEvent = { viewModel.onEvent(it) },
-                moveToInvoice = {
-                        navController.navigate("${CashierScreen.Invoice.route}?paymentData=$it")
-                },
-                navigateBack = { navController.navigateUp() },
-                products = products,
-                draftId = draftId,
-                customerCode = customerCode
-        )
+    Payment(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        moveToInvoice = {
+            navController.navigate("${CashierScreen.Invoice.route}?paymentData=$it")
+        },
+        navigateBack = { navController.navigateUp() },
+        products = products,
+        draftId = draftId,
+        customerCode = customerCode
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Payment(
-        uiState: PaymentUiState,
-        onEvent: (PaymentUiEvent) -> Unit,
-        moveToInvoice: (String) -> Unit,
-        navigateBack: () -> Unit,
-        products: List<ProductTransSerializable>,
-        draftId: String,
-        customerCode: String = ""
+    uiState: PaymentUiState,
+    onEvent: (PaymentUiEvent) -> Unit,
+    moveToInvoice: (String) -> Unit,
+    navigateBack: () -> Unit,
+    products: List<ProductTransSerializable>,
+    draftId: String,
+    customerCode: String = ""
 ) {
-        val radioOptions = listOf("Tunai", "QRIS")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-        val state = rememberMessageBarState()
+    val radioOptions = listOf("Tunai", "QRIS")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    val state = rememberMessageBarState()
 
-        LaunchedEffect(customerCode) {
-                if (customerCode.isNotEmpty()) {
-                        onEvent(PaymentUiEvent.CustomerReceived(customerCode))
+    LaunchedEffect(customerCode) {
+        if (customerCode.isNotEmpty()) {
+            onEvent(PaymentUiEvent.CustomerReceived(customerCode))
+        }
+    }
+
+    LaunchedEffect(selectedOption) {
+        onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
+    }
+    LaunchedEffect(products) { onEvent(PaymentUiEvent.ArgumentProductsLoaded(products)) }
+    LaunchedEffect(draftId) { onEvent(PaymentUiEvent.NoInvoiceChanged(draftId)) }
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            state.addError(Exception("Ups, Silahkan lakukan kirim ulang ya!"))
+            onEvent(PaymentUiEvent.DraftIsPrinted(draftId))
+            val jsonResponse = Json.encodeToString(uiState)
+            moveToInvoice(jsonResponse)
+        }
+    }
+
+    LaunchedEffect(uiState.paymentResponse) {
+        uiState.paymentResponse?.let { response ->
+            if (response.code == "200") {
+                uiState.products.forEach { _ ->
+                    onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
                 }
-        }
+            }
 
-        LaunchedEffect(selectedOption) {
-                onEvent(PaymentUiEvent.PaymentMethodChanged(selectedOption))
+            val jsonResponse = Json.encodeToString(uiState)
+            moveToInvoice(jsonResponse)
         }
-        LaunchedEffect(products) { onEvent(PaymentUiEvent.ArgumentProductsLoaded(products)) }
-        LaunchedEffect(draftId) { onEvent(PaymentUiEvent.NoInvoiceChanged(draftId)) }
-        LaunchedEffect(uiState.errorMessage) {
-                uiState.errorMessage?.let {
-                        state.addError(Exception("Ups, Silahkan lakukan kirim ulang ya!"))
-                        onEvent(PaymentUiEvent.DraftIsPrinted(draftId))
-                        val jsonResponse = Json.encodeToString(uiState)
-                        moveToInvoice(jsonResponse)
-                }
+    }
+
+    LaunchedEffect(uiState.isConnected) {
+        if (!uiState.isConnected) {
+            state.addError(Exception("Awas, internetmu mati!"))
         }
+    }
 
-        LaunchedEffect(uiState.paymentResponse) {
-                uiState.paymentResponse?.let { response ->
-                        if (response.code == "200") {
-                                uiState.products.forEach { _ ->
-                                        onEvent(PaymentUiEvent.DeleteScannedProducts(draftId))
-                                }
-                        }
-
-                        val jsonResponse = Json.encodeToString(uiState)
-                        moveToInvoice(jsonResponse)
-                }
-        }
-
-        LaunchedEffect(uiState.isConnected) {
-                if (!uiState.isConnected) {
-                        state.addError(Exception("Awas, internetmu mati!"))
-                }
-        }
-
-        ContentWithMessageBar(
-                messageBarState = state,
-                errorMaxLines = 2,
-                showCopyButton = false,
-                visibilityDuration = 3000L,
-                modifier = Modifier.statusBarsPadding()
-        ) {
-                if (uiState.isLoading) {
-                        EnhancedLoading()
-                } else {
-                        Column(modifier = Modifier.fillMaxSize()) {
-                                Column(
-                                        modifier =
-                                                Modifier.weight(1f)
-                                                        .fillMaxWidth()
-                                                        .padding(16.dp)
-                                                        .verticalScroll(rememberScrollState())
-                                ) {
-                                        HeadlineText(
-                                                text = "Pembayaran",
-                                                modifier = Modifier.padding(bottom = 32.dp)
+    ContentWithMessageBar(
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
+        visibilityDuration = 3000L,
+        modifier = Modifier.statusBarsPadding()
+    ) {
+        if (uiState.isLoading) {
+            EnhancedLoading()
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier =
+                        Modifier.weight(1f)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState())
+                ) {
+                    HeadlineText(
+                        text = "Pembayaran",
+                        modifier = Modifier.padding(bottom = 32.dp)
+                    )
+                    if (uiState.searchCust.isNotEmpty()) {
+                        Text(
+                            text = "Pelanggan",
+                            style =
+                                MaterialTheme.typography.titleSmall
+                                    .copy(
+                                        fontWeight =
+                                            FontWeight
+                                                .SemiBold
+                                    ),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            text =
+                                uiState.customers
+                                    .find {
+                                        it.kode ==
+                                                uiState.searchCust
+                                    }
+                                    ?.nama
+                                    ?: "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primary,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                    Text(
+                        text = "Jenis Pembayaran",
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                        color = dark,
+                    )
+                    PaymentOptions(
+                        radioOptions = radioOptions,
+                        selectedOption = selectedOption,
+                        onOptionSelected
+                    )
+                    //                    if (selectedOption == "Kredit") {
+                    //                        Text(
+                    //                            text = "Jatuh Tempo",
+                    //                            style =
+                    // MaterialTheme.typography.titleSmall.copy(fontWeight =
+                    // FontWeight.SemiBold),
+                    //                            color = dark,
+                    //                        )
+                    //                        OutlinedTextField(
+                    //                            value = uiState.selectedDate,
+                    //                            onValueChange = {},
+                    //                            textStyle =
+                    // MaterialTheme.typography.bodyMedium,
+                    //                            label = {
+                    //                                Text(
+                    //                                    "dd/mm/yyyy",
+                    //                                    style =
+                    // MaterialTheme.typography.bodyMedium,
+                    //                                    color = secondary_text
+                    //                                )
+                    //                            },
+                    //                            enabled = false,
+                    //                            trailingIcon = {
+                    //                                IconButton(onClick = {
+                    // onEvent(PaymentUiEvent.DateIconClicked) }) {
+                    //                                    Icon(
+                    //
+                    // Icons.Default.DateRange,
+                    //                                        contentDescription
+                    // = "Date",
+                    //                                        tint = stroke
+                    //                                    )
+                    //                                }
+                    //                            },
+                    //                            shape =
+                    // RoundedCornerShape(10.dp),
+                    //                            colors =
+                    // OutlinedTextFieldDefaults.colors(
+                    //                                disabledPlaceholderColor =
+                    // secondary_text,
+                    //                                disabledBorderColor =
+                    // stroke,
+                    //                                disabledLabelColor =
+                    // secondary_text,
+                    //                                disabledTextColor =
+                    // primary_text,
+                    //                                disabledTrailingIconColor
+                    // = icon,
+                    //                            ),
+                    //                            modifier =
+                    // Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                    //                        )
+                    //                    }
+                    Text(
+                        text =
+                            if (selectedOption == "QRIS") "Keterangan"
+                            else "Uang Diterima",
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                        color = dark,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    DefaultTextField(
+                        value =
+                            if (selectedOption == "QRIS")
+                                uiState.description
+                            else uiState.uangDiterima,
+                        onValueChange = {
+                            if (selectedOption == "QRIS") {
+                                onEvent(
+                                    PaymentUiEvent
+                                        .DescriptionChanged(
+                                            it
                                         )
-                                        if (uiState.searchCust.isNotEmpty()) {
-                                                Text(
-                                                        text = "Pelanggan",
-                                                        style =
-                                                                MaterialTheme.typography.titleSmall
-                                                                        .copy(
-                                                                                fontWeight =
-                                                                                        FontWeight
-                                                                                                .SemiBold
-                                                                        ),
-                                                        color = dark,
-                                                        modifier = Modifier.padding(bottom = 8.dp)
-                                                )
-                                                Text(
-                                                        text =
-                                                                uiState.customers
-                                                                        .find {
-                                                                                it.kode ==
-                                                                                        uiState.searchCust
-                                                                        }
-                                                                        ?.nama
-                                                                        ?: "",
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        color = primary,
-                                                        modifier = Modifier.padding(bottom = 16.dp)
-                                                )
-                                        }
-                                        Text(
-                                                text = "Jenis Pembayaran",
-                                                style =
-                                                        MaterialTheme.typography.titleSmall.copy(
-                                                                fontWeight = FontWeight.SemiBold
-                                                        ),
-                                                color = dark,
+                                )
+                            } else {
+                                val formatted =
+                                    formatCurrencyInput(it)
+                                onEvent(
+                                    PaymentUiEvent
+                                        .UangDiterimaChanged(
+                                            formatted
                                         )
-                                        PaymentOptions(
-                                                radioOptions = radioOptions,
-                                                selectedOption = selectedOption,
-                                                onOptionSelected
-                                        )
-                                        //                    if (selectedOption == "Kredit") {
-                                        //                        Text(
-                                        //                            text = "Jatuh Tempo",
-                                        //                            style =
-                                        // MaterialTheme.typography.titleSmall.copy(fontWeight =
-                                        // FontWeight.SemiBold),
-                                        //                            color = dark,
-                                        //                        )
-                                        //                        OutlinedTextField(
-                                        //                            value = uiState.selectedDate,
-                                        //                            onValueChange = {},
-                                        //                            textStyle =
-                                        // MaterialTheme.typography.bodyMedium,
-                                        //                            label = {
-                                        //                                Text(
-                                        //                                    "dd/mm/yyyy",
-                                        //                                    style =
-                                        // MaterialTheme.typography.bodyMedium,
-                                        //                                    color = secondary_text
-                                        //                                )
-                                        //                            },
-                                        //                            enabled = false,
-                                        //                            trailingIcon = {
-                                        //                                IconButton(onClick = {
-                                        // onEvent(PaymentUiEvent.DateIconClicked) }) {
-                                        //                                    Icon(
-                                        //
-                                        // Icons.Default.DateRange,
-                                        //                                        contentDescription
-                                        // = "Date",
-                                        //                                        tint = stroke
-                                        //                                    )
-                                        //                                }
-                                        //                            },
-                                        //                            shape =
-                                        // RoundedCornerShape(10.dp),
-                                        //                            colors =
-                                        // OutlinedTextFieldDefaults.colors(
-                                        //                                disabledPlaceholderColor =
-                                        // secondary_text,
-                                        //                                disabledBorderColor =
-                                        // stroke,
-                                        //                                disabledLabelColor =
-                                        // secondary_text,
-                                        //                                disabledTextColor =
-                                        // primary_text,
-                                        //                                disabledTrailingIconColor
-                                        // = icon,
-                                        //                            ),
-                                        //                            modifier =
-                                        // Modifier.fillMaxWidth().padding(bottom = 16.dp)
-                                        //                        )
-                                        //                    }
-                                        Text(
-                                                text =
-                                                        if (selectedOption == "QRIS") "Keterangan"
-                                                        else "Uang Diterima",
-                                                style =
-                                                        MaterialTheme.typography.titleSmall.copy(
-                                                                fontWeight = FontWeight.SemiBold
-                                                        ),
-                                                color = dark,
-                                                modifier = Modifier.padding(bottom = 8.dp)
-                                        )
-                                        DefaultTextField(
-                                                value =
-                                                        if (selectedOption == "QRIS")
-                                                                uiState.description
-                                                        else uiState.uangDiterima,
-                                                onValueChange = {
-                                                        if (selectedOption == "QRIS") {
-                                                                onEvent(
-                                                                        PaymentUiEvent
-                                                                                .DescriptionChanged(
-                                                                                        it
-                                                                                )
-                                                                )
-                                                        } else {
-                                                                val formatted =
-                                                                        formatCurrencyInput(it)
-                                                                onEvent(
-                                                                        PaymentUiEvent
-                                                                                .UangDiterimaChanged(
-                                                                                        formatted
-                                                                                )
-                                                                )
-                                                        }
-                                                },
-                                                placehoder =
-                                                        if (selectedOption == "QRIS")
-                                                                "Dari? (Mandiri/BNI/BRI dst)"
-                                                        else "Nominal Uang",
-                                                keyboardOptions =
-                                                        if (selectedOption == "QRIS")
-                                                                KeyboardOptions(
-                                                                        keyboardType =
-                                                                                KeyboardType.Text
-                                                                )
-                                                        else
-                                                                KeyboardOptions(
-                                                                        keyboardType =
-                                                                                KeyboardType.Number
-                                                                ),
-                                                visualTransformation =
-                                                        if (selectedOption != "QRIS")
-                                                                CurrencyVisualTransformation()
-                                                        else null,
-                                                modifier =
-                                                        Modifier.fillMaxWidth()
-                                                                .padding(bottom = 16.dp)
-                                        )
-                                        if (selectedOption != "QRIS") {
-                                                Text(
-                                                        text = "Kembalian",
-                                                        style =
-                                                                MaterialTheme.typography.titleSmall
-                                                                        .copy(
-                                                                                fontWeight =
-                                                                                        FontWeight
-                                                                                                .SemiBold
-                                                                        ),
-                                                        color = dark,
-                                                        modifier = Modifier.padding(bottom = 8.dp)
-                                                )
-                                                DisabledTextField(
-                                                        value =
-                                                                if (uiState.kembalian < 0) "Rp 0"
-                                                                else
-                                                                        currencyFormat(
-                                                                                uiState.kembalian
-                                                                                        .toDouble()
-                                                                        ),
-                                                        onValueChange = {},
-                                                        modifier =
-                                                                Modifier.fillMaxWidth()
-                                                                        .padding(bottom = 16.dp)
-                                                )
-                                        }
-                                }
-                                Column(modifier = Modifier.imePadding()) {
-                                        HorizontalDivider(
-                                                modifier = Modifier.fillMaxWidth().width(1.dp)
-                                        )
-                                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                                                SummaryRow(
-                                                        label = "Total Harga:",
-                                                        value =
-                                                                currencyFormat(
-                                                                        uiState.totalHarga
-                                                                                .toDouble()
-                                                                ),
-                                                )
-                                                SummaryRow(
-                                                        label = "Diskon:",
-                                                        value =
-                                                                currencyFormat(
-                                                                        uiState.diskon.toDouble()
-                                                                )
-                                                )
-                                                HorizontalDivider(
-                                                        modifier =
-                                                                Modifier.fillMaxWidth()
-                                                                        .width(1.dp)
-                                                                        .padding(vertical = 10.dp)
-                                                )
-                                                SummaryRow(
-                                                        label = "Totlal Tagihan",
-                                                        value =
-                                                                currencyFormat(
-                                                                        uiState.subtotal.toDouble()
-                                                                ),
-                                                        isBold = true
-                                                )
-                                                Spacer(modifier = Modifier.height(16.dp))
-                                                FooterButton(
-                                                        onCancelClick = navigateBack,
-                                                        onConfirmClick = {
-                                                                if (selectedOption != "QRIS") {
-                                                                        val uangDiterimaValue =
-                                                                                uiState.uangDiterima
-                                                                                        .replace(
-                                                                                                ".",
-                                                                                                ""
-                                                                                        )
-                                                                                        .replace(
-                                                                                                ",",
-                                                                                                ""
-                                                                                        )
-                                                                                        .toIntOrNull()
-                                                                                        ?: 0
-                                                                        if (uiState.uangDiterima
-                                                                                        .isEmpty() ||
-                                                                                        uangDiterimaValue <
-                                                                                                uiState.subtotal
-                                                                        ) {
-                                                                                state.addError(
-                                                                                        Exception(
-                                                                                                "Hei, uang diterima tidak bisa kurang dari total harga!"
-                                                                                        )
-                                                                                )
-                                                                                return@FooterButton
-                                                                        }
-                                                                }
-                                                                onEvent(
-                                                                        PaymentUiEvent
-                                                                                .ConfirmButtonClicked
-                                                                )
-                                                        },
-                                                        cancelText = "Kembali",
-                                                        confirmText = "Bayar",
-                                                        borderCancelColor = icon,
-                                                        contentCancelColor = icon
-                                                )
-                                        }
-                                }
-                        }
-                }
-        }
-
-        if (uiState.showDatePicker) {
-                WheelDatePickerView(
-                        modifier = Modifier.padding(top = 18.dp, bottom = 10.dp).fillMaxWidth(),
-                        showDatePicker = uiState.showDatePicker,
-                        title = "Pilih Tanggal",
-                        titleStyle =
-                                TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        color = dark,
-                                ),
-                        doneLabelStyle =
-                                TextStyle(
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = primary,
-                                ),
-                        selectorProperties =
-                                WheelPickerDefaults.selectorProperties(
-                                        borderColor = secondary,
-                                ),
-                        defaultDateTextStyle =
-                                MaterialTheme.typography.titleSmall.copy(
-                                        color = primary,
-                                        fontSize = 18.sp
-                                ),
-                        rowCount = 5,
-                        height = 170.dp,
-                        onDoneClick = { date ->
-                                val formattedDate =
-                                        "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
-                                onEvent(PaymentUiEvent.SelectedDateChanged(formattedDate))
+                                )
+                            }
                         },
-                        dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
-                        onDismiss = { onEvent(PaymentUiEvent.DismissDialog) }
-                )
+                        placehoder =
+                            if (selectedOption == "QRIS")
+                                "Dari? (Mandiri/BNI/BRI dst)"
+                            else "Nominal Uang",
+                        keyboardOptions =
+                            if (selectedOption == "QRIS")
+                                KeyboardOptions(
+                                    keyboardType =
+                                        KeyboardType.Text
+                                )
+                            else
+                                KeyboardOptions(
+                                    keyboardType =
+                                        KeyboardType.Number
+                                ),
+                        visualTransformation =
+                            if (selectedOption != "QRIS")
+                                CurrencyVisualTransformation()
+                            else null,
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                    )
+                    if (selectedOption != "QRIS") {
+                        Text(
+                            text = "Kembalian",
+                            style =
+                                MaterialTheme.typography.titleSmall
+                                    .copy(
+                                        fontWeight =
+                                            FontWeight
+                                                .SemiBold
+                                    ),
+                            color = dark,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        DisabledTextField(
+                            value =
+                                if (uiState.kembalian < 0) "Rp 0"
+                                else
+                                    currencyFormat(
+                                        uiState.kembalian
+                                            .toDouble()
+                                    ),
+                            onValueChange = {},
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                        )
+                    }
+                }
+                Column(modifier = Modifier.imePadding()) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth().width(1.dp)
+                    )
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        SummaryRow(
+                            label = "Total Harga:",
+                            value =
+                                currencyFormat(
+                                    uiState.totalHarga
+                                        .toDouble()
+                                ),
+                        )
+                        SummaryRow(
+                            label = "Diskon:",
+                            value =
+                                currencyFormat(
+                                    uiState.diskon.toDouble()
+                                )
+                        )
+                        HorizontalDivider(
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .width(1.dp)
+                                    .padding(vertical = 10.dp)
+                        )
+                        SummaryRow(
+                            label = "Totlal Tagihan",
+                            value =
+                                currencyFormat(
+                                    uiState.subtotal.toDouble()
+                                ),
+                            isBold = true
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        FooterButton(
+                            onCancelClick = navigateBack,
+                            onConfirmClick = {
+                                if (selectedOption != "QRIS") {
+                                    val uangDiterimaValue =
+                                        uiState.uangDiterima
+                                            .replace(
+                                                ".",
+                                                ""
+                                            )
+                                            .replace(
+                                                ",",
+                                                ""
+                                            )
+                                            .toIntOrNull()
+                                            ?: 0
+                                    if (uiState.uangDiterima
+                                            .isEmpty() ||
+                                        uangDiterimaValue <
+                                        uiState.subtotal
+                                    ) {
+                                        state.addError(
+                                            Exception(
+                                                "Hei, uang diterima tidak bisa kurang dari total harga!"
+                                            )
+                                        )
+                                        return@FooterButton
+                                    }
+                                }
+                                onEvent(
+                                    PaymentUiEvent
+                                        .ConfirmButtonClicked
+                                )
+                            },
+                            cancelText = "Kembali",
+                            confirmText = "Bayar",
+                            borderCancelColor = icon,
+                            contentCancelColor = icon
+                        )
+                    }
+                }
+            }
         }
+    }
+
+    if (uiState.showDatePicker) {
+        WheelDatePickerView(
+            modifier = Modifier.padding(top = 18.dp, bottom = 10.dp).fillMaxWidth(),
+            showDatePicker = uiState.showDatePicker,
+            title = "Pilih Tanggal",
+            titleStyle =
+                TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = dark,
+                ),
+            doneLabelStyle =
+                TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primary,
+                ),
+            selectorProperties =
+                WheelPickerDefaults.selectorProperties(
+                    borderColor = secondary,
+                ),
+            defaultDateTextStyle =
+                MaterialTheme.typography.titleSmall.copy(
+                    color = primary,
+                    fontSize = 18.sp
+                ),
+            rowCount = 5,
+            height = 170.dp,
+            onDoneClick = { date ->
+                val formattedDate =
+                    "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
+                onEvent(PaymentUiEvent.SelectedDateChanged(formattedDate))
+            },
+            dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
+            onDismiss = { onEvent(PaymentUiEvent.DismissDialog) }
+        )
+    }
 }
 
 @Composable
 fun PaymentOptions(
-        radioOptions: List<String>,
-        selectedOption: String,
-        onOptionSelected: (String) -> Unit
+    radioOptions: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
 ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                radioOptions.forEach { text ->
-                        Row(
-                                modifier =
-                                        Modifier.selectable(
-                                                        selected = (text == selectedOption),
-                                                        onClick = { onOptionSelected(text) },
-                                                )
-                                                .padding(end = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                        ) {
-                                RadioButton(
-                                        selected = (text == selectedOption),
-                                        onClick = { onOptionSelected(text) }
-                                )
-                                Text(
-                                        text = text,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = secondary_text,
-                                )
-                        }
-                }
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        radioOptions.forEach { text ->
+            Row(
+                modifier =
+                    Modifier.selectable(
+                        selected = (text == selectedOption),
+                        onClick = { onOptionSelected(text) },
+                    )
+                        .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    onClick = { onOptionSelected(text) }
+                )
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = secondary_text,
+                )
+            }
         }
+    }
 }
 
 @Composable
 fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
-        Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-                Text(
-                        text = label,
-                        style =
-                                if (isBold)
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        )
-                                else MaterialTheme.typography.bodyMedium,
-                        color = if (isBold) dark else secondary_text
-                )
-                Text(
-                        text = value,
-                        style =
-                                if (isBold)
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        )
-                                else MaterialTheme.typography.bodyMedium,
-                        color = dark
-                )
-        }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
+            color = if (isBold) dark else secondary_text
+        )
+        Text(
+            text = value,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
+            color = dark
+        )
+    }
 }

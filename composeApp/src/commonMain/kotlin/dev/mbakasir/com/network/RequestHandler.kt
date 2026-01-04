@@ -22,146 +22,150 @@ import kotlinx.serialization.SerializationException
 
 class RequestHandler(val httpClient: HttpClient, val sessionHandler: SessionHandler) {
 
-        suspend inline fun <reified B, reified R> executeRequest(
-                method: HttpMethod,
-                urlPathSegments: List<Any>,
-                body: B? = null,
-                queryParams: Map<String, Any>? = null
-        ): NetworkResult<R, NetworkException> {
-                return withContext(Dispatchers.IO) {
-                        try {
-                                val response =
-                                        httpClient
-                                                .prepareRequest {
-                                                        this.method = method
-                                                        url {
-                                                                val pathSegments =
-                                                                        urlPathSegments.map {
-                                                                                it.toString()
-                                                                        }
-                                                                appendPathSegments(pathSegments)
-                                                        }
-                                                        body?.let { setBody(it) }
-                                                        queryParams?.let { params ->
-                                                                params.forEach { (key, value) ->
-                                                                        parameter(key, value)
-                                                                }
-                                                        }
-                                                }
-                                                .execute()
-                                                .body<R>()
-
-                                if (body is dev.mbakasir.com.features.auth.domain.LoginRequest) {
-                                        httpClient.authProvider<BearerAuthProvider>()?.clearToken()
+    suspend inline fun <reified B, reified R> executeRequest(
+        method: HttpMethod,
+        urlPathSegments: List<Any>,
+        body: B? = null,
+        queryParams: Map<String, Any>? = null
+    ): NetworkResult<R, NetworkException> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    httpClient
+                        .prepareRequest {
+                            this.method = method
+                            url {
+                                val pathSegments =
+                                    urlPathSegments.map {
+                                        it.toString()
+                                    }
+                                appendPathSegments(pathSegments)
+                            }
+                            body?.let { setBody(it) }
+                            queryParams?.let { params ->
+                                params.forEach { (key, value) ->
+                                    parameter(key, value)
                                 }
-
-                                NetworkResult.Success(response)
-                        } catch (e: ResponseException) {
-                                val contentType = e.response.headers["Content-Type"]
-                                val errorBody: DefaultError? =
-                                        if (contentType?.contains("application/json") == true) {
-                                                e.response.body<DefaultError>()
-                                        } else {
-                                                null
-                                        }
-                                val networkException =
-                                        when (e.response.status) {
-                                                HttpStatusCode.Unauthorized -> {
-                                                        sessionHandler.clearData()
-                                                        NetworkException.UnauthorizedException(
-                                                                "Sesi Anda telah berakhir, silakan login kembali.",
-                                                                e
-                                                        )
-                                                }
-                                                HttpStatusCode.NotFound ->
-                                                        NetworkException.NotFoundException(
-                                                                "Data tidak ditemukan.",
-                                                                e
-                                                        )
-                                                HttpStatusCode.Forbidden ->
-                                                        NetworkException.ForbiddenException(
-                                                                "Anda tidak memiliki akses untuk tindakan ini.",
-                                                                e
-                                                        )
-                                                HttpStatusCode.BadRequest ->
-                                                        NetworkException.BadRequestException(
-                                                                errorBody?.message
-                                                                        ?: "Permintaan tidak valid, silakan cek kembali data Anda.",
-                                                                e
-                                                        )
-                                                else ->
-                                                        NetworkException.UnknownException(
-                                                                "Terjadi kesalahan: ${errorBody?.message ?: "Tidak diketahui"}",
-                                                                e
-                                                        )
-                                        }
-                                NetworkResult.Error(networkException)
-                        } catch (e: UnresolvedAddressException) {
-                                NetworkResult.Error(
-                                        NetworkException.NoInternetException(
-                                                "Koneksi internet bermasalah, silakan periksa sambungan Anda.",
-                                                e
-                                        )
-                                )
-                        } catch (e: SerializationException) {
-                                NetworkResult.Error(
-                                        NetworkException.SerializationException(
-                                                "Gagal memproses data respon server.",
-                                                e
-                                        )
-                                )
-                        } catch (e: HttpRequestTimeoutException) {
-                                NetworkResult.Error(
-                                        NetworkException.RequestTimeoutException(
-                                                "Waktu permintaan habis, silakan coba lagi.",
-                                                e
-                                        )
-                                )
-                        } catch (e: ServerResponseException) {
-                                NetworkResult.Error(
-                                        NetworkException.ServerErrorException(
-                                                "Terjadi kesalahan pada server, silakan coba lagi nanti.",
-                                                e
-                                        )
-                                )
-                        } catch (e: Exception) {
-                                NetworkResult.Error(
-                                        NetworkException.UnknownException(
-                                                "Terjadi kesalahan yang tidak diketahui.",
-                                                e
-                                        )
-                                )
+                            }
                         }
+                        .execute()
+                        .body<R>()
+
+                if (body is dev.mbakasir.com.features.auth.domain.LoginRequest) {
+                    httpClient.authProvider<BearerAuthProvider>()?.clearToken()
                 }
+
+                NetworkResult.Success(response)
+            } catch (e: ResponseException) {
+                val contentType = e.response.headers["Content-Type"]
+                val errorBody: DefaultError? =
+                    if (contentType?.contains("application/json") == true) {
+                        e.response.body<DefaultError>()
+                    } else {
+                        null
+                    }
+                val networkException =
+                    when (e.response.status) {
+                        HttpStatusCode.Unauthorized -> {
+                            sessionHandler.clearData()
+                            NetworkException.UnauthorizedException(
+                                "Sesi Anda telah berakhir, silakan login kembali.",
+                                e
+                            )
+                        }
+
+                        HttpStatusCode.NotFound ->
+                            NetworkException.NotFoundException(
+                                "Data tidak ditemukan.",
+                                e
+                            )
+
+                        HttpStatusCode.Forbidden ->
+                            NetworkException.ForbiddenException(
+                                "Anda tidak memiliki akses untuk tindakan ini.",
+                                e
+                            )
+
+                        HttpStatusCode.BadRequest ->
+                            NetworkException.BadRequestException(
+                                errorBody?.message
+                                    ?: "Permintaan tidak valid, silakan cek kembali data Anda.",
+                                e
+                            )
+
+                        else ->
+                            NetworkException.UnknownException(
+                                "Terjadi kesalahan: ${errorBody?.message ?: "Tidak diketahui"}",
+                                e
+                            )
+                    }
+                NetworkResult.Error(networkException)
+            } catch (e: UnresolvedAddressException) {
+                NetworkResult.Error(
+                    NetworkException.NoInternetException(
+                        "Koneksi internet bermasalah, silakan periksa sambungan Anda.",
+                        e
+                    )
+                )
+            } catch (e: SerializationException) {
+                NetworkResult.Error(
+                    NetworkException.SerializationException(
+                        "Gagal memproses data respon server.",
+                        e
+                    )
+                )
+            } catch (e: HttpRequestTimeoutException) {
+                NetworkResult.Error(
+                    NetworkException.RequestTimeoutException(
+                        "Waktu permintaan habis, silakan coba lagi.",
+                        e
+                    )
+                )
+            } catch (e: ServerResponseException) {
+                NetworkResult.Error(
+                    NetworkException.ServerErrorException(
+                        "Terjadi kesalahan pada server, silakan coba lagi nanti.",
+                        e
+                    )
+                )
+            } catch (e: Exception) {
+                NetworkResult.Error(
+                    NetworkException.UnknownException(
+                        "Terjadi kesalahan yang tidak diketahui.",
+                        e
+                    )
+                )
+            }
         }
+    }
 
-        suspend inline fun <reified R> get(
-                urlPathSegments: List<Any>,
-                queryParams: Map<String, Any>? = null
-        ): NetworkResult<R, NetworkException> =
-                executeRequest<Any, R>(
-                        method = HttpMethod.Get,
-                        urlPathSegments = urlPathSegments.toList(),
-                        queryParams = queryParams
-                )
+    suspend inline fun <reified R> get(
+        urlPathSegments: List<Any>,
+        queryParams: Map<String, Any>? = null
+    ): NetworkResult<R, NetworkException> =
+        executeRequest<Any, R>(
+            method = HttpMethod.Get,
+            urlPathSegments = urlPathSegments.toList(),
+            queryParams = queryParams
+        )
 
-        suspend inline fun <reified B, reified R> post(
-                urlPathSegments: List<Any>,
-                body: B? = null
-        ): NetworkResult<R, NetworkException> =
-                executeRequest(
-                        method = HttpMethod.Post,
-                        urlPathSegments = urlPathSegments.toList(),
-                        body = body
-                )
+    suspend inline fun <reified B, reified R> post(
+        urlPathSegments: List<Any>,
+        body: B? = null
+    ): NetworkResult<R, NetworkException> =
+        executeRequest(
+            method = HttpMethod.Post,
+            urlPathSegments = urlPathSegments.toList(),
+            body = body
+        )
 
-        suspend inline fun <reified B, reified R> put(
-                urlPathSegments: List<Any>,
-                body: B? = null
-        ): NetworkResult<R, NetworkException> =
-                executeRequest(
-                        method = HttpMethod.Put,
-                        urlPathSegments = urlPathSegments.toList(),
-                        body = body
-                )
+    suspend inline fun <reified B, reified R> put(
+        urlPathSegments: List<Any>,
+        body: B? = null
+    ): NetworkResult<R, NetworkException> =
+        executeRequest(
+            method = HttpMethod.Put,
+            urlPathSegments = urlPathSegments.toList(),
+            body = body
+        )
 }

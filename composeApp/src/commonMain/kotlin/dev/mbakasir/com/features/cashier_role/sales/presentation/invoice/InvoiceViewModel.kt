@@ -19,174 +19,175 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class InvoiceViewModel(
-        private val sessionHandler: SessionHandler,
-        private val salesRepository: SalesRepository
+    private val sessionHandler: SessionHandler,
+    private val salesRepository: SalesRepository
 ) : ViewModel() {
 
-        private val _uiState = MutableStateFlow(InvoiceUiState())
-        val uiState: StateFlow<InvoiceUiState> = _uiState
+    private val _uiState = MutableStateFlow(InvoiceUiState())
+    val uiState: StateFlow<InvoiceUiState> = _uiState
 
-        fun onEvent(event: InvoiceUiEvent) {
-                when (event) {
-                        is InvoiceUiEvent.ArgumentPaymentLoaded -> {
-                                handlePaymentLoaded(event)
-                        }
-                        is InvoiceUiEvent.ArgumentNoInvoiceLoaded -> {
-                                getInvoice(event.noInvoice)
-                        }
-                }
+    fun onEvent(event: InvoiceUiEvent) {
+        when (event) {
+            is InvoiceUiEvent.ArgumentPaymentLoaded -> {
+                handlePaymentLoaded(event)
+            }
+
+            is InvoiceUiEvent.ArgumentNoInvoiceLoaded -> {
+                getInvoice(event.noInvoice)
+            }
         }
+    }
 
-        private fun getInvoice(noInvoice: String) {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+    private fun getInvoice(noInvoice: String) {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-                viewModelScope.launch(Dispatchers.IO) {
-                        val result = salesRepository.getInvoice(noInvoice)
-                        val customerResult = salesRepository.getCustomers()
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = salesRepository.getInvoice(noInvoice)
+            val customerResult = salesRepository.getCustomers()
 
-                        withContext(Dispatchers.Main) {
-                                result
-                                        .onSuccess { invoiceData ->
-                                                if (invoiceData.code == "200") {
-                                                        val customers =
-                                                                if (customerResult is
-                                                                                NetworkResult.Success
-                                                                )
-                                                                        customerResult
-                                                                                .data
-                                                                                .customers
-                                                                else emptyList()
-                                                        val customer =
-                                                                customers.find {
-                                                                        it.kode ==
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .customer ||
-                                                                                it.nama ==
-                                                                                        invoiceData
-                                                                                                .data
-                                                                                                .customer
-                                                                }
-                                                        val pelangganType =
-                                                                customer?.nama.takeIf {
-                                                                        !it.isNullOrEmpty()
-                                                                }
-                                                                        ?: "Pelanggan Umum"
-
-                                                        _uiState.value =
-                                                                _uiState.value.copy(
-                                                                        totalHarga =
-                                                                                invoiceData
-                                                                                        .totalHarga
-                                                                                        .toDouble(),
-                                                                        diskon =
-                                                                                invoiceData
-                                                                                        .totalDiskon
-                                                                                        .toDouble(),
-                                                                        subtotal =
-                                                                                invoiceData
-                                                                                        .totalTagihan
-                                                                                        .toDouble(),
-                                                                        invoiceNumber =
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .invoice,
-                                                                        tanggal =
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .tanggal,
-                                                                        method =
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .method,
-                                                                        kasir =
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .kasir,
-                                                                        pelangganType =
-                                                                                pelangganType,
-                                                                        ppn =
-                                                                                invoiceData.ppn
-                                                                                        .toDouble(),
-                                                                        bayar =
-                                                                                invoiceData.data
-                                                                                        .bayar
-                                                                                        .toDoubleOrNull()
-                                                                                        ?: 0.0,
-                                                                        kembali =
-                                                                                invoiceData.data
-                                                                                        .kembali
-                                                                                        .toDoubleOrNull()
-                                                                                        ?: 0.0,
-                                                                        detil =
-                                                                                invoiceData
-                                                                                        .data
-                                                                                        .detil,
-                                                                        store = getStoreInfo()
-                                                                )
-                                                }
-                                        }
-                                        .onError {
-                                                _uiState.value =
-                                                        _uiState.value.copy(
-                                                                errorMessage = it.message
-                                                        )
-                                        }
-
-                                _uiState.value = _uiState.value.copy(isLoading = false)
-                        }
-                }
-        }
-
-        private fun handlePaymentLoaded(event: InvoiceUiEvent.ArgumentPaymentLoaded) {
-                val detail = event.payment.products.map { it.toDetailPayment() }
-                viewModelScope.launch {
-                        val totalHarga =
-                                event.payment
-                                        .products
-                                        .sumOf { it.qtyJual * it.hargaItem }
-                                        .toDouble()
-                        val diskon = event.payment.products.sumOf { it.diskon }.toDouble()
-
-                        val customer =
-                                event.payment.customers.find { it.kode == event.payment.searchCust }
-                        val pelangganType =
-                                customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
-
-                        _uiState.value =
-                                _uiState.value.copy(
-                                        totalHarga = totalHarga,
-                                        diskon = diskon,
-                                        subtotal = totalHarga - diskon,
-                                        invoiceNumber = event.payment.noInvoice,
-                                        tanggal = event.payment.currentDate,
-                                        method = event.payment.paymentMethod,
-                                        kasir = getUserInfo().nama,
-                                        pelangganType = pelangganType,
-                                        ppn = "event.payment.ppn".toDoubleOrNull() ?: 0.0,
-                                        bayar = event.payment.uangDiterima.toDoubleOrNull() ?: 0.0,
-                                        kembali =
-                                                event.payment.kembalian.toString().toDoubleOrNull()
-                                                        ?: 0.0,
-                                        detil = detail,
-                                        store = getStoreInfo()
+            withContext(Dispatchers.Main) {
+                result
+                    .onSuccess { invoiceData ->
+                        if (invoiceData.code == "200") {
+                            val customers =
+                                if (customerResult is
+                                            NetworkResult.Success
                                 )
-                }
-        }
+                                    customerResult
+                                        .data
+                                        .customers
+                                else emptyList()
+                            val customer =
+                                customers.find {
+                                    it.kode ==
+                                            invoiceData
+                                                .data
+                                                .customer ||
+                                            it.nama ==
+                                            invoiceData
+                                                .data
+                                                .customer
+                                }
+                            val pelangganType =
+                                customer?.nama.takeIf {
+                                    !it.isNullOrEmpty()
+                                }
+                                    ?: "Pelanggan Umum"
 
-        private suspend fun getStoreInfo(): Toko {
-                return Toko(
-                        nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
-                        alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
-                        telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
+                            _uiState.value =
+                                _uiState.value.copy(
+                                    totalHarga =
+                                        invoiceData
+                                            .totalHarga
+                                            .toDouble(),
+                                    diskon =
+                                        invoiceData
+                                            .totalDiskon
+                                            .toDouble(),
+                                    subtotal =
+                                        invoiceData
+                                            .totalTagihan
+                                            .toDouble(),
+                                    invoiceNumber =
+                                        invoiceData
+                                            .data
+                                            .invoice,
+                                    tanggal =
+                                        invoiceData
+                                            .data
+                                            .tanggal,
+                                    method =
+                                        invoiceData
+                                            .data
+                                            .method,
+                                    kasir =
+                                        invoiceData
+                                            .data
+                                            .kasir,
+                                    pelangganType =
+                                        pelangganType,
+                                    ppn =
+                                        invoiceData.ppn
+                                            .toDouble(),
+                                    bayar =
+                                        invoiceData.data
+                                            .bayar
+                                            .toDoubleOrNull()
+                                            ?: 0.0,
+                                    kembali =
+                                        invoiceData.data
+                                            .kembali
+                                            .toDoubleOrNull()
+                                            ?: 0.0,
+                                    detil =
+                                        invoiceData
+                                            .data
+                                            .detil,
+                                    store = getStoreInfo()
+                                )
+                        }
+                    }
+                    .onError {
+                        _uiState.value =
+                            _uiState.value.copy(
+                                errorMessage = it.message
+                            )
+                    }
+
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun handlePaymentLoaded(event: InvoiceUiEvent.ArgumentPaymentLoaded) {
+        val detail = event.payment.products.map { it.toDetailPayment() }
+        viewModelScope.launch {
+            val totalHarga =
+                event.payment
+                    .products
+                    .sumOf { it.qtyJual * it.hargaItem }
+                    .toDouble()
+            val diskon = event.payment.products.sumOf { it.diskon }.toDouble()
+
+            val customer =
+                event.payment.customers.find { it.kode == event.payment.searchCust }
+            val pelangganType =
+                customer?.nama.takeIf { !it.isNullOrEmpty() } ?: "Pelanggan Umum"
+
+            _uiState.value =
+                _uiState.value.copy(
+                    totalHarga = totalHarga,
+                    diskon = diskon,
+                    subtotal = totalHarga - diskon,
+                    invoiceNumber = event.payment.noInvoice,
+                    tanggal = event.payment.currentDate,
+                    method = event.payment.paymentMethod,
+                    kasir = getUserInfo().nama,
+                    pelangganType = pelangganType,
+                    ppn = "event.payment.ppn".toDoubleOrNull() ?: 0.0,
+                    bayar = event.payment.uangDiterima.toDoubleOrNull() ?: 0.0,
+                    kembali =
+                        event.payment.kembalian.toString().toDoubleOrNull()
+                            ?: 0.0,
+                    detil = detail,
+                    store = getStoreInfo()
                 )
         }
+    }
 
-        private suspend fun getUserInfo(): User {
-                return User(
-                        username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
-                        nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
-                        role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"
-                )
-        }
+    private suspend fun getStoreInfo(): Toko {
+        return Toko(
+            nama = sessionHandler.getStoreName().firstOrNull() ?: "Unknown Store",
+            alamat = sessionHandler.getAddress().firstOrNull() ?: "Unknown Address",
+            telp = sessionHandler.getTelp().firstOrNull() ?: "Unknown Phone"
+        )
+    }
+
+    private suspend fun getUserInfo(): User {
+        return User(
+            username = sessionHandler.getUsername().firstOrNull() ?: "Unknown Store",
+            nama = sessionHandler.getName().firstOrNull() ?: "Unknown Address",
+            role = sessionHandler.getRole().firstOrNull() ?: "Unknown Phone"
+        )
+    }
 }

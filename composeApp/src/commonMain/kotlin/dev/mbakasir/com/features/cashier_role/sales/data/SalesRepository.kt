@@ -11,46 +11,47 @@ import dev.mbakasir.com.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
 
 interface SalesRepository {
-        suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?>
-        suspend fun searchProductsByBarcode(barcode: String): Flow<List<ProductEntity>>
-        suspend fun addProductTransToDraft(
-                draftId: String,
-                cashierName: String,
-                productTransEntity: ProductTransEntity,
-                username: String
-        )
+    suspend fun getProductByBarcode(barcode: String): Flow<ProductEntity?>
+    suspend fun searchProductsByBarcode(barcode: String): Flow<List<ProductEntity>>
+    suspend fun addProductTransToDraft(
+        draftId: String,
+        cashierName: String,
+        productTransEntity: ProductTransEntity,
+        username: String
+    )
 
-        suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>>
-        suspend fun updateProductTransInDraft(
-                draftId: String,
-                productId: String? = null,
-                qty: Int? = null,
-                amountPaid: Int? = null,
-                paymentMethod: String? = null,
-                description: String? = null,
-                dueDate: String? = null,
-                isPrinted: Boolean? = null,
-                customer: String? = null
-        )
+    suspend fun getProductsFromDraft(draftId: String): Flow<List<ProductTransEntity>>
+    suspend fun updateProductTransInDraft(
+        draftId: String,
+        productId: String? = null,
+        qty: Int? = null,
+        amountPaid: Int? = null,
+        paymentMethod: String? = null,
+        description: String? = null,
+        dueDate: String? = null,
+        isPrinted: Boolean? = null,
+        customer: String? = null
+    )
 
-        suspend fun deleteDraft(draftId: String)
-        suspend fun createPayment(
-                paymentRequest: CreatePaymentRequest
-        ): NetworkResult<CreatePaymentApiModel, NetworkException>
-        suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>
-        suspend fun getDrafts(username: String): Flow<List<ProductDraftWithItems>>
-        suspend fun getHistory(
-                startDate: String,
-                endDate: String,
-                page: String,
-                perPage: String
-        ): NetworkResult<HistoryApiModel, NetworkException>
+    suspend fun deleteDraft(draftId: String)
+    suspend fun createPayment(
+        paymentRequest: CreatePaymentRequest
+    ): NetworkResult<CreatePaymentApiModel, NetworkException>
 
-        suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
+    suspend fun getInvoice(invoice: String): NetworkResult<InvoiceApiModel, NetworkException>
+    suspend fun getDrafts(username: String): Flow<List<ProductDraftWithItems>>
+    suspend fun getHistory(
+        startDate: String,
+        endDate: String,
+        page: String,
+        perPage: String
+    ): NetworkResult<HistoryApiModel, NetworkException>
 
-        suspend fun deleteDraftsForUser(username: String)
+    suspend fun getCustomers(): NetworkResult<PelangganApiModel, NetworkException>
 
-        suspend fun updateDraftCustomer(draftId: String, customer: String)
+    suspend fun deleteDraftsForUser(username: String)
 
-        suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
+    suspend fun updateDraftCustomer(draftId: String, customer: String)
+
+    suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 }

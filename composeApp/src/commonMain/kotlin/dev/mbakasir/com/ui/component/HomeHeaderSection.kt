@@ -27,35 +27,35 @@ import org.jetbrains.compose.resources.painterResource
 fun HomeHeaderSection(username: String, role: String) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Image(
-                painter = painterResource(resource = Res.drawable.account),
-                contentDescription = null,
-                modifier = Modifier.weight(0.3f, fill = false)
+            painter = painterResource(resource = Res.drawable.account),
+            contentDescription = null,
+            modifier = Modifier.weight(0.3f, fill = false)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(username, style = MaterialTheme.typography.bodyMedium, color = dark)
             Text(
-                    role,
-                    style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                            ),
-                    color = dark
+                role,
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                color = dark
             )
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
-                onClick = {},
-                modifier =
-                        Modifier.border(
-                                width = 1.dp,
-                                color = stroke,
-                                shape = RoundedCornerShape(8.dp)
-                        )
+            onClick = {},
+            modifier =
+                Modifier.border(
+                    width = 1.dp,
+                    color = stroke,
+                    shape = RoundedCornerShape(8.dp)
+                )
         ) {
             Image(
-                    painter = painterResource(resource = Res.drawable.ic_bell),
-                    contentDescription = null
+                painter = painterResource(resource = Res.drawable.ic_bell),
+                contentDescription = null
             )
         }
     }

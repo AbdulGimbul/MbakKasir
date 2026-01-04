@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EntrySalesViewModel(
-        private val salesRepository: SalesRepository,
-        private val authRepository: AuthRepository
+    private val salesRepository: SalesRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EntrySalesUiState())
@@ -36,31 +36,40 @@ class EntrySalesViewModel(
             is EntrySalesUiEvent.LoadScannedProducts -> {
                 loadScannedProducts(event.draftId)
             }
+
             is EntrySalesUiEvent.FlashLightClick -> {
                 _uiState.value = _uiState.value.copy(flashlightOn = !_uiState.value.flashlightOn)
             }
+
             is EntrySalesUiEvent.OnLaunchGallery -> {
                 _uiState.value = _uiState.value.copy(launchGallery = event.launchGallery)
             }
+
             is EntrySalesUiEvent.OnInputUserChanged -> {
                 _uiState.value = _uiState.value.copy(inputUser = event.inputUser)
             }
+
             is EntrySalesUiEvent.ScanProduct -> {
                 scanProductByBarcode(event.draftId, event.barcode)
             }
+
             is EntrySalesUiEvent.SearchProduct -> {
                 searchProduct()
             }
+
             is EntrySalesUiEvent.ScanIconClick -> {
                 _uiState.value =
-                        _uiState.value.copy(startBarCodeScan = !_uiState.value.startBarCodeScan)
+                    _uiState.value.copy(startBarCodeScan = !_uiState.value.startBarCodeScan)
             }
+
             is EntrySalesUiEvent.IncreaseProductQty -> {
                 increaseProductQty(event.draftId, event.product)
             }
+
             is EntrySalesUiEvent.DecreaseProductQty -> {
                 decreaseProductQty(event.draftId, event.product)
             }
+
             is EntrySalesUiEvent.DeleteProduct -> {
                 if (_uiState.value.scannedProducts.isNotEmpty()) {
                     _uiState.value.scannedProducts.forEach { _ ->
@@ -68,10 +77,12 @@ class EntrySalesViewModel(
                     }
                 }
             }
+
             is EntrySalesUiEvent.OnSearchCustChanged -> {
                 _uiState.value = _uiState.value.copy(searchCust = event.searchCust)
                 calculateTotals()
             }
+
             is EntrySalesUiEvent.OnCustomerCheckChanged -> {
                 _uiState.value = _uiState.value.copy(checkedStatePelanggan = event.checked)
             }
@@ -90,17 +101,17 @@ class EntrySalesViewModel(
                     if (!currentList.any { it.barcode == product.barcode }) {
                         val scannedProduct = product.toProductTrans(draftId)
                         salesRepository.addProductTransToDraft(
-                                draftId,
-                                cashier,
-                                scannedProduct,
-                                username
+                            draftId,
+                            cashier,
+                            scannedProduct,
+                            username
                         )
                         loadScannedProducts(draftId)
                     } else {
                         _uiState.value =
-                                _uiState.value.copy(
-                                        errorMessage = "Ups, barang ini sudah ditambahkan ya!"
-                                )
+                            _uiState.value.copy(
+                                errorMessage = "Ups, barang ini sudah ditambahkan ya!"
+                            )
                     }
                 } else {
                     _uiState.value = _uiState.value.copy(errorMessage = "Barang tidak ditemukan")
@@ -118,15 +129,15 @@ class EntrySalesViewModel(
 
         searchJob?.cancel()
         searchJob =
-                viewModelScope.launch(Dispatchers.IO) {
-                    delay(300)
-                    salesRepository.searchProductsByBarcode(_uiState.value.inputUser)
-                            .collectLatest { products ->
-                                withContext(Dispatchers.Main) {
-                                    _uiState.value = _uiState.value.copy(searchResults = products)
-                                }
-                            }
-                }
+            viewModelScope.launch(Dispatchers.IO) {
+                delay(300)
+                salesRepository.searchProductsByBarcode(_uiState.value.inputUser)
+                    .collectLatest { products ->
+                        withContext(Dispatchers.Main) {
+                            _uiState.value = _uiState.value.copy(searchResults = products)
+                        }
+                    }
+            }
     }
 
     private fun increaseProductQty(draftId: String, product: ProductTransEntity) {
@@ -173,10 +184,11 @@ class EntrySalesViewModel(
         viewModelScope.launch {
             val result = salesRepository.getCustomers()
             result
-                    .onSuccess { _uiState.value = _uiState.value.copy(customers = it.customers) }
-                    .onError { _uiState.value = _uiState.value.copy(errorMessage = it.message) }
+                .onSuccess { _uiState.value = _uiState.value.copy(customers = it.customers) }
+                .onError { _uiState.value = _uiState.value.copy(errorMessage = it.message) }
         }
     }
+
     private fun calculateTotals() {
         val currentScanned = _uiState.value.scannedProducts
         val customer = _uiState.value.customers.find { it.kode == _uiState.value.searchCust }
@@ -196,17 +208,20 @@ class EntrySalesViewModel(
 
         currentScanned.forEach { product ->
             val specialPrice =
-                    when (customerType) {
-                        "Pelanggan" ->
-                                if (product.hargaPelanggan > 0) product.hargaPelanggan
-                                else product.hargaItem
-                        "Toko" ->
-                                if (product.hargaToko > 0) product.hargaToko else product.hargaItem
-                        "Sales" ->
-                                if (product.hargaSales > 0) product.hargaSales
-                                else product.hargaItem
-                        else -> product.hargaItem
-                    }
+                when (customerType) {
+                    "Pelanggan" ->
+                        if (product.hargaPelanggan > 0) product.hargaPelanggan
+                        else product.hargaItem
+
+                    "Toko" ->
+                        if (product.hargaToko > 0) product.hargaToko else product.hargaItem
+
+                    "Sales" ->
+                        if (product.hargaSales > 0) product.hargaSales
+                        else product.hargaItem
+
+                    else -> product.hargaItem
+                }
             val originalPrice = product.hargaItem
             val qty = product.qtyJual
             val gross = originalPrice * qty
@@ -218,10 +233,10 @@ class EntrySalesViewModel(
         val totalTagihan = totalHarga - totalDiskon
 
         _uiState.value =
-                _uiState.value.copy(
-                        totalHarga = totalHarga,
-                        totalDiskon = totalDiskon,
-                        totalTagihan = totalTagihan
-                )
+            _uiState.value.copy(
+                totalHarga = totalHarga,
+                totalDiskon = totalDiskon,
+                totalTagihan = totalTagihan
+            )
     }
 }

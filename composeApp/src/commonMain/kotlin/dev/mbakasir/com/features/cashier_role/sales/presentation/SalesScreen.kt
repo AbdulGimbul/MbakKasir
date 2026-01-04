@@ -66,20 +66,20 @@ fun SalesScreen(viewModel: SalesViewModel, navController: NavController) {
     }
 
     Sales(
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-            moveToEntrySales = { navController.navigate("${CashierScreen.EntrySales.route}/$it") },
-            moveToHistory = { navController.navigate(CashierScreen.History.route) }
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        moveToEntrySales = { navController.navigate("${CashierScreen.EntrySales.route}/$it") },
+        moveToHistory = { navController.navigate(CashierScreen.History.route) }
     )
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Sales(
-        uiState: SalesUiState,
-        onEvent: (SalesUiEvent) -> Unit,
-        moveToEntrySales: (String) -> Unit,
-        moveToHistory: () -> Unit
+    uiState: SalesUiState,
+    onEvent: (SalesUiEvent) -> Unit,
+    moveToEntrySales: (String) -> Unit,
+    moveToHistory: () -> Unit
 ) {
     var search by remember { mutableStateOf("") }
     val composition by rememberLottieComposition {
@@ -92,85 +92,85 @@ fun Sales(
     }
 
     ContentWithMessageBar(
-            messageBarState = state,
-            errorMaxLines = 2,
-            showCopyButton = false,
-            visibilityDuration = 3000L,
-            modifier = Modifier.statusBarsPadding()
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
+        visibilityDuration = 3000L,
+        modifier = Modifier.statusBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Row(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                            stringResource(Res.string.title_penjualan),
-                            style =
-                                    MaterialTheme.typography.headlineLarge.copy(
-                                            fontWeight = FontWeight.Bold
-                                    ),
-                            color = dark,
-                            maxLines = 1
+                        stringResource(Res.string.title_penjualan),
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        color = dark,
+                        maxLines = 1
                     )
                     IconButton(onClick = moveToHistory) {
                         Icon(
-                                painter = painterResource(Res.drawable.ic_notes),
-                                tint = primary,
-                                contentDescription = null,
-                                modifier = Modifier.size(32.dp)
+                            painter = painterResource(Res.drawable.ic_notes),
+                            tint = primary,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                 }
                 DefaultTextField(
-                        value = search,
-                        onValueChange = { search = it },
-                        placehoder = stringResource(Res.string.placeholder_search),
-                        leadingIcon = Icons.Default.Search,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    value = search,
+                    onValueChange = { search = it },
+                    placehoder = stringResource(Res.string.placeholder_search),
+                    leadingIcon = Icons.Default.Search,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 if (uiState.draftList.isNotEmpty()) {
                     LazyColumn {
                         items(uiState.draftList) { product ->
                             SalesItem(
-                                    product = product,
-                                    onClick = {
-                                        if (product.draft.isPrinted) {
-                                            onEvent(
-                                                    SalesUiEvent.SendDraftTrans(
-                                                            product.draft.draftId
-                                                    )
+                                product = product,
+                                onClick = {
+                                    if (product.draft.isPrinted) {
+                                        onEvent(
+                                            SalesUiEvent.SendDraftTrans(
+                                                product.draft.draftId
                                             )
-                                        } else {
-                                            moveToEntrySales(product.draft.draftId)
-                                        }
-                                    },
-                                    modifier = Modifier.padding(vertical = 4.dp)
+                                        )
+                                    } else {
+                                        moveToEntrySales(product.draft.draftId)
+                                    }
+                                },
+                                modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
                     }
                 } else {
                     Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Image(
-                                painter =
-                                        rememberLottiePainter(
-                                                composition = composition,
-                                                iterations = Compottie.IterateForever
-                                        ),
-                                contentDescription = "Lottie animation",
-                                modifier = Modifier.size(170.dp)
+                            painter =
+                                rememberLottiePainter(
+                                    composition = composition,
+                                    iterations = Compottie.IterateForever
+                                ),
+                            contentDescription = "Lottie animation",
+                            modifier = Modifier.size(170.dp)
                         )
                         Text(
-                                stringResource(Res.string.msg_data_not_available),
-                                style = MaterialTheme.typography.bodyMedium,
+                            stringResource(Res.string.msg_data_not_available),
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }

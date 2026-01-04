@@ -30,57 +30,57 @@ import mbakkasir.composeapp.generated.resources.img_users_sales
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        Home(uiState = uiState, onRefresh = { viewModel.refresh() })
+    Home(uiState = uiState, onRefresh = { viewModel.refresh() })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(uiState: HomeUiState, onRefresh: () -> Unit = {}) {
-        val pullToRefreshState = rememberPullToRefreshState()
+    val pullToRefreshState = rememberPullToRefreshState()
 
-        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { onRefresh() }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { onRefresh() }
 
-        PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = onRefresh,
-                state = pullToRefreshState,
-                modifier = Modifier.fillMaxSize()
+    PullToRefreshBox(
+        isRefreshing = uiState.isLoading,
+        onRefresh = onRefresh,
+        state = pullToRefreshState,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier =
+                Modifier.padding(16.dp)
+                    .statusBarsPadding()
+                    .verticalScroll(rememberScrollState())
         ) {
-                Column(
-                        modifier =
-                                Modifier.padding(16.dp)
-                                        .statusBarsPadding()
-                                        .verticalScroll(rememberScrollState())
-                ) {
-                        HomeHeaderSection(
-                                username = uiState.user?.userInfo?.nama ?: "",
-                                role = uiState.user?.userInfo?.role ?: ""
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        StatCard(
-                                title = "Nominal Penjualan",
-                                value = uiState.nominalPenjualan,
-                                imageRes = Res.drawable.img_nom_sales,
-                                cardColor = cyanLight3
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        StatCard(
-                                title = "Jumlah Penjualan",
-                                value = uiState.jumlahPenjualan.substringBefore(" "),
-                                suffix = "items",
-                                imageRes = Res.drawable.img_jml_sales,
-                                cardColor = pinkLight3
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        StatCard(
-                                title = "Jumlah Pembeli",
-                                value = uiState.jumlahPembeli.substringBefore(" "),
-                                suffix = "orang",
-                                imageRes = Res.drawable.img_users_sales,
-                                cardColor = purpleLight3
-                        )
-                }
+            HomeHeaderSection(
+                username = uiState.user?.userInfo?.nama ?: "",
+                role = uiState.user?.userInfo?.role ?: ""
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            StatCard(
+                title = "Nominal Penjualan",
+                value = uiState.nominalPenjualan,
+                imageRes = Res.drawable.img_nom_sales,
+                cardColor = cyanLight3
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            StatCard(
+                title = "Jumlah Penjualan",
+                value = uiState.jumlahPenjualan.substringBefore(" "),
+                suffix = "items",
+                imageRes = Res.drawable.img_jml_sales,
+                cardColor = pinkLight3
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            StatCard(
+                title = "Jumlah Pembeli",
+                value = uiState.jumlahPembeli.substringBefore(" "),
+                suffix = "orang",
+                imageRes = Res.drawable.img_users_sales,
+                cardColor = purpleLight3
+            )
         }
+    }
 }

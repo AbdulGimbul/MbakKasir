@@ -13,7 +13,7 @@ interface CustomerDao {
 
     @Query("SELECT * FROM customers")
     fun getCustomers(): Flow<List<CustomerEntity>>
-    
+
     @Query("SELECT * FROM customers")
     suspend fun getCustomersList(): List<CustomerEntity>
 

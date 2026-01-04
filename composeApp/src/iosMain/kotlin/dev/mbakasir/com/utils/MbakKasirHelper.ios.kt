@@ -8,10 +8,10 @@ import platform.UIKit.UIApplication
 
 actual fun currencyFormat(value: Double): String {
     val formatter =
-            NSNumberFormatter().apply {
-                numberStyle = NSNumberFormatterCurrencyStyle
-                locale = NSLocale("in_ID")
-            }
+        NSNumberFormatter().apply {
+            numberStyle = NSNumberFormatterCurrencyStyle
+            locale = NSLocale("in_ID")
+        }
     return formatter.stringFromNumber(value) ?: "$value"
 }
 

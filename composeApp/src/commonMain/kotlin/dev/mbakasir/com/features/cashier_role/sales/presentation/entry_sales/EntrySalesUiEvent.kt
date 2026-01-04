@@ -11,10 +11,10 @@ sealed class EntrySalesUiEvent {
     data object FlashLightClick : EntrySalesUiEvent()
     data class OnLaunchGallery(val launchGallery: Boolean) : EntrySalesUiEvent()
     data class IncreaseProductQty(val draftId: String, val product: ProductTransEntity) :
-            EntrySalesUiEvent()
+        EntrySalesUiEvent()
 
     data class DecreaseProductQty(val draftId: String, val product: ProductTransEntity) :
-            EntrySalesUiEvent()
+        EntrySalesUiEvent()
 
     data class DeleteProduct(val draftId: String) : EntrySalesUiEvent()
     data class LoadScannedProducts(val draftId: String) : EntrySalesUiEvent()

@@ -22,32 +22,32 @@ interface ProductTransDraftDao {
 
     @Transaction
     suspend fun addProductToDraft(
-            draftId: String,
-            cashierName: String,
-            product: ProductTransEntity,
-            username: String
+        draftId: String,
+        cashierName: String,
+        product: ProductTransEntity,
+        username: String
     ) {
         val draft = getDraftById(draftId)
         if (draft != null) {
 
             insertProductTrans(product)
             updateDraft(
-                    draftId = draft.draftId,
-                    isPrinted = draft.isPrinted,
-                    amountPaid = draft.amountPaid,
-                    paymentMethod = draft.paymentMethod,
-                    description = draft.description,
-                    dueDate = draft.dueDate,
-                    customer = draft.customer,
-                    username = username
+                draftId = draft.draftId,
+                isPrinted = draft.isPrinted,
+                amountPaid = draft.amountPaid,
+                paymentMethod = draft.paymentMethod,
+                description = draft.description,
+                dueDate = draft.dueDate,
+                customer = draft.customer,
+                username = username
             )
         } else {
             val newDraft =
-                    ProductTransDraftEntity(
-                            draftId = draftId,
-                            cashier = cashierName,
-                            username = username
-                    )
+                ProductTransDraftEntity(
+                    draftId = draftId,
+                    cashier = cashierName,
+                    username = username
+                )
             insertDraft(newDraft)
             insertProductTrans(product)
         }
@@ -60,30 +60,30 @@ interface ProductTransDraftDao {
     suspend fun getDraftById(draftId: String): ProductTransDraftEntity?
 
     @Query(
-            "UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, description = :description, customer = :customer, username = :username WHERE draftId = :draftId"
+        "UPDATE product_trans_drafts SET isPrinted = :isPrinted, amountPaid = :amountPaid, paymentMethod = :paymentMethod, dueDate = :dueDate, description = :description, customer = :customer, username = :username WHERE draftId = :draftId"
     )
     suspend fun updateDraft(
-            draftId: String,
-            isPrinted: Boolean?,
-            amountPaid: Int?,
-            paymentMethod: String?,
-            description: String?,
-            dueDate: String?,
-            customer: String?,
-            username: String?
+        draftId: String,
+        isPrinted: Boolean?,
+        amountPaid: Int?,
+        paymentMethod: String?,
+        description: String?,
+        dueDate: String?,
+        customer: String?,
+        username: String?
     )
 
     @Transaction
     suspend fun updateProductInDraft(
-            draftId: String,
-            productId: String?,
-            qty: Int?,
-            amountPaid: Int?,
-            paymentMethod: String?,
-            description: String?,
-            dueDate: String?,
-            isPrinted: Boolean?,
-            customer: String?
+        draftId: String,
+        productId: String?,
+        qty: Int?,
+        amountPaid: Int?,
+        paymentMethod: String?,
+        description: String?,
+        dueDate: String?,
+        isPrinted: Boolean?,
+        customer: String?
     ) {
         val draftWithItems = getDraftWithItemsById(draftId)
         draftWithItems?.let { existingDraftWithItems ->
@@ -97,7 +97,7 @@ interface ProductTransDraftDao {
                     }
 
                     val remainingItems =
-                            existingDraftWithItems.items.filter { it.idBarang != productId }
+                        existingDraftWithItems.items.filter { it.idBarang != productId }
                     if (remainingItems.isEmpty()) {
                         deleteDraft(draftId)
                     }
@@ -117,20 +117,21 @@ interface ProductTransDraftDao {
             customer?.let { draft.customer = it }
 
             updateDraft(
-                    draftId = draft.draftId,
-                    isPrinted = draft.isPrinted,
-                    amountPaid = draft.amountPaid,
-                    paymentMethod = draft.paymentMethod,
-                    description = draft.description,
-                    dueDate = draft.dueDate,
-                    customer = draft.customer,
-                    username = draft.username
+                draftId = draft.draftId,
+                isPrinted = draft.isPrinted,
+                amountPaid = draft.amountPaid,
+                paymentMethod = draft.paymentMethod,
+                description = draft.description,
+                dueDate = draft.dueDate,
+                customer = draft.customer,
+                username = draft.username
             )
         }
-                ?: println("Draft not found for draftId: $draftId")
+            ?: println("Draft not found for draftId: $draftId")
     }
 
-    @Update suspend fun updateProductTrans(product: ProductTransEntity)
+    @Update
+    suspend fun updateProductTrans(product: ProductTransEntity)
 
     @Transaction
     @Query("SELECT * FROM product_trans_drafts WHERE draftId = :draftId")

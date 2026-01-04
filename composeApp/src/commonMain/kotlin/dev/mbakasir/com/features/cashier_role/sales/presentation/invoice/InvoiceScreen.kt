@@ -60,442 +60,443 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun InvoiceScreen(
-        viewModel: InvoiceViewModel,
-        shareManager: ShareManager,
-        navController: NavController,
-        paymentData: PaymentUiState? = null,
-        noInvoice: String? = null
+    viewModel: InvoiceViewModel,
+    shareManager: ShareManager,
+    navController: NavController,
+    paymentData: PaymentUiState? = null,
+    noInvoice: String? = null
 ) {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        Invoice(
-                uiState = uiState,
-                onEvent = { viewModel.onEvent(it) },
-                shareManager = shareManager,
-                paymentData = paymentData,
-                noInvoice = noInvoice,
-                navigateBack = {
-                        if (noInvoice != null) {
-                                navController.popBackStack()
-                        } else {
-                                navController.navigate(CashierScreen.Sales.route) {
-                                        popUpTo(CashierScreen.Sales.route) { inclusive = true }
-                                }
-                        }
+    Invoice(
+        uiState = uiState,
+        onEvent = { viewModel.onEvent(it) },
+        shareManager = shareManager,
+        paymentData = paymentData,
+        noInvoice = noInvoice,
+        navigateBack = {
+            if (noInvoice != null) {
+                navController.popBackStack()
+            } else {
+                navController.navigate(CashierScreen.Sales.route) {
+                    popUpTo(CashierScreen.Sales.route) { inclusive = true }
                 }
-        )
+            }
+        }
+    )
 }
 
 @Composable
 fun Invoice(
-        uiState: InvoiceUiState,
-        onEvent: (InvoiceUiEvent) -> Unit,
-        shareManager: ShareManager,
-        paymentData: PaymentUiState? = null,
-        noInvoice: String? = null,
-        navigateBack: () -> Unit
+    uiState: InvoiceUiState,
+    onEvent: (InvoiceUiEvent) -> Unit,
+    shareManager: ShareManager,
+    paymentData: PaymentUiState? = null,
+    noInvoice: String? = null,
+    navigateBack: () -> Unit
 ) {
-        val captureController = rememberCaptureController()
-        val scope = rememberCoroutineScope()
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
 
-        LaunchedEffect(paymentData, noInvoice) {
-                when {
-                        paymentData != null -> {
-                                onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentData))
-                        }
-                        noInvoice != null -> {
-                                onEvent(InvoiceUiEvent.ArgumentNoInvoiceLoaded(noInvoice))
-                        }
-                }
+    LaunchedEffect(paymentData, noInvoice) {
+        when {
+            paymentData != null -> {
+                onEvent(InvoiceUiEvent.ArgumentPaymentLoaded(paymentData))
+            }
+
+            noInvoice != null -> {
+                onEvent(InvoiceUiEvent.ArgumentNoInvoiceLoaded(noInvoice))
+            }
         }
+    }
 
-        if (uiState.isLoading) {
-                EnhancedLoading()
-        } else {
+    if (uiState.isLoading) {
+        EnhancedLoading()
+    } else {
+        Column(
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(Color.White)
+                    .imePadding()
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
+        ) {
+            Capturable(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                captureController = captureController,
+                onCaptured = { imageBitmap ->
+                    scope.launch {
+                        shareManager.shareImage(
+                            imageBitmap = imageBitmap,
+                            fileName =
+                                "invoice_${uiState.invoiceNumber}.png"
+                        )
+                    }
+                },
+            ) {
                 Column(
-                        modifier =
-                                Modifier.fillMaxSize()
-                                        .background(Color.White)
-                                        .imePadding()
-                                        .statusBarsPadding()
-                                        .navigationBarsPadding(),
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .background(Color.White)
+                            .padding(16.dp)
                 ) {
-                        Capturable(
-                                modifier =
-                                        Modifier.fillMaxWidth()
-                                                .weight(1f)
-                                                .verticalScroll(rememberScrollState()),
-                                captureController = captureController,
-                                onCaptured = { imageBitmap ->
-                                        scope.launch {
-                                                shareManager.shareImage(
-                                                        imageBitmap = imageBitmap,
-                                                        fileName =
-                                                                "invoice_${uiState.invoiceNumber}.png"
-                                                )
-                                        }
-                                },
+                    Box(
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(
+                                    Color(0XFFDBFFF6),
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .padding(16.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment =
+                                Alignment.CenterHorizontally
                         ) {
-                                Column(
-                                        modifier =
-                                                Modifier.fillMaxWidth()
-                                                        .background(Color.White)
-                                                        .padding(16.dp)
-                                ) {
-                                        Box(
-                                                modifier =
-                                                        Modifier.fillMaxWidth()
-                                                                .background(
-                                                                        Color(0XFFDBFFF6),
-                                                                        RoundedCornerShape(10.dp)
-                                                                )
-                                                                .padding(16.dp),
-                                        ) {
-                                                Column(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        horizontalAlignment =
-                                                                Alignment.CenterHorizontally
-                                                ) {
-                                                        Text(
-                                                                text =
-                                                                        uiState.store?.nama
-                                                                                .toString(),
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .titleMedium.copy(
-                                                                                fontWeight =
-                                                                                        FontWeight
-                                                                                                .SemiBold
-                                                                        ),
-                                                                color = dark,
-                                                                modifier = Modifier.padding(8.dp),
-                                                        )
-                                                        Text(
-                                                                text =
-                                                                        uiState.store?.alamat
-                                                                                .toString(),
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark,
-                                                                modifier =
-                                                                        Modifier.padding(
-                                                                                bottom = 8.dp
-                                                                        )
-                                                        )
-                                                        Text(
-                                                                text =
-                                                                        uiState.store?.telp
-                                                                                .toString(),
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark
-                                                        )
-                                                }
-                                        }
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                                Column {
-                                                        Text(
-                                                                text = uiState.invoiceNumber,
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark
-                                                        )
-                                                        Text(
-                                                                text = uiState.tanggal,
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark
-                                                        )
-                                                }
-                                                Column(horizontalAlignment = Alignment.End) {
-                                                        Text(
-                                                                text = uiState.method,
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark
-                                                        )
-                                                        Text(
-                                                                text = uiState.kasir,
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .bodyMedium,
-                                                                color = dark
-                                                        )
-                                                        if (uiState.pelangganType.isNotEmpty()) {
-                                                                Text(
-                                                                        text =
-                                                                                uiState.pelangganType,
-                                                                        style =
-                                                                                MaterialTheme
-                                                                                        .typography
-                                                                                        .bodyMedium,
-                                                                        color = dark
-                                                                )
-                                                        }
-                                                }
-                                        }
-                                        HorizontalDivider(
-                                                modifier = Modifier.padding(vertical = 16.dp),
-                                                color = stroke
-                                        )
-                                        Text(
-                                                text = "Produk:",
-                                                style =
-                                                        MaterialTheme.typography.titleMedium.copy(
-                                                                fontWeight = FontWeight.SemiBold
-                                                        ),
-                                                color = dark,
-                                                modifier = Modifier.padding(bottom = 8.dp)
-                                        )
-                                        uiState.detil.forEach {
-                                                ItemRow(
-                                                        name = it.namaBarang,
-                                                        qty = it.qtyJual,
-                                                        price =
-                                                                currencyFormat(
-                                                                        (it.hargaItem
-                                                                                .toDoubleOrNull()
-                                                                                ?: 0.0)
-                                                                ),
-                                                        discount =
-                                                                currencyFormat(
-                                                                        (it.diskon.toDoubleOrNull()
-                                                                                ?: 0.0)
-                                                                )
-                                                )
-                                                Spacer(modifier = Modifier.height(8.dp))
-                                        }
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        DashedDivider(color = dark, thickness = 1.dp)
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        TotalRow(
-                                                label = "TOTAL HARGA:",
-                                                amount = currencyFormat(uiState.totalHarga)
-                                        )
-                                        TotalRow(
-                                                label = "PPN:",
-                                                amount = currencyFormat(uiState.ppn)
-                                        )
-                                        TotalRow(
-                                                label = "DISKON:",
-                                                amount = "- ${currencyFormat(uiState.diskon)}"
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        TotalRow(
-                                                label = "TOTAL TAGIHAN:",
-                                                amount = currencyFormat(uiState.subtotal),
-                                                isBold = true
-                                        )
-                                        HorizontalDivider(
-                                                modifier = Modifier.padding(vertical = 16.dp),
-                                                color = stroke
-                                        )
-                                        TotalRow(
-                                                label = "TUNAI:",
-                                                amount = currencyFormat(uiState.bayar)
-                                        )
-                                        TotalRow(
-                                                label = "KEMBALIAN:",
-                                                amount = currencyFormat(uiState.kembali)
-                                        )
-                                        Spacer(modifier = Modifier.height(24.dp))
-                                        Text(
-                                                text = "==TERIMA KASIH SUDAH BERBELANJA==",
-                                                textAlign = TextAlign.Center,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = secondary_text,
-                                                modifier = Modifier.fillMaxWidth(),
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(
-                                                text =
-                                                        "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
-                                                textAlign = TextAlign.Center,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = secondary_text,
-                                                modifier = Modifier.fillMaxWidth()
-                                        )
-                                }
+                            Text(
+                                text =
+                                    uiState.store?.nama
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .titleMedium.copy(
+                                            fontWeight =
+                                                FontWeight
+                                                    .SemiBold
+                                        ),
+                                color = dark,
+                                modifier = Modifier.padding(8.dp),
+                            )
+                            Text(
+                                text =
+                                    uiState.store?.alamat
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark,
+                                modifier =
+                                    Modifier.padding(
+                                        bottom = 8.dp
+                                    )
+                            )
+                            Text(
+                                text =
+                                    uiState.store?.telp
+                                        .toString(),
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark
+                            )
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Column {
-                                HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
-                                Row(
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                        horizontalArrangement = Arrangement.SpaceAround
-                                ) {
-                                        TextButton(onClick = { captureController.capture() }) {
-                                                Row(
-                                                        verticalAlignment =
-                                                                Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.Center
-                                                ) {
-                                                        Icon(
-                                                                imageVector = Icons.Default.Print,
-                                                                contentDescription = "Cetak",
-                                                                tint = primary
-                                                        )
-                                                        Text(
-                                                                "Cetak",
-                                                                fontWeight = FontWeight.SemiBold,
-                                                                fontSize = 18.sp,
-                                                                color = primary,
-                                                                modifier =
-                                                                        Modifier.padding(
-                                                                                start = 4.dp
-                                                                        )
-                                                        )
-                                                }
-                                        }
-                                        TextButton(onClick = { navigateBack() }) {
-                                                Row(
-                                                        verticalAlignment =
-                                                                Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.Center
-                                                ) {
-                                                        if (noInvoice != null) {
-                                                                Icon(
-                                                                        imageVector =
-                                                                                Icons.Outlined
-                                                                                        .ArrowBackIosNew,
-                                                                        contentDescription =
-                                                                                "Kembali",
-                                                                        tint = icon
-                                                                )
-                                                                Text(
-                                                                        "Kembali",
-                                                                        fontWeight =
-                                                                                FontWeight.SemiBold,
-                                                                        fontSize = 18.sp,
-                                                                        color = icon,
-                                                                        modifier =
-                                                                                Modifier.padding(
-                                                                                        start = 4.dp
-                                                                                )
-                                                                )
-                                                        } else {
-                                                                Icon(
-                                                                        imageVector =
-                                                                                Icons.Outlined
-                                                                                        .CheckCircle,
-                                                                        contentDescription =
-                                                                                "Selesai",
-                                                                        tint = icon
-                                                                )
-                                                                Text(
-                                                                        "Selesai",
-                                                                        fontWeight =
-                                                                                FontWeight.SemiBold,
-                                                                        fontSize = 18.sp,
-                                                                        color = icon,
-                                                                        modifier =
-                                                                                Modifier.padding(
-                                                                                        start = 4.dp
-                                                                                )
-                                                                )
-                                                        }
-                                                }
-                                        }
-                                }
+                            Text(
+                                text = uiState.invoiceNumber,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = uiState.tanggal,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark
+                            )
                         }
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = uiState.method,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark
+                            )
+                            Text(
+                                text = uiState.kasir,
+                                style =
+                                    MaterialTheme.typography
+                                        .bodyMedium,
+                                color = dark
+                            )
+                            if (uiState.pelangganType.isNotEmpty()) {
+                                Text(
+                                    text =
+                                        uiState.pelangganType,
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .bodyMedium,
+                                    color = dark
+                                )
+                            }
+                        }
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = stroke
+                    )
+                    Text(
+                        text = "Produk:",
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                        color = dark,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    uiState.detil.forEach {
+                        ItemRow(
+                            name = it.namaBarang,
+                            qty = it.qtyJual,
+                            price =
+                                currencyFormat(
+                                    (it.hargaItem
+                                        .toDoubleOrNull()
+                                        ?: 0.0)
+                                ),
+                            discount =
+                                currencyFormat(
+                                    (it.diskon.toDoubleOrNull()
+                                        ?: 0.0)
+                                )
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DashedDivider(color = dark, thickness = 1.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TotalRow(
+                        label = "TOTAL HARGA:",
+                        amount = currencyFormat(uiState.totalHarga)
+                    )
+                    TotalRow(
+                        label = "PPN:",
+                        amount = currencyFormat(uiState.ppn)
+                    )
+                    TotalRow(
+                        label = "DISKON:",
+                        amount = "- ${currencyFormat(uiState.diskon)}"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TotalRow(
+                        label = "TOTAL TAGIHAN:",
+                        amount = currencyFormat(uiState.subtotal),
+                        isBold = true
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = stroke
+                    )
+                    TotalRow(
+                        label = "TUNAI:",
+                        amount = currencyFormat(uiState.bayar)
+                    )
+                    TotalRow(
+                        label = "KEMBALIAN:",
+                        amount = currencyFormat(uiState.kembali)
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "==TERIMA KASIH SUDAH BERBELANJA==",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text =
+                            "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = secondary_text,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Column {
+                HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    TextButton(onClick = { captureController.capture() }) {
+                        Row(
+                            verticalAlignment =
+                                Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Print,
+                                contentDescription = "Cetak",
+                                tint = primary
+                            )
+                            Text(
+                                "Cetak",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 18.sp,
+                                color = primary,
+                                modifier =
+                                    Modifier.padding(
+                                        start = 4.dp
+                                    )
+                            )
+                        }
+                    }
+                    TextButton(onClick = { navigateBack() }) {
+                        Row(
+                            verticalAlignment =
+                                Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            if (noInvoice != null) {
+                                Icon(
+                                    imageVector =
+                                        Icons.Outlined
+                                            .ArrowBackIosNew,
+                                    contentDescription =
+                                        "Kembali",
+                                    tint = icon
+                                )
+                                Text(
+                                    "Kembali",
+                                    fontWeight =
+                                        FontWeight.SemiBold,
+                                    fontSize = 18.sp,
+                                    color = icon,
+                                    modifier =
+                                        Modifier.padding(
+                                            start = 4.dp
+                                        )
+                                )
+                            } else {
+                                Icon(
+                                    imageVector =
+                                        Icons.Outlined
+                                            .CheckCircle,
+                                    contentDescription =
+                                        "Selesai",
+                                    tint = icon
+                                )
+                                Text(
+                                    "Selesai",
+                                    fontWeight =
+                                        FontWeight.SemiBold,
+                                    fontSize = 18.sp,
+                                    color = icon,
+                                    modifier =
+                                        Modifier.padding(
+                                            start = 4.dp
+                                        )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
+    }
 }
 
 @Composable
 fun ItemRow(name: String, qty: String, price: String, discount: String) {
-        Column {
-                Row {
-                        Text(
-                                text = name,
-                                color = secondary_text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(3f)
-                        )
-                        Text(
-                                text = qty,
-                                textAlign = TextAlign.Center,
-                                color = secondary_text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                                text = price,
-                                textAlign = TextAlign.End,
-                                color = secondary_text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(2f)
-                        )
-                }
-                Text(
-                        text = "Diskon: $discount",
-                        textAlign = TextAlign.End,
-                        color = secondary_text,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
-                )
+    Column {
+        Row {
+            Text(
+                text = name,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(3f)
+            )
+            Text(
+                text = qty,
+                textAlign = TextAlign.Center,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = price,
+                textAlign = TextAlign.End,
+                color = secondary_text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(2f)
+            )
         }
+        Text(
+            text = "Diskon: $discount",
+            textAlign = TextAlign.End,
+            color = secondary_text,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
+        )
+    }
 }
 
 @Composable
 fun TotalRow(label: String, amount: String, isBold: Boolean = false) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                        text = label,
-                        style =
-                                if (isBold)
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        )
-                                else MaterialTheme.typography.bodyMedium,
-                        color = dark
-                )
-                Text(
-                        text = amount,
-                        style =
-                                if (isBold)
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        )
-                                else MaterialTheme.typography.bodyMedium,
-                        color = dark
-                )
-        }
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text = label,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
+            color = dark
+        )
+        Text(
+            text = amount,
+            style =
+                if (isBold)
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                else MaterialTheme.typography.bodyMedium,
+            color = dark
+        )
+    }
 }
 
 @Composable
 fun DashedDivider(
-        color: Color = Color.Red,
-        thickness: Dp = 1.dp,
-        intervals: FloatArray = floatArrayOf(10f, 5f),
-        phase: Float = 0f,
-        startMargin: Dp = 0.dp,
-        endMargin: Dp = 0.dp,
-        modifier: Modifier = Modifier.fillMaxWidth()
+    color: Color = Color.Red,
+    thickness: Dp = 1.dp,
+    intervals: FloatArray = floatArrayOf(10f, 5f),
+    phase: Float = 0f,
+    startMargin: Dp = 0.dp,
+    endMargin: Dp = 0.dp,
+    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
-        val pathEffect = PathEffect.dashPathEffect(intervals, phase)
+    val pathEffect = PathEffect.dashPathEffect(intervals, phase)
 
-        Canvas(modifier = modifier) {
-                val dividerHeight = thickness.toPx()
-                val startX = startMargin.toPx()
-                val endX = size.width - endMargin.toPx()
+    Canvas(modifier = modifier) {
+        val dividerHeight = thickness.toPx()
+        val startX = startMargin.toPx()
+        val endX = size.width - endMargin.toPx()
 
-                drawLine(
-                        color = color,
-                        strokeWidth = dividerHeight,
-                        start = Offset(startX, 0f),
-                        end = Offset(endX, 0f),
-                        pathEffect = pathEffect,
-                        cap = StrokeCap.Butt
-                )
-        }
+        drawLine(
+            color = color,
+            strokeWidth = dividerHeight,
+            start = Offset(startX, 0f),
+            end = Offset(endX, 0f),
+            pathEffect = pathEffect,
+            cap = StrokeCap.Butt
+        )
+    }
 }

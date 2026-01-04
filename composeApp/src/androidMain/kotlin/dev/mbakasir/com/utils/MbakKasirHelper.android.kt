@@ -19,9 +19,9 @@ actual typealias JavaSerializable = Serializable
 class AndroidBrowserHelper(private val context: Context) : BrowserHelper {
     override fun openBrowser(url: String) {
         val intent =
-                Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+            Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         context.startActivity(intent)
     }
 }

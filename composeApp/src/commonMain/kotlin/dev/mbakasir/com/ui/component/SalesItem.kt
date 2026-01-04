@@ -29,110 +29,110 @@ import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun SalesItem(
-        product: dev.mbakasir.com.features.cashier_role.sales.data.ProductDraftWithItems,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier
+    product: dev.mbakasir.com.features.cashier_role.sales.data.ProductDraftWithItems,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-        OutlinedCard(
-                modifier = modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                border = CardDefaults.outlinedCardBorder(enabled = true),
-                colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
-        ) {
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                        ) {
-                                Icon(
-                                        imageVector = Icons.Default.AccessTime,
-                                        contentDescription = "Time",
-                                        modifier = Modifier.padding(end = 4.dp)
-                                )
-                                Text(
-                                        text = product.draft.dateTime,
-                                        color = dev.mbakasir.com.ui.theme.secondary_text,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        maxLines = 1
-                                )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ItemRowSales(
-                                label = if (product.draft.isPrinted) "Belum posting" else "Draft",
-                                value = currencyFormat(product.totalAmount.toDouble()),
-                                color =
-                                        if (product.draft.isPrinted)
-                                                dev.mbakasir.com.ui.theme.yellow
-                                        else dev.mbakasir.com.ui.theme.red
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = "Time",
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+                Text(
+                    text = product.draft.dateTime,
+                    color = dev.mbakasir.com.ui.theme.secondary_text,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(16.dp))
+            ItemRowSales(
+                label = if (product.draft.isPrinted) "Belum posting" else "Draft",
+                value = currencyFormat(product.totalAmount.toDouble()),
+                color =
+                    if (product.draft.isPrinted)
+                        dev.mbakasir.com.ui.theme.yellow
+                    else dev.mbakasir.com.ui.theme.red
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ItemRowSales(
+                label = product.draft.cashier,
+                value = product.draft.draftId,
+                color = dev.mbakasir.com.ui.theme.dark
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(
+                onClick = onClick,
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        contentColor =
+                            if (product.draft.isPrinted)
+                                dev.mbakasir.com.ui.theme.blue
+                            else dev.mbakasir.com.ui.theme.primary
+                    ),
+                border =
+                    BorderStroke(
+                        width = 1.dp,
+                        color =
+                            if (product.draft.isPrinted)
+                                dev.mbakasir.com.ui.theme.blue
+                            else dev.mbakasir.com.ui.theme.primary
+                    ),
+                shape = RoundedCornerShape(24.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text =
+                        if (product.draft.isPrinted) "Kirim ulang"
+                        else "Selesaikan",
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ItemRowSales(
-                                label = product.draft.cashier,
-                                value = product.draft.draftId,
-                                color = dev.mbakasir.com.ui.theme.dark
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedButton(
-                                onClick = onClick,
-                                colors =
-                                        ButtonDefaults.outlinedButtonColors(
-                                                contentColor =
-                                                        if (product.draft.isPrinted)
-                                                                dev.mbakasir.com.ui.theme.blue
-                                                        else dev.mbakasir.com.ui.theme.primary
-                                        ),
-                                border =
-                                        BorderStroke(
-                                                width = 1.dp,
-                                                color =
-                                                        if (product.draft.isPrinted)
-                                                                dev.mbakasir.com.ui.theme.blue
-                                                        else dev.mbakasir.com.ui.theme.primary
-                                        ),
-                                shape = RoundedCornerShape(24.dp),
-                                modifier = Modifier.fillMaxWidth()
-                        ) {
-                                Text(
-                                        text =
-                                                if (product.draft.isPrinted) "Kirim ulang"
-                                                else "Selesaikan",
-                                        style =
-                                                MaterialTheme.typography.bodySmall.copy(
-                                                        fontWeight = FontWeight.Bold
-                                                )
-                                )
-                        }
-                }
+                )
+            }
         }
+    }
 }
 
 @Composable
 fun ItemRowSales(label: String, value: String, color: Color) {
-        Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-                Text(
-                        text = label,
-                        color = color,
-                        style =
-                                MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                ),
-                        maxLines = 1,
-                        modifier = Modifier.weight(1f, fill = false)
-                )
-                Text(
-                        text = value,
-                        color = dev.mbakasir.com.ui.theme.dark,
-                        style =
-                                MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                ),
-                        maxLines = 1
-                )
-        }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            color = color,
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+            maxLines = 1,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        Text(
+            text = value,
+            color = dev.mbakasir.com.ui.theme.dark,
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+            maxLines = 1
+        )
+    }
 }

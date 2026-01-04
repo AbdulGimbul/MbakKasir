@@ -52,12 +52,12 @@ fun ProductScreen(viewModel: ProductViewModel) {
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                .distinctUntilChanged()
-                .collect { index ->
-                    if (index == uiState.productList.lastIndex) {
-                        viewModel.getTopProduct()
-                    }
+            .distinctUntilChanged()
+            .collect { index ->
+                if (index == uiState.productList.lastIndex) {
+                    viewModel.getTopProduct()
                 }
+            }
     }
 
     Product(uiState = uiState, listState = listState, onRefresh = { viewModel.reloadData() })
@@ -77,74 +77,74 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { onRefresh() }
 
     ContentWithMessageBar(
-            messageBarState = state,
-            errorMaxLines = 2,
-            showCopyButton = false,
-            visibilityDuration = 3000L,
-            modifier = Modifier.statusBarsPadding()
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
+        visibilityDuration = 3000L,
+        modifier = Modifier.statusBarsPadding()
     ) {
         PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = onRefresh,
-                state = pullToRefreshState,
-                modifier = Modifier.fillMaxSize()
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh,
+            state = pullToRefreshState,
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(
-                        "Barang",
-                        style =
-                                MaterialTheme.typography.headlineLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                ),
-                        color = dark,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
+                    "Barang",
+                    style =
+                        MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    color = dark,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
                 )
                 DefaultTextField(
-                        value = search,
-                        onValueChange = { search = it },
-                        placehoder = "Search ...",
-                        leadingIcon = Icons.Default.Search,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    value = search,
+                    onValueChange = { search = it },
+                    placehoder = "Search ...",
+                    leadingIcon = Icons.Default.Search,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                 )
                 Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                                text = "Terakhir Diperbaharui",
-                                color = dark,
-                                style =
-                                        MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        ),
-                                maxLines = 2
+                            text = "Terakhir Diperbaharui",
+                            color = dark,
+                            style =
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                            maxLines = 2
                         )
                         Text(
-                                text = uiState.latestUpdate.ifEmpty { "-" },
-                                color = primary,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1
+                            text = uiState.latestUpdate.ifEmpty { "-" },
+                            color = primary,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1
                         )
                     }
                     Column(modifier = Modifier.weight(0.5f), horizontalAlignment = Alignment.End) {
                         Text(
-                                text = "Jumlah Barang",
-                                color = dark,
-                                style =
-                                        MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        ),
-                                maxLines = 2,
-                                modifier = Modifier.fillMaxWidth()
+                            text = "Jumlah Barang",
+                            color = dark,
+                            style =
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                            maxLines = 2,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Text(
-                                text = uiState.totalProduct.toString(),
-                                color = primary,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth()
+                            text = uiState.totalProduct.toString(),
+                            color = primary,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }

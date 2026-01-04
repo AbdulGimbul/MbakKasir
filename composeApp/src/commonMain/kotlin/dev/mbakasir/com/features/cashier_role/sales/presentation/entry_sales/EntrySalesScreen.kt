@@ -84,35 +84,35 @@ import rememberMessageBarState
 
 @Composable
 fun EntrySalesScreen(
-        viewModel: EntrySalesViewModel,
-        paymentViewModel: PaymentViewModel,
-        navController: NavController,
-        navigationType: MbakKasirNavigationType,
-        draftId: String,
+    viewModel: EntrySalesViewModel,
+    paymentViewModel: PaymentViewModel,
+    navController: NavController,
+    navigationType: MbakKasirNavigationType,
+    draftId: String,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paymentUiState by paymentViewModel.uiState.collectAsStateWithLifecycle()
 
     if (navigationType == MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER) {
         EntrySalesAndPayment(
-                entryUiState = uiState,
-                paymentUiState = paymentUiState,
-                entryOnEvent = { viewModel.onEvent(it) },
-                paymentOnEvent = { paymentViewModel.onEvent(it) },
-                navigateBack = { navController.navigateUp() },
-                draftId = draftId
+            entryUiState = uiState,
+            paymentUiState = paymentUiState,
+            entryOnEvent = { viewModel.onEvent(it) },
+            paymentOnEvent = { paymentViewModel.onEvent(it) },
+            navigateBack = { navController.navigateUp() },
+            draftId = draftId
         )
     } else {
         EntrySales(
-                uiState = uiState,
-                onEvent = { viewModel.onEvent(it) },
-                moveToPayment = { scannedProducts, draftId, customerCode ->
-                    navController.navigate(
-                            "${CashierScreen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId&customerCode=$customerCode"
-                    ) { restoreState = true }
-                },
-                navigateBack = { navController.navigateUp() },
-                draftId = draftId
+            uiState = uiState,
+            onEvent = { viewModel.onEvent(it) },
+            moveToPayment = { scannedProducts, draftId, customerCode ->
+                navController.navigate(
+                    "${CashierScreen.Payment.route}/?scannedProducts=$scannedProducts&draftId=$draftId&customerCode=$customerCode"
+                ) { restoreState = true }
+            },
+            navigateBack = { navController.navigateUp() },
+            draftId = draftId
         )
     }
 }
@@ -120,11 +120,11 @@ fun EntrySalesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntrySales(
-        uiState: EntrySalesUiState,
-        onEvent: (EntrySalesUiEvent) -> Unit,
-        moveToPayment: (String, String, String) -> Unit,
-        navigateBack: () -> Unit,
-        draftId: String
+    uiState: EntrySalesUiState,
+    onEvent: (EntrySalesUiEvent) -> Unit,
+    moveToPayment: (String, String, String) -> Unit,
+    navigateBack: () -> Unit,
+    draftId: String
 ) {
 
     val showDialog = remember { mutableStateOf(false) }
@@ -143,12 +143,12 @@ fun EntrySales(
     }
 
     ContentWithMessageBar(
-            messageBarState = state,
-            errorMaxLines = 2,
-            showCopyButton = false,
-            visibilityDuration = 3000L,
-            errorContainerColor = Color.Yellow,
-            modifier = Modifier.statusBarsPadding()
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
+        visibilityDuration = 3000L,
+        errorContainerColor = Color.Yellow,
+        modifier = Modifier.statusBarsPadding()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)) {
@@ -156,8 +156,8 @@ fun EntrySales(
                     HeadlineText(stringResource(Res.string.entry_sales_add))
                     Spacer(modifier = Modifier.width(8.dp))
                     HeadlineText(
-                            text = stringResource(Res.string.entry_sales_title),
-                            color = primary_text
+                        text = stringResource(Res.string.entry_sales_title),
+                        color = primary_text
                     )
                 }
 
@@ -169,25 +169,25 @@ fun EntrySales(
                         val customer = uiState.customers.find { it.kode == uiState.searchCust }
                         val customerType = customer?.jenis_cs ?: ""
                         EntrySalesItem(
-                                product = product,
-                                customerType = customerType,
-                                onIncreaseQty = {
-                                    onEvent(
-                                            EntrySalesUiEvent.IncreaseProductQty(
-                                                    draftId.toString(),
-                                                    it
-                                            )
+                            product = product,
+                            customerType = customerType,
+                            onIncreaseQty = {
+                                onEvent(
+                                    EntrySalesUiEvent.IncreaseProductQty(
+                                        draftId.toString(),
+                                        it
                                     )
-                                },
-                                onDecreaseQty = {
-                                    onEvent(
-                                            EntrySalesUiEvent.DecreaseProductQty(
-                                                    draftId.toString(),
-                                                    it
-                                            )
+                                )
+                            },
+                            onDecreaseQty = {
+                                onEvent(
+                                    EntrySalesUiEvent.DecreaseProductQty(
+                                        draftId.toString(),
+                                        it
                                     )
-                                },
-                                modifier = Modifier.padding(vertical = 4.dp)
+                                )
+                            },
+                            modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
                 }
@@ -195,25 +195,25 @@ fun EntrySales(
 
             if (uiState.startBarCodeScan) {
                 QrScanner(
-                        modifier =
-                                Modifier.clipToBounds()
-                                        .clip(shape = RoundedCornerShape(size = 14.dp)),
-                        flashlightOn = uiState.flashlightOn,
-                        onCompletion = {
-                            onEvent(EntrySalesUiEvent.OnInputUserChanged(it))
-                            onEvent(EntrySalesUiEvent.ScanIconClick)
-                            onEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), it))
-                        },
-                        onFailure = {
-                            if (it.isEmpty()) {
-                                state.addError(Exception(invalidQrError))
-                            } else {
-                                state.addError(Exception(it))
-                            }
-                        },
-                        openImagePicker = false,
-                        imagePickerHandler = { onEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
-                        cameraLens = CameraLens.Back
+                    modifier =
+                        Modifier.clipToBounds()
+                            .clip(shape = RoundedCornerShape(size = 14.dp)),
+                    flashlightOn = uiState.flashlightOn,
+                    onCompletion = {
+                        onEvent(EntrySalesUiEvent.OnInputUserChanged(it))
+                        onEvent(EntrySalesUiEvent.ScanIconClick)
+                        onEvent(EntrySalesUiEvent.ScanProduct(draftId.toString(), it))
+                    },
+                    onFailure = {
+                        if (it.isEmpty()) {
+                            state.addError(Exception(invalidQrError))
+                        } else {
+                            state.addError(Exception(it))
+                        }
+                    },
+                    openImagePicker = false,
+                    imagePickerHandler = { onEvent(EntrySalesUiEvent.OnLaunchGallery(it)) },
+                    cameraLens = CameraLens.Back
                 )
             }
 
@@ -223,24 +223,24 @@ fun EntrySales(
                     CustomerSection(uiState, onEvent)
                     Spacer(modifier = Modifier.height(16.dp))
                     TransactionSummaryFooter(
-                            uiState = uiState,
-                            onCancel = { showDialog.value = true },
-                            onConfirm = {
-                                if (uiState.scannedProducts.isEmpty()) {
-                                    state.addError(Exception(itemsEmptyError))
-                                    return@TransactionSummaryFooter
-                                }
-                                val customer =
-                                        uiState.customers.find { it.kode == uiState.searchCust }
-                                val customerType = customer?.jenis_cs ?: ""
-                                val scannedProductsJson =
-                                        Json.encodeToString(
-                                                uiState.scannedProducts.map {
-                                                    it.toSerializable(customerType)
-                                                }
-                                        )
-                                moveToPayment(scannedProductsJson, draftId, uiState.searchCust)
+                        uiState = uiState,
+                        onCancel = { showDialog.value = true },
+                        onConfirm = {
+                            if (uiState.scannedProducts.isEmpty()) {
+                                state.addError(Exception(itemsEmptyError))
+                                return@TransactionSummaryFooter
                             }
+                            val customer =
+                                uiState.customers.find { it.kode == uiState.searchCust }
+                            val customerType = customer?.jenis_cs ?: ""
+                            val scannedProductsJson =
+                                Json.encodeToString(
+                                    uiState.scannedProducts.map {
+                                        it.toSerializable(customerType)
+                                    }
+                                )
+                            moveToPayment(scannedProductsJson, draftId, uiState.searchCust)
+                        }
                     )
                 }
             }
@@ -249,35 +249,35 @@ fun EntrySales(
 
     if (showDialog.value) {
         AlertDialog(
-                onDismissRequest = { showDialog.value = false },
-                confirmButton = {
-                    TextButton(
-                            onClick = {
-                                showDialog.value = false
-                                onEvent(EntrySalesUiEvent.DeleteProduct(draftId.toString()))
-                                navigateBack()
-                            }
-                    ) { Text(stringResource(Res.string.yes)) }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDialog.value = false }) {
-                        Text(stringResource(Res.string.no))
+            onDismissRequest = { showDialog.value = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog.value = false
+                        onEvent(EntrySalesUiEvent.DeleteProduct(draftId.toString()))
+                        navigateBack()
                     }
-                },
-                title = {
-                    Text(
-                            text = stringResource(Res.string.cancel_transaction_title),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                    )
-                },
-                text = {
-                    Text(
-                            stringResource(Res.string.cancel_transaction_body),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                    )
+                ) { Text(stringResource(Res.string.yes)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text(stringResource(Res.string.no))
                 }
+            },
+            title = {
+                Text(
+                    text = stringResource(Res.string.cancel_transaction_title),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Text(
+                    stringResource(Res.string.cancel_transaction_body),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
         )
     }
 }
@@ -285,12 +285,12 @@ fun EntrySales(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntrySalesAndPayment(
-        entryUiState: EntrySalesUiState,
-        paymentUiState: PaymentUiState,
-        entryOnEvent: (EntrySalesUiEvent) -> Unit,
-        paymentOnEvent: (PaymentUiEvent) -> Unit,
-        navigateBack: () -> Unit,
-        draftId: String
+    entryUiState: EntrySalesUiState,
+    paymentUiState: PaymentUiState,
+    entryOnEvent: (EntrySalesUiEvent) -> Unit,
+    paymentOnEvent: (PaymentUiEvent) -> Unit,
+    navigateBack: () -> Unit,
+    draftId: String
 ) {
     val messageBarState = rememberMessageBarState()
     val invalidQrError = stringResource(Res.string.invalid_qr)
@@ -301,7 +301,7 @@ fun EntrySalesAndPayment(
         val customer = entryUiState.customers.find { it.kode == entryUiState.searchCust }
         val customerType = customer?.jenis_cs ?: ""
         val updatedProducts =
-                entryUiState.scannedProducts.map { product -> product.toSerializable(customerType) }
+            entryUiState.scannedProducts.map { product -> product.toSerializable(customerType) }
         paymentOnEvent(PaymentUiEvent.ArgumentProductsLoaded(updatedProducts))
     }
 
@@ -312,26 +312,26 @@ fun EntrySalesAndPayment(
     }
 
     Row(
-            modifier =
-                    Modifier.fillMaxSize()
-                            .padding(16.dp) // Row to place EntrySales and Payment side by side
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(16.dp) // Row to place EntrySales and Payment side by side
     ) {
         // Left Side: Entry Sales
         ContentWithMessageBar(
-                messageBarState = messageBarState,
-                modifier =
-                        Modifier.weight(1f) // Takes 50% of the screen width
-                                .fillMaxHeight()
-                                .padding(end = 8.dp) // Padding to separate from Payment
+            messageBarState = messageBarState,
+            modifier =
+                Modifier.weight(1f) // Takes 50% of the screen width
+                    .fillMaxHeight()
+                    .padding(end = 8.dp) // Padding to separate from Payment
         ) {
             Column(modifier = Modifier.fillMaxHeight()) {
                 // Entry Sales Section
                 Column(modifier = Modifier.weight(1f)) {
                     HeadlineText(stringResource(Res.string.entry_sales_label))
                     HeadlineText(
-                            text = stringResource(Res.string.entry_sales_title),
-                            color = secondary_text,
-                            modifier = Modifier.padding(bottom = 32.dp)
+                        text = stringResource(Res.string.entry_sales_title),
+                        color = secondary_text,
+                        modifier = Modifier.padding(bottom = 32.dp)
                     )
 
                     ProductSearchSection(entryUiState, draftId, entryOnEvent)
@@ -339,59 +339,59 @@ fun EntrySalesAndPayment(
                     LazyColumn {
                         items(entryUiState.scannedProducts) { product ->
                             val customer =
-                                    entryUiState.customers.find {
-                                        it.kode == entryUiState.searchCust
-                                    }
+                                entryUiState.customers.find {
+                                    it.kode == entryUiState.searchCust
+                                }
                             val customerType = customer?.jenis_cs ?: ""
                             EntrySalesItem(
-                                    product = product,
-                                    customerType = customerType,
-                                    onIncreaseQty = {
-                                        entryOnEvent(
-                                                EntrySalesUiEvent.IncreaseProductQty(
-                                                        draftId.toString(),
-                                                        it
-                                                )
+                                product = product,
+                                customerType = customerType,
+                                onIncreaseQty = {
+                                    entryOnEvent(
+                                        EntrySalesUiEvent.IncreaseProductQty(
+                                            draftId.toString(),
+                                            it
                                         )
-                                    },
-                                    onDecreaseQty = {
-                                        entryOnEvent(
-                                                EntrySalesUiEvent.DecreaseProductQty(
-                                                        draftId.toString(),
-                                                        it
-                                                )
+                                    )
+                                },
+                                onDecreaseQty = {
+                                    entryOnEvent(
+                                        EntrySalesUiEvent.DecreaseProductQty(
+                                            draftId.toString(),
+                                            it
                                         )
-                                    },
-                                    modifier = Modifier.padding(vertical = 4.dp)
+                                    )
+                                },
+                                modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
                     }
 
                     if (entryUiState.startBarCodeScan) {
                         QrScanner(
-                                modifier =
-                                        Modifier.clipToBounds()
-                                                .clip(shape = RoundedCornerShape(size = 14.dp)),
-                                flashlightOn = entryUiState.flashlightOn,
-                                onCompletion = {
-                                    entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(it))
-                                    entryOnEvent(EntrySalesUiEvent.ScanIconClick)
-                                    entryOnEvent(
-                                            EntrySalesUiEvent.ScanProduct(draftId.toString(), it)
-                                    )
-                                },
-                                onFailure = {
-                                    if (it.isEmpty()) {
-                                        messageBarState.addError(Exception(invalidQrError))
-                                    } else {
-                                        messageBarState.addError(Exception(it))
-                                    }
-                                },
-                                openImagePicker = false,
-                                imagePickerHandler = {
-                                    entryOnEvent(EntrySalesUiEvent.OnLaunchGallery(it))
-                                },
-                                cameraLens = CameraLens.Back
+                            modifier =
+                                Modifier.clipToBounds()
+                                    .clip(shape = RoundedCornerShape(size = 14.dp)),
+                            flashlightOn = entryUiState.flashlightOn,
+                            onCompletion = {
+                                entryOnEvent(EntrySalesUiEvent.OnInputUserChanged(it))
+                                entryOnEvent(EntrySalesUiEvent.ScanIconClick)
+                                entryOnEvent(
+                                    EntrySalesUiEvent.ScanProduct(draftId.toString(), it)
+                                )
+                            },
+                            onFailure = {
+                                if (it.isEmpty()) {
+                                    messageBarState.addError(Exception(invalidQrError))
+                                } else {
+                                    messageBarState.addError(Exception(it))
+                                }
+                            },
+                            openImagePicker = false,
+                            imagePickerHandler = {
+                                entryOnEvent(EntrySalesUiEvent.OnLaunchGallery(it))
+                            },
+                            cameraLens = CameraLens.Back
                         )
                     }
                 }
@@ -416,11 +416,11 @@ fun EntrySalesAndPayment(
         }
 
         ContentWithMessageBar(
-                messageBarState = paymentMessageBarState,
-                modifier =
-                        Modifier.weight(1f) // Takes 50% of the screen width
-                                .fillMaxHeight()
-                                .padding(start = 8.dp) // Padding to separate from Entry Sales
+            messageBarState = paymentMessageBarState,
+            modifier =
+                Modifier.weight(1f) // Takes 50% of the screen width
+                    .fillMaxHeight()
+                    .padding(start = 8.dp) // Padding to separate from Entry Sales
         ) {
             if (paymentUiState.isLoading) {
                 EnhancedLoading()
@@ -429,56 +429,56 @@ fun EntrySalesAndPayment(
                     // Payment Section
                     Column(modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp)) {
                         HeadlineText(
-                                text = stringResource(Res.string.payment_title),
-                                modifier = Modifier.padding(bottom = 32.dp)
+                            text = stringResource(Res.string.payment_title),
+                            modifier = Modifier.padding(bottom = 32.dp)
                         )
 
                         Text(stringResource(Res.string.payment_type))
                         PaymentOptions(
-                                radioOptions = radioOptions,
-                                selectedOption = selectedOption,
-                                onOptionSelected = onOptionSelected
+                            radioOptions = radioOptions,
+                            selectedOption = selectedOption,
+                            onOptionSelected = onOptionSelected
                         )
 
                         if (selectedOption == "Kredit") {
                             OutlinedTextField(
-                                    value = paymentUiState.selectedDate,
-                                    onValueChange = {},
-                                    label = { Text("Jatuh Tempo") },
-                                    trailingIcon = {
-                                        IconButton(
-                                                onClick = {
-                                                    paymentOnEvent(PaymentUiEvent.DateIconClicked)
-                                                }
-                                        ) {
-                                            Icon(
-                                                    Icons.Default.DateRange,
-                                                    contentDescription = "Date"
-                                            )
+                                value = paymentUiState.selectedDate,
+                                onValueChange = {},
+                                label = { Text("Jatuh Tempo") },
+                                trailingIcon = {
+                                    IconButton(
+                                        onClick = {
+                                            paymentOnEvent(PaymentUiEvent.DateIconClicked)
                                         }
-                                    },
-                                    enabled = false,
-                                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.DateRange,
+                                            contentDescription = "Date"
+                                        )
+                                    }
+                                },
+                                enabled = false,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                             )
                         }
 
                         DefaultTextField(
-                                value = paymentUiState.uangDiterima,
-                                onValueChange = {
-                                    val formatted = formatCurrencyInput(it)
-                                    paymentOnEvent(PaymentUiEvent.UangDiterimaChanged(formatted))
-                                },
-                                placehoder = "Nominal Uang",
-                                keyboardOptions =
-                                        KeyboardOptions(keyboardType = KeyboardType.Number),
-                                visualTransformation = CurrencyVisualTransformation(),
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                            value = paymentUiState.uangDiterima,
+                            onValueChange = {
+                                val formatted = formatCurrencyInput(it)
+                                paymentOnEvent(PaymentUiEvent.UangDiterimaChanged(formatted))
+                            },
+                            placehoder = "Nominal Uang",
+                            keyboardOptions =
+                                KeyboardOptions(keyboardType = KeyboardType.Number),
+                            visualTransformation = CurrencyVisualTransformation(),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
 
                         DisabledTextField(
-                                value = paymentUiState.kembalian.toString(),
-                                onValueChange = {},
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                            value = paymentUiState.kembalian.toString(),
+                            onValueChange = {},
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
                     }
 
@@ -489,51 +489,51 @@ fun EntrySalesAndPayment(
                         HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
                         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                             SummaryRow(
-                                    label = "Total Harga:",
-                                    value = currencyFormat(paymentUiState.totalHarga.toDouble()),
+                                label = "Total Harga:",
+                                value = currencyFormat(paymentUiState.totalHarga.toDouble()),
                             )
                             SummaryRow(
-                                    label = "Diskon:",
-                                    value = currencyFormat(paymentUiState.diskon.toDouble())
+                                label = "Diskon:",
+                                value = currencyFormat(paymentUiState.diskon.toDouble())
                             )
                             HorizontalDivider(
-                                    modifier =
-                                            Modifier.fillMaxWidth()
-                                                    .width(1.dp)
-                                                    .padding(vertical = 10.dp)
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .width(1.dp)
+                                        .padding(vertical = 10.dp)
                             )
                             SummaryRow(
-                                    label = "Totlal Tagihan",
-                                    value = currencyFormat(paymentUiState.subtotal.toDouble()),
-                                    isBold = true
+                                label = "Totlal Tagihan",
+                                value = currencyFormat(paymentUiState.subtotal.toDouble()),
+                                isBold = true
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             FooterButton(
-                                    onCancelClick = navigateBack,
-                                    onConfirmClick = {
-                                        val uangDiterimaValue =
-                                                paymentUiState
-                                                        .uangDiterima
-                                                        .replace(".", "")
-                                                        .replace(",", "")
-                                                        .toIntOrNull()
-                                                        ?: 0
-                                        if (paymentUiState.uangDiterima.isEmpty() ||
-                                                        uangDiterimaValue < paymentUiState.subtotal
-                                        ) {
-                                            paymentMessageBarState.addError(
-                                                    Exception(
-                                                            "Hei, uang diterima tidak bisa kurang dari total harga!"
-                                                    )
+                                onCancelClick = navigateBack,
+                                onConfirmClick = {
+                                    val uangDiterimaValue =
+                                        paymentUiState
+                                            .uangDiterima
+                                            .replace(".", "")
+                                            .replace(",", "")
+                                            .toIntOrNull()
+                                            ?: 0
+                                    if (paymentUiState.uangDiterima.isEmpty() ||
+                                        uangDiterimaValue < paymentUiState.subtotal
+                                    ) {
+                                        paymentMessageBarState.addError(
+                                            Exception(
+                                                "Hei, uang diterima tidak bisa kurang dari total harga!"
                                             )
-                                            return@FooterButton
-                                        }
-                                        val method =
-                                                if (selectedOption == "Tunai") "Cash" else "Kredit"
-                                        paymentOnEvent(PaymentUiEvent.ConfirmButtonClicked)
-                                    },
-                                    cancelText = "Kembali",
-                                    confirmText = "Bayar"
+                                        )
+                                        return@FooterButton
+                                    }
+                                    val method =
+                                        if (selectedOption == "Tunai") "Cash" else "Kredit"
+                                    paymentOnEvent(PaymentUiEvent.ConfirmButtonClicked)
+                                },
+                                cancelText = "Kembali",
+                                confirmText = "Bayar"
                             )
                         }
                     }

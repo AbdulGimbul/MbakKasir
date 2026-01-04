@@ -17,9 +17,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginViewModel(
-        private val authRepository: AuthRepository,
-        private val konnectivity: Konnectivity,
-        private val salesRepository: SalesRepository,
+    private val authRepository: AuthRepository,
+    private val konnectivity: Konnectivity,
+    private val salesRepository: SalesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.NotAuthenticated())
@@ -50,10 +50,10 @@ class LoginViewModel(
     }
 
     private fun updateState(
-            update: (LoginUiState.NotAuthenticated) -> LoginUiState.NotAuthenticated
+        update: (LoginUiState.NotAuthenticated) -> LoginUiState.NotAuthenticated
     ) {
         _uiState.value =
-                (_uiState.value as? LoginUiState.NotAuthenticated)?.let(update) ?: _uiState.value
+            (_uiState.value as? LoginUiState.NotAuthenticated)?.let(update) ?: _uiState.value
     }
 
     private fun login() {
@@ -64,14 +64,14 @@ class LoginViewModel(
             val result = authRepository.login(LoginRequest(ui.username, ui.password))
             withContext(Dispatchers.Main) {
                 result
-                        .onSuccess {
-                            if (it.code == "200") {
-                                _uiState.value = LoginUiState.Authenticated(role = it.user.role)
-                            }
+                    .onSuccess {
+                        if (it.code == "200") {
+                            _uiState.value = LoginUiState.Authenticated(role = it.user.role)
                         }
-                        .onError { error ->
-                            updateState { it.copy(errorMessage = error.message, isLoading = false) }
-                        }
+                    }
+                    .onError { error ->
+                        updateState { it.copy(errorMessage = error.message, isLoading = false) }
+                    }
             }
         }
     }
@@ -82,25 +82,25 @@ class LoginViewModel(
             val result = authRepository.isTokenValid("", "", "1", "1")
             withContext(Dispatchers.Main) {
                 result
-                        .onSuccess {
+                    .onSuccess {
+                        val role = authRepository.getRole()
+                        _uiState.value = LoginUiState.Authenticated(role = role)
+                    }
+                    .onError { error ->
+                        if (error is NetworkException.UnauthorizedException) {
+                            // salesRepository.deleteAllDrafts() // Removed to persist drafts
+                            // per user
+                            updateState { it.copy(errorMessage = error.message) }
+                        } else {
+                            // Offline or other error: Check if we have a valid session locally
                             val role = authRepository.getRole()
-                            _uiState.value = LoginUiState.Authenticated(role = role)
-                        }
-                        .onError { error ->
-                            if (error is NetworkException.UnauthorizedException) {
-                                // salesRepository.deleteAllDrafts() // Removed to persist drafts
-                                // per user
-                                updateState { it.copy(errorMessage = error.message) }
+                            if (role.isNotEmpty()) {
+                                _uiState.value = LoginUiState.Authenticated(role = role)
                             } else {
-                                // Offline or other error: Check if we have a valid session locally
-                                val role = authRepository.getRole()
-                                if (role.isNotEmpty()) {
-                                    _uiState.value = LoginUiState.Authenticated(role = role)
-                                } else {
-                                    updateState { it.copy(errorMessage = error.message) }
-                                }
+                                updateState { it.copy(errorMessage = error.message) }
                             }
                         }
+                    }
 
                 updateState { it.copy(isLoading = false) }
             }
@@ -112,8 +112,8 @@ class LoginViewModel(
             val result = authRepository.getVersion()
             withContext(Dispatchers.Main) {
                 result
-                        .onSuccess { data -> updateState { it.copy(version = data.version) } }
-                        .onError { error -> updateState { it.copy(errorMessage = error.message) } }
+                    .onSuccess { data -> updateState { it.copy(version = data.version) } }
+                    .onError { error -> updateState { it.copy(errorMessage = error.message) } }
             }
         }
     }

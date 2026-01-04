@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel(
-        private val homeRepository: HomeRepository,
-        private val productRepository: ProductRepository,
-        private val authRepository: AuthRepository,
-        private val salesRepository: SalesRepository
+    private val homeRepository: HomeRepository,
+    private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository,
+    private val salesRepository: SalesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -58,23 +58,23 @@ class HomeViewModel(
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster
-                            .onSuccess {
-                                lastUpdateMaster.value = it.lastUpdate.toString()
+                        .onSuccess {
+                            lastUpdateMaster.value = it.lastUpdate.toString()
 
-                                if (lastUpdateCache.isEmpty() ||
-                                                lastUpdateCache == "null" ||
-                                                lastUpdateCache != lastUpdateMaster.value
-                                ) {
-                                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
-                                    // Move getProducts here to avoid fetching if not needed or if
-                                    // master update failed
-                                    fetchAndCacheProducts()
-                                }
+                            if (lastUpdateCache.isEmpty() ||
+                                lastUpdateCache == "null" ||
+                                lastUpdateCache != lastUpdateMaster.value
+                            ) {
+                                productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                                // Move getProducts here to avoid fetching if not needed or if
+                                // master update failed
+                                fetchAndCacheProducts()
                             }
-                            .onError { error ->
-                                _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                                // Do NOT clear cache on error
-                            }
+                        }
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                            // Do NOT clear cache on error
+                        }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -88,15 +88,15 @@ class HomeViewModel(
         val getProducts = productRepository.getProducts()
         withContext(Dispatchers.Main) {
             getProducts
-                    .onSuccess { data ->
-                        productRepository.deleteAllProducts() // Only delete if fetch successful
-                        data.barangs.forEach { barang ->
-                            productRepository.addProduct(barang.toProduct())
-                        }
+                .onSuccess { data ->
+                    productRepository.deleteAllProducts() // Only delete if fetch successful
+                    data.barangs.forEach { barang ->
+                        productRepository.addProduct(barang.toProduct())
                     }
-                    .onError { error ->
-                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                    }
+                }
+                .onError { error ->
+                    _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                }
         }
     }
 
@@ -105,17 +105,17 @@ class HomeViewModel(
             val result = homeRepository.getSalesReport()
             withContext(Dispatchers.Main) {
                 result
-                        .onSuccess { data ->
-                            _uiState.value =
-                                    _uiState.value.copy(
-                                            nominalPenjualan = data.nominalSales.data,
-                                            jumlahPenjualan = data.totalSales.data,
-                                            jumlahPembeli = data.totalCustomers.data
-                                    )
-                        }
-                        .onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                        }
+                    .onSuccess { data ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                nominalPenjualan = data.nominalSales.data,
+                                jumlahPenjualan = data.totalSales.data,
+                                jumlahPembeli = data.totalCustomers.data
+                            )
+                    }
+                    .onError { error ->
+                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                    }
             }
         }
     }

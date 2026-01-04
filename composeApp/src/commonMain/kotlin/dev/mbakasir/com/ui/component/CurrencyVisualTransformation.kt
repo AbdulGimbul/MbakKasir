@@ -10,7 +10,7 @@ class CurrencyVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val originalText = text.text
         val digitsOnly = originalText.filter { it.isDigit() }
-        
+
         if (digitsOnly.isEmpty()) {
             return TransformedText(
                 text = AnnotatedString("Rp 0"),
@@ -20,21 +20,21 @@ class CurrencyVisualTransformation : VisualTransformation {
                 }
             )
         }
-        
+
         val longVal = digitsOnly.toLongOrNull() ?: 0L
         val formattedNumber = longVal.toString().reversed().chunked(3).joinToString(".").reversed()
         val formatted = "Rp $formattedNumber"
-        
+
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
                 if (offset == 0) return 3
                 val digitsBefore = originalText.take(offset).count { it.isDigit() }
                 if (digitsBefore == 0) return 3
-                
+
                 val formattedDigits = formatted.filter { it.isDigit() }
                 var transformedOffset = 3
                 var digitsFound = 0
-                
+
                 for (i in 3 until formatted.length) {
                     if (formatted[i].isDigit()) {
                         digitsFound++
@@ -46,13 +46,13 @@ class CurrencyVisualTransformation : VisualTransformation {
                 }
                 return transformedOffset
             }
-            
+
             override fun transformedToOriginal(offset: Int): Int {
                 if (offset <= 3) return 0
                 val digitsBeforeOffset = formatted.substring(0, offset).count { it.isDigit() }
                 var originalOffset = 0
                 var digitsFound = 0
-                
+
                 for (char in originalText) {
                     if (char.isDigit()) {
                         digitsFound++
@@ -65,7 +65,7 @@ class CurrencyVisualTransformation : VisualTransformation {
                 return originalText.length
             }
         }
-        
+
         return TransformedText(
             text = AnnotatedString(formatted),
             offsetMapping = offsetMapping

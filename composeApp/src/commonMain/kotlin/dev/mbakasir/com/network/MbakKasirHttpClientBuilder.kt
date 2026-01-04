@@ -45,21 +45,21 @@ class MbakKasirHttpClientBuilder(private val sessionHandler: SessionHandler) {
 
             install(ContentNegotiation) {
                 json(
-                        Json {
-                            prettyPrint = true
-                            isLenient = true
-                            ignoreUnknownKeys = true
-                        }
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    }
                 )
             }
 
             install(Logging) {
                 logger =
-                        object : Logger {
-                            override fun log(message: String) {
-                                println(message)
-                            }
+                    object : Logger {
+                        override fun log(message: String) {
+                            println(message)
                         }
+                    }
                 level = LogLevel.ALL
             }
 
@@ -67,8 +67,8 @@ class MbakKasirHttpClientBuilder(private val sessionHandler: SessionHandler) {
                 bearer {
                     loadTokens {
                         BearerTokens(
-                                accessToken = sessionHandler.getToken().first(),
-                                refreshToken = ""
+                            accessToken = sessionHandler.getToken().first(),
+                            refreshToken = ""
                         )
                     }
                 }

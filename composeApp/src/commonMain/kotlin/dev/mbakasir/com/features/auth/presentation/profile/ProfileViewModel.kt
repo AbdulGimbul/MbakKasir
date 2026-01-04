@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProfileViewModel(
-        private val authRepository: AuthRepository,
-        private val salesRepository: SalesRepository
+    private val authRepository: AuthRepository,
+    private val salesRepository: SalesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -33,7 +33,7 @@ class ProfileViewModel(
         when (event) {
             is ProfileUiEvent.Logout -> logout()
             is ProfileUiEvent.OnShowAlertDialog ->
-                    _uiState.update { it.copy(showDialog = !it.showDialog) }
+                _uiState.update { it.copy(showDialog = !it.showDialog) }
         }
     }
 
@@ -61,20 +61,20 @@ class ProfileViewModel(
                 // salesRepository.deleteAllDrafts() // Removed to persist drafts per user
 
                 result
-                        .onSuccess {
-                            _uiState.value = _uiState.value.copy(isLogout = true, isLoading = false)
-                        }
-                        .onError {
-                            // Even if API fails, we still consider the user logged out locally
-                            _uiState.value =
-                                    _uiState.value.copy(
-                                            isLogout = true,
-                                            isLoading = false,
-                                            errorMessage =
-                                                    it.message // Optional: show error briefly? But
-                                            // we are navigating away.
-                                            )
-                        }
+                    .onSuccess {
+                        _uiState.value = _uiState.value.copy(isLogout = true, isLoading = false)
+                    }
+                    .onError {
+                        // Even if API fails, we still consider the user logged out locally
+                        _uiState.value =
+                            _uiState.value.copy(
+                                isLogout = true,
+                                isLoading = false,
+                                errorMessage =
+                                    it.message // Optional: show error briefly? But
+                                // we are navigating away.
+                            )
+                    }
             }
         }
     }
@@ -85,12 +85,12 @@ class ProfileViewModel(
                 val result = authRepository.getVersion()
                 withContext(Dispatchers.Main) {
                     result
-                            .onSuccess { data ->
-                                _uiState.value = _uiState.value.copy(version = data.version)
-                            }
-                            .onError { error ->
-                                _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                            }
+                        .onSuccess { data ->
+                            _uiState.value = _uiState.value.copy(version = data.version)
+                        }
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
                 }
             }
         }

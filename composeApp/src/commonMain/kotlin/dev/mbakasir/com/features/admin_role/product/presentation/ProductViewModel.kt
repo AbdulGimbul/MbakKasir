@@ -43,44 +43,44 @@ class ProductViewModel(private val productRepository: ProductRepository) : ViewM
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster
-                            .onSuccess {
-                                lastUpdateMaster.value = it.lastUpdate.toString()
-                                _uiState.value =
-                                        _uiState.value.copy(latestUpdate = lastUpdateMaster.value)
+                        .onSuccess {
+                            lastUpdateMaster.value = it.lastUpdate.toString()
+                            _uiState.value =
+                                _uiState.value.copy(latestUpdate = lastUpdateMaster.value)
 
-                                if (lastUpdateCache.isEmpty() ||
-                                                lastUpdateCache == "null" ||
-                                                lastUpdateCache != lastUpdateMaster.value
-                                ) {
-                                    productRepository.setLastUpdateCache(lastUpdateMaster.value)
+                            if (lastUpdateCache.isEmpty() ||
+                                lastUpdateCache == "null" ||
+                                lastUpdateCache != lastUpdateMaster.value
+                            ) {
+                                productRepository.setLastUpdateCache(lastUpdateMaster.value)
 
-                                    val getProducts = productRepository.getProducts()
-                                    withContext(Dispatchers.Main) {
-                                        // productRepository.deleteAllProducts() // Deleted only on
-                                        // success
-                                        getProducts
-                                                .onSuccess { data ->
-                                                    productRepository.deleteAllProducts()
-                                                    data.barangs.forEach { barang ->
-                                                        productRepository.addProduct(
-                                                                barang.toProduct()
-                                                        )
-                                                    }
-                                                    getTopProduct()
-                                                }
-                                                .onError { error ->
-                                                    _uiState.value =
-                                                            _uiState.value.copy(
-                                                                    errorMessage = error.message,
-                                                                    isLoading = false
-                                                            )
-                                                }
-                                    }
+                                val getProducts = productRepository.getProducts()
+                                withContext(Dispatchers.Main) {
+                                    // productRepository.deleteAllProducts() // Deleted only on
+                                    // success
+                                    getProducts
+                                        .onSuccess { data ->
+                                            productRepository.deleteAllProducts()
+                                            data.barangs.forEach { barang ->
+                                                productRepository.addProduct(
+                                                    barang.toProduct()
+                                                )
+                                            }
+                                            getTopProduct()
+                                        }
+                                        .onError { error ->
+                                            _uiState.value =
+                                                _uiState.value.copy(
+                                                    errorMessage = error.message,
+                                                    isLoading = false
+                                                )
+                                        }
                                 }
                             }
-                            .onError { error ->
-                                _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                            }
+                        }
+                        .onError { error ->
+                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                        }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -96,24 +96,24 @@ class ProductViewModel(private val productRepository: ProductRepository) : ViewM
         viewModelScope.launch {
             try {
                 val product =
-                        productRepository
-                                .getTopProductByStock(pageSize, currentPage * pageSize)
-                                .first()
+                    productRepository
+                        .getTopProductByStock(pageSize, currentPage * pageSize)
+                        .first()
 
                 if (product.isNotEmpty()) {
                     val updatedList =
-                            if (currentPage == 0) {
-                                product
-                            } else {
-                                _uiState.value.productList + product
-                            }
+                        if (currentPage == 0) {
+                            product
+                        } else {
+                            _uiState.value.productList + product
+                        }
                     _uiState.value =
-                            _uiState.value.copy(productList = updatedList, isLoading = false)
+                        _uiState.value.copy(productList = updatedList, isLoading = false)
                     currentPage++
                 } else {
                     if (currentPage == 0) {
                         _uiState.value =
-                                _uiState.value.copy(productList = emptyList(), isLoading = false)
+                            _uiState.value.copy(productList = emptyList(), isLoading = false)
                     } else {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     }

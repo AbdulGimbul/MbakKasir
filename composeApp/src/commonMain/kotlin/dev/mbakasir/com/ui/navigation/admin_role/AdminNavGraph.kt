@@ -33,10 +33,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.admin_role.home.presentation.HomeScreen
-import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
 import dev.mbakasir.com.features.admin_role.product.StockOpnamePreviewScreen
 import dev.mbakasir.com.features.admin_role.product.presentation.ProductScreen
-import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameScreen
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.StockOpnameViewModel
 import dev.mbakasir.com.features.admin_role.stock_opname.presentation.entry_stock_opname.EntryStockOpnameScreen
@@ -45,86 +43,89 @@ import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
 import dev.mbakasir.com.ui.theme.primary
 import org.koin.compose.viewmodel.koinViewModel
+import dev.mbakasir.com.features.admin_role.home.presentation.HomeViewModel as AdminHomeViewModel
+import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewModel as AdminProductViewModel
 
 @Composable
 fun AdminNavHost(
-        navController: NavHostController,
-        windowSize: WindowWidthSizeClass,
-        parentNavController: NavHostController,
+    navController: NavHostController,
+    windowSize: WindowWidthSizeClass,
+    parentNavController: NavHostController,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     val navigationType: MbakKasirNavigationType =
-            when (windowSize) {
-                WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-                WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-                else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-            }
+        when (windowSize) {
+            WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+            WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+            else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
             Scaffold(
-                    bottomBar = { BottomBar(navController) },
-                    floatingActionButton = {
-                        if (currentRoute == AdminScreen.StockOpname.route) {
-                            FloatingActionButton(
-                                    onClick = {
-                                        navController.navigate(AdminScreen.EntryStockOpname.route)
-                                    },
-                                    shape = CircleShape,
-                                    containerColor = primary
-                            ) {
-                                Icon(
-                                        imageVector = Icons.Default.Add,
-                                        contentDescription = "Add",
-                                        tint = Color.White
-                                )
-                            }
-                        }
-                    }
-            ) { innerPadding ->
-                NavHostContent(
-                        navController = navController,
-                        innerPadding = innerPadding,
-                        navigationType = navigationType,
-                        parentNavController = parentNavController
-                )
-            }
-        }
-        MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
-            PermanentNavigationDrawer(
-                    drawerContent = { SideBar(navController) },
-                    content = {
-                        Scaffold(
-                                floatingActionButton = {
-                                    if (currentRoute == AdminScreen.StockOpname.route) {
-                                        FloatingActionButton(
-                                                onClick = {
-                                                    navController.navigate(
-                                                            AdminScreen.EntryStockOpname.route
-                                                    )
-                                                },
-                                                shape = CircleShape,
-                                                containerColor = primary
-                                        ) {
-                                            Icon(
-                                                    imageVector = Icons.Default.Add,
-                                                    contentDescription = "Add",
-                                                    tint = Color.White
-                                            )
-                                        }
-                                    }
-                                }
-                        ) { innerPadding ->
-                            NavHostContent(
-                                    navController = navController,
-                                    innerPadding = innerPadding,
-                                    navigationType = navigationType,
-                                    parentNavController = parentNavController
+                bottomBar = { BottomBar(navController) },
+                floatingActionButton = {
+                    if (currentRoute == AdminScreen.StockOpname.route) {
+                        FloatingActionButton(
+                            onClick = {
+                                navController.navigate(AdminScreen.EntryStockOpname.route)
+                            },
+                            shape = CircleShape,
+                            containerColor = primary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add",
+                                tint = Color.White
                             )
                         }
                     }
+                }
+            ) { innerPadding ->
+                NavHostContent(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    navigationType = navigationType,
+                    parentNavController = parentNavController
+                )
+            }
+        }
+
+        MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
+            PermanentNavigationDrawer(
+                drawerContent = { SideBar(navController) },
+                content = {
+                    Scaffold(
+                        floatingActionButton = {
+                            if (currentRoute == AdminScreen.StockOpname.route) {
+                                FloatingActionButton(
+                                    onClick = {
+                                        navController.navigate(
+                                            AdminScreen.EntryStockOpname.route
+                                        )
+                                    },
+                                    shape = CircleShape,
+                                    containerColor = primary
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Add",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    ) { innerPadding ->
+                        NavHostContent(
+                            navController = navController,
+                            innerPadding = innerPadding,
+                            navigationType = navigationType,
+                            parentNavController = parentNavController
+                        )
+                    }
+                }
             )
         }
     }
@@ -132,23 +133,23 @@ fun AdminNavHost(
 
 @Composable
 fun NavHostContent(
-        navController: NavHostController,
-        innerPadding: PaddingValues,
-        navigationType: MbakKasirNavigationType,
-        parentNavController: NavHostController
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    navigationType: MbakKasirNavigationType,
+    parentNavController: NavHostController
 ) {
     NavHost(
-            navController = navController,
-            startDestination = AdminScreen.Home.route,
-            modifier = Modifier.padding(innerPadding)
+        navController = navController,
+        startDestination = AdminScreen.Home.route,
+        modifier = Modifier.padding(innerPadding)
     ) {
         composable(AdminScreen.Home.route) {
             HomeScreen(viewModel = koinViewModel<AdminHomeViewModel>())
         }
         composable(AdminScreen.Profile.route) {
             ProfileScreen(
-                    viewModel = koinViewModel<ProfileViewModel>(),
-                    navController = parentNavController
+                viewModel = koinViewModel<ProfileViewModel>(),
+                navController = parentNavController
             )
         }
         composable(AdminScreen.StockInOut.route) { StockOpnamePreviewScreen() }
@@ -157,14 +158,14 @@ fun NavHostContent(
         }
         composable(AdminScreen.StockOpname.route) {
             StockOpnameScreen(
-                    viewModel = koinViewModel<StockOpnameViewModel>(),
-                    navController = navController
+                viewModel = koinViewModel<StockOpnameViewModel>(),
+                navController = navController
             )
         }
         composable(AdminScreen.EntryStockOpname.route) {
             EntryStockOpnameScreen(
-                    viewModel = koinViewModel<EntryStockOpnameViewModel>(),
-                    navController = navController
+                viewModel = koinViewModel<EntryStockOpnameViewModel>(),
+                navController = navController
             )
         }
         composable(AdminScreen.StockOpnamePreview.route) { StockOpnamePreviewScreen() }
@@ -179,24 +180,24 @@ private fun BottomBar(navController: NavHostController, modifier: Modifier = Mod
 
         navigationItems.map { item ->
             NavigationBarItem(
-                    selected = currentRoute == item.screen.route,
-                    onClick = {
-                        navController.navigate(item.screen.route) {
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(AdminScreen.Home.route) { saveState = true }
-                                restoreState = true
-                                launchSingleTop = true
-                            }
+                selected = currentRoute == item.screen.route,
+                onClick = {
+                    navController.navigate(item.screen.route) {
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(AdminScreen.Home.route) { saveState = true }
+                            restoreState = true
+                            launchSingleTop = true
                         }
-                    },
-                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                    label = { Text(text = item.title, maxLines = 1, softWrap = false) },
-                    colors =
-                            NavigationBarItemDefaults.colors(
-                                    selectedIconColor = primary,
-                                    selectedTextColor = primary,
-                                    indicatorColor = Color.Transparent
-                            )
+                    }
+                },
+                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                label = { Text(text = item.title, maxLines = 1, softWrap = false) },
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = primary,
+                        selectedTextColor = primary,
+                        indicatorColor = Color.Transparent
+                    )
             )
         }
     }
@@ -211,19 +212,19 @@ fun SideBar(navController: NavHostController) {
         Column(modifier = Modifier.wrapContentWidth().fillMaxHeight().padding(24.dp)) {
             navigationItems.forEach { item ->
                 NavigationDrawerItem(
-                        selected = currentRoute == item.screen.route,
-                        label = { Text(text = item.title) },
-                        icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                        onClick = {
-                            navController.navigate(item.screen.route) {
-                                navController.graph.startDestinationRoute?.let {
-                                    popUpTo(AdminScreen.Home.route) { saveState = true }
-                                    restoreState = true
-                                    launchSingleTop = true
-                                }
+                    selected = currentRoute == item.screen.route,
+                    label = { Text(text = item.title) },
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                    onClick = {
+                        navController.navigate(item.screen.route) {
+                            navController.graph.startDestinationRoute?.let {
+                                popUpTo(AdminScreen.Home.route) { saveState = true }
+                                restoreState = true
+                                launchSingleTop = true
                             }
-                        },
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
         }
@@ -236,25 +237,25 @@ enum class MbakKasirNavigationType {
 }
 
 val navigationItems =
-        listOf(
-                AdminBottomRailNavItem(
-                        title = "Beranda",
-                        icon = Icons.Outlined.Home,
-                        screen = AdminScreen.Home
-                ),
-                AdminBottomRailNavItem(
-                        title = "Barang",
-                        icon = Icons.Outlined.Domain,
-                        screen = AdminScreen.Product
-                ),
-                AdminBottomRailNavItem(
-                        title = "Stock Opname",
-                        icon = Icons.Outlined.Domain,
-                        screen = AdminScreen.StockOpname
-                ),
-                AdminBottomRailNavItem(
-                        title = "Akun",
-                        icon = Icons.Outlined.AccountCircle,
-                        screen = AdminScreen.Profile
-                )
+    listOf(
+        AdminBottomRailNavItem(
+            title = "Beranda",
+            icon = Icons.Outlined.Home,
+            screen = AdminScreen.Home
+        ),
+        AdminBottomRailNavItem(
+            title = "Barang",
+            icon = Icons.Outlined.Domain,
+            screen = AdminScreen.Product
+        ),
+        AdminBottomRailNavItem(
+            title = "Stock Opname",
+            icon = Icons.Outlined.Domain,
+            screen = AdminScreen.StockOpname
+        ),
+        AdminBottomRailNavItem(
+            title = "Akun",
+            icon = Icons.Outlined.AccountCircle,
+            screen = AdminScreen.Profile
         )
+    )

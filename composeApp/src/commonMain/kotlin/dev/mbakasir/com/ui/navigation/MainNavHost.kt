@@ -42,23 +42,23 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
         }
 
         composable(
-                route = "${MainScreen.Cashier.route}/{role}",
-                arguments = listOf(navArgument("role") { type = NavType.StringType })
+            route = "${MainScreen.Cashier.route}/{role}",
+            arguments = listOf(navArgument("role") { type = NavType.StringType })
         ) { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: ""
             CashierNavHost(
-                    navController = rememberNavController(),
-                    windowSize = windowSize,
-                    parentNavController = navController,
-                    role = role
+                navController = rememberNavController(),
+                windowSize = windowSize,
+                parentNavController = navController,
+                role = role
             )
         }
 
         composable(MainScreen.Admin.route) {
             AdminNavHost(
-                    navController = rememberNavController(),
-                    windowSize = windowSize,
-                    parentNavController = navController
+                navController = rememberNavController(),
+                windowSize = windowSize,
+                parentNavController = navController
             )
         }
     }

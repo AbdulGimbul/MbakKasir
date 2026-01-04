@@ -2,10 +2,10 @@ package dev.mbakasir.com.features.cashier_role.product.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Entity(tableName = "products")
