@@ -6,36 +6,36 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreatePaymentApiModel(
-    val message: String,
-    val data: DataPayment,
-    val code: String
+        val message: String,
+        val data: DataPayment,
+        val code: String,
+        @SerialName("total_harga") val totalHarga: Int,
+        @SerialName("total_diskon") val totalDiskon: Int,
+        @SerialName("ppn") val ppn: Int,
+        @SerialName("total_tagihan") val totalTagihan: Int
 ) : JavaSerializable
 
 @Serializable
 data class DataPayment(
-    val invoice: String,
-    val customer: String,
-    val kasir: String,
-    val method: String,
-    val bayar: String,
-    val kembali: String,
-    val ppn: String,
-    val device: String,
-    val tanggal: String,
-    val detil: List<DetailPayment>
+        val invoice: String,
+        val customer: String,
+        val kasir: String,
+        val method: String,
+        val bayar: String,
+        val kembali: String,
+        val ppn: String,
+        val device: String,
+        val tanggal: String,
+        val detil: List<DetailPayment>
 ) : JavaSerializable
 
 @Serializable
 data class DetailPayment(
-    @SerialName("kode_detil_jual")
-    val kodeDetilJual: String,
-    @SerialName("nama_barang")
-    val namaBarang: String,
-    val jenis: String,
-    @SerialName("qty_jual")
-    val qtyJual: String,
-    @SerialName("harga_item")
-    val hargaItem: String,
-    val subtotal: String,
-    val diskon: String
+        @SerialName("kode_detil_jual") val kodeDetilJual: String,
+        @SerialName("nama_barang") val namaBarang: String,
+        val jenis: String,
+        @SerialName("qty_jual") val qtyJual: String,
+        @SerialName("harga_item") val hargaItem: String,
+        val subtotal: String,
+        val diskon: String
 ) : JavaSerializable
