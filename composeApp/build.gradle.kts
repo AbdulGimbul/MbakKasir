@@ -47,6 +47,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.core.splashscreen)
+            implementation(libs.app.update)
+            implementation(libs.app.update.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -151,8 +153,8 @@ android {
         applicationId = "dev.mbakasir.com"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.1"
     }
     packaging {
         resources {
