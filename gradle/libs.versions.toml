@@ -48,6 +48,7 @@ sqlite = "2.6.2"
 room = "2.8.4"
 mokkery = "2.10.2"
 chucker = "4.1.0"
+app-update = "2.1.0"
 
 [libraries]
 kmp-capturable-compose = { module = "io.github.suwasto:kmp-capturable-compose", version.ref = "kmpCapturableCompose" }
@@ -114,6 +115,8 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
+app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
+app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "app-update" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
