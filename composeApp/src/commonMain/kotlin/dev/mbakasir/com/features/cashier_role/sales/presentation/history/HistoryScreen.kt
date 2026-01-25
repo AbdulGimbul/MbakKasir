@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,8 +46,8 @@ import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.HistoryItem
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.formatDateForApi
 import kotlin.time.Clock
@@ -58,7 +58,8 @@ fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
     val listState = rememberLazyListState()
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.collect { lastVisibleIndex ->
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.collect {
+                lastVisibleIndex ->
             val historyCount = uiState.history?.data?.size ?: 0
             if (lastVisibleIndex != null) {
                 if (lastVisibleIndex >= historyCount - 1 && historyCount > 0) {
@@ -69,22 +70,22 @@ fun HistoryScreen(viewModel: HistoryViewModel, navController: NavController) {
     }
 
     History(
-        uiState = uiState,
-        onEvent = { viewModel.onEvent(it) },
-        moveToInvoice = {
-            navController.navigate("${CashierScreen.Invoice.route}?noInvoice=$it")
-        },
-        listState = listState
+            uiState = uiState,
+            onEvent = { viewModel.onEvent(it) },
+            moveToInvoice = {
+                navController.navigate("${CashierScreen.Invoice.route}?noInvoice=$it")
+            },
+            listState = listState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, kotlin.time.ExperimentalTime::class)
 @Composable
 fun History(
-    uiState: HistoryUiState,
-    onEvent: (HistoryUiEvent) -> Unit,
-    moveToInvoice: (String) -> Unit,
-    listState: LazyListState
+        uiState: HistoryUiState,
+        onEvent: (HistoryUiEvent) -> Unit,
+        moveToInvoice: (String) -> Unit,
+        listState: LazyListState
 ) {
 
     val state = rememberDateRangePickerState()
@@ -92,10 +93,10 @@ fun History(
 
     var selectedDateRange by remember {
         mutableStateOf(
-            dev.mbakasir.com.utils.formatDateRange(
-                Clock.System.now().toEpochMilliseconds(),
-                Clock.System.now().toEpochMilliseconds()
-            )
+                dev.mbakasir.com.utils.formatDateRange(
+                        Clock.System.now().toEpochMilliseconds(),
+                        Clock.System.now().toEpochMilliseconds()
+                )
         )
     }
 
@@ -104,98 +105,118 @@ fun History(
 
         Box {
             OutlinedTextField(
-                value = selectedDateRange,
-                onValueChange = {},
-                readOnly = true,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.FilterAlt,
-                        contentDescription = "Date Range"
-                    )
-                },
-                placeholder = { Text(text = "Select Date Range", color = secondary_text) },
-                trailingIcon = {
-                    IconButton(
-                        onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }
-                    ) {
+                    value = selectedDateRange,
+                    onValueChange = {},
+                    readOnly = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    leadingIcon = {
                         Icon(
-                            Icons.Outlined.FilterAlt,
-                            contentDescription = "Filter",
-                            tint = primary
+                                imageVector = Icons.Outlined.FilterAlt,
+                                contentDescription = "Date Range"
                         )
-                    }
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = stroke,
-                        unfocusedBorderColor = stroke,
-                        cursorColor = primary_text,
-                        focusedLabelColor = primary,
-                        unfocusedLabelColor = secondary_text,
-                    ),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    },
+                    placeholder = { Text(text = "Select Date Range", color = secondaryText) },
+                    trailingIcon = {
+                        IconButton(
+                                onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }
+                        ) {
+                            Icon(
+                                    Icons.Outlined.FilterAlt,
+                                    contentDescription = "Filter",
+                                    tint = primary
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    colors =
+                            OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = stroke,
+                                    unfocusedBorderColor = stroke,
+                                    cursorColor = primaryText,
+                                    focusedLabelColor = primary,
+                                    unfocusedLabelColor = secondaryText,
+                            ),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             )
         }
 
         if (isDateRangePickerVisible) {
             Row(
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .background(DatePickerDefaults.colors().containerColor),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+                    modifier =
+                            Modifier.fillMaxWidth()
+                                    .background(DatePickerDefaults.colors().containerColor),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                    onClick = {
-                        val startDate = state.selectedStartDateMillis
-                        val endDate = state.selectedEndDateMillis
+                        onClick = {
+                            val startDate = state.selectedStartDateMillis
+                            val endDate = state.selectedEndDateMillis
 
-                        if (startDate != null && endDate != null) {
-                            selectedDateRange =
-                                dev.mbakasir.com.utils.formatDateRange(startDate, endDate)
-                            val apiStartDate = formatDateForApi(startDate)
-                            val apiEndDate = formatDateForApi(endDate)
+                            if (startDate != null && endDate != null) {
+                                selectedDateRange =
+                                        dev.mbakasir.com.utils.formatDateRange(startDate, endDate)
+                                val apiStartDate = formatDateForApi(startDate)
+                                val apiEndDate = formatDateForApi(endDate)
 
-                            onEvent(HistoryUiEvent.UpdateDate(apiStartDate, apiEndDate))
-                            // GetHistories is handled by ViewModel on UpdateDate
+                                onEvent(HistoryUiEvent.UpdateDate(apiStartDate, apiEndDate))
+                                // GetHistories is handled by ViewModel on UpdateDate
 
-                            isDateRangePickerVisible = false
-                        }
-                    },
-                    enabled = state.selectedEndDateMillis != null
+                                isDateRangePickerVisible = false
+                            }
+                        },
+                        enabled = state.selectedEndDateMillis != null
                 ) { Icon(imageVector = Icons.Default.Check, contentDescription = "") }
             }
 
             DateRangePicker(
-                state = state,
-                showModeToggle = false,
-                modifier = Modifier.fillMaxWidth()
+                    state = state,
+                    showModeToggle = false,
+                    modifier = Modifier.fillMaxWidth()
             )
         }
 
         LazyColumn(state = listState) {
             uiState.history?.let { hist ->
-                items(hist.data) {
-                    HistoryItem(
-                        date = it.tanggal,
-                        method = it.method,
-                        total = it.bayar,
-                        invoiceNumber = it.invoice,
-                        cashier = it.kasir,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        onClick = { moveToInvoice(it.invoice) }
-                    )
+                itemsIndexed(hist.data) { index, it ->
+                    androidx.compose.animation.AnimatedVisibility(
+                            visible = true,
+                            enter =
+                                    androidx.compose.animation.fadeIn(
+                                            animationSpec =
+                                                    androidx.compose.animation.core.tween(
+                                                            durationMillis = 150,
+                                                            delayMillis = index * 30
+                                                    )
+                                    ) +
+                                            androidx.compose.animation.slideInVertically(
+                                                    animationSpec =
+                                                            androidx.compose.animation.core.tween(
+                                                                    durationMillis = 150,
+                                                                    delayMillis = index * 30
+                                                            ),
+                                                    initialOffsetY = { offset -> offset / 4 }
+                                            )
+                    ) {
+                        HistoryItem(
+                                date = it.tanggal,
+                                method = it.method,
+                                total = it.bayar,
+                                invoiceNumber = it.invoice,
+                                cashier = it.kasir,
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                onClick = { moveToInvoice(it.invoice) }
+                        )
+                    }
                 }
 
                 if (uiState.isLoading) {
                     item {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                                contentAlignment = Alignment.Center
                         ) { CircularProgressIndicator() }
                     }
                 }

@@ -1,21 +1,18 @@
 package dev.mbakasir.com
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import dev.mbakasir.com.ui.navigation.MainNavHost
-import dev.mbakasir.com.ui.theme.PoppinsTypography
+import dev.mbakasir.com.ui.theme.MbakKasirTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 @Preview
 fun App() {
-    MaterialTheme(
-        typography = PoppinsTypography(),
-    ) {
+    MbakKasirTheme {
         val navController = rememberNavController()
         val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
@@ -31,8 +28,8 @@ fun App() {
          */
 
         MainNavHost(
-            navController = navController,
-            windowSize = windowSizeClass.windowWidthSizeClass
+                navController = navController,
+                windowSize = windowSizeClass.windowWidthSizeClass
         )
     }
 }

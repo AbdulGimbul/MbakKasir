@@ -12,79 +12,91 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Elevation
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.blue
 import dev.mbakasir.com.ui.theme.dark
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.secondaryText
+import dev.mbakasir.com.ui.theme.shadowColor
+import dev.mbakasir.com.ui.theme.strokeLight
+import dev.mbakasir.com.ui.theme.surface
 
 @Composable
 fun HistoryItem(
-    date: String,
-    method: String,
-    total: String,
-    cashier: String,
-    invoiceNumber: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+        date: String,
+        method: String,
+        total: String,
+        cashier: String,
+        invoiceNumber: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
+    Card(
+            modifier =
+                    modifier.fillMaxWidth()
+                            .shadow(
+                                    elevation = Elevation.xs,
+                                    shape = RoundedCornerShape(CornerRadius.md),
+                                    ambientColor = shadowColor,
+                                    spotColor = shadowColor
+                            ),
+            shape = RoundedCornerShape(CornerRadius.md),
+            border = CardDefaults.outlinedCardBorder(enabled = true),
+            colors = CardDefaults.cardColors(containerColor = surface)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.AccessTime,
-                    contentDescription = "Time",
-                    modifier = Modifier.padding(end = 4.dp)
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = "Time",
+                        tint = secondaryText,
+                        modifier = Modifier.padding(end = Spacing.xs)
                 )
                 Text(
-                    text = date,
-                    color = secondary_text,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                        text = date,
+                        color = secondaryText,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = Spacing.xs)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
+            HorizontalDivider(color = strokeLight)
+            Spacer(modifier = Modifier.height(Spacing.lg))
             ItemRow(label = method, value = total)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
             ItemRow(label = cashier, value = invoiceNumber)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
             OutlinedButton(
-                onClick = onClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = blue),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = blue
-                ),
-                shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.fillMaxWidth()
+                    onClick = onClick,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = blue),
+                    border = BorderStroke(width = 1.5.dp, color = blue),
+                    shape = RoundedCornerShape(CornerRadius.xxl),
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Preview",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                        text = "Preview",
+                        style =
+                                MaterialTheme.typography.labelLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                ),
+                        modifier = Modifier.padding(vertical = Spacing.xs)
                 )
             }
         }
@@ -94,17 +106,19 @@ fun HistoryItem(
 @Composable
 fun ItemRow(label: String, value: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label, color = dark,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+                text = label,
+                color = dark,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
         Text(
-            text = value, color = dark,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+                text = value,
+                color = dark,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
     }
 }

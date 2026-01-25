@@ -42,8 +42,8 @@ import dev.mbakasir.com.ui.component.DisabledTextField
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 
 @Composable
@@ -82,7 +82,7 @@ fun EntryStockOpname(
         Spacer(modifier = Modifier.width(8.dp))
         HeadlineText(
             text = "Stock Opname",
-            color = primary_text,
+            color = primaryText,
             modifier = Modifier.padding(bottom = 32.dp)
         )
         ExposedDropdownMenuBox(
@@ -100,7 +100,7 @@ fun EntryStockOpname(
                     Text(
                         "Scan Barcode",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = secondary_text
+                        color = secondaryText
                     )
                 },
                 trailingIcon = {
@@ -120,9 +120,9 @@ fun EntryStockOpname(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = stroke,
                     unfocusedBorderColor = stroke,
-                    cursorColor = primary_text,
+                    cursorColor = primaryText,
                     focusedLabelColor = primary,
-                    unfocusedLabelColor = secondary_text,
+                    unfocusedLabelColor = secondaryText,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
