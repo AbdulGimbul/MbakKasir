@@ -32,134 +32,134 @@ import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun EntrySalesItem(
-        product: dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity,
-        customerType: String = "",
-        onIncreaseQty:
-                (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
-        onDecreaseQty:
-                (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
-        modifier: Modifier = Modifier
+    product: dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity,
+    customerType: String = "",
+    onIncreaseQty:
+        (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
+    onDecreaseQty:
+        (dev.mbakasir.com.features.cashier_role.sales.data.ProductTransEntity) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val specialPrice =
-            when (customerType) {
-                "Pelanggan" -> product.hargaPelanggan
-                "Toko" -> product.hargaToko
-                "Sales" -> product.hargaSales
-                else -> 0
-            }
+        when (customerType) {
+            "Pelanggan" -> product.hargaPelanggan
+            "Toko" -> product.hargaToko
+            "Sales" -> product.hargaSales
+            else -> 0
+        }
 
     OutlinedCard(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
-            border =
-                    CardDefaults.outlinedCardBorder(
-                            enabled = true,
-                    ),
-            colors =
-                    CardDefaults.outlinedCardColors(
-                            containerColor = Color.White,
-                    )
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        border =
+            CardDefaults.outlinedCardBorder(
+                enabled = true,
+            ),
+        colors =
+            CardDefaults.outlinedCardColors(
+                containerColor = Color.White,
+            )
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Column {
                 Text(
-                        text = "[${product.kodeBarang}] ${product.barcode}",
-                        color = dev.mbakasir.com.ui.theme.primaryText,
-                        style =
-                                MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                ),
-                        modifier = Modifier.padding(bottom = 4.dp)
+                    text = "[${product.kodeBarang}] ${product.barcode}",
+                    color = dev.mbakasir.com.ui.theme.primaryText,
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                        text = product.namaBarang,
-                        color = dev.mbakasir.com.ui.theme.dark,
-                        style =
-                                MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                )
+                    text = product.namaBarang,
+                    color = dev.mbakasir.com.ui.theme.dark,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        )
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
             Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (specialPrice > 0 && specialPrice != product.hargaItem) {
                     Column {
                         Text(
-                                currencyFormat(product.hargaItem.toDouble()),
-                                style =
-                                        MaterialTheme.typography.bodySmall.copy(
-                                                fontWeight = FontWeight.SemiBold,
-                                                textDecoration =
-                                                        androidx.compose.ui.text.style
-                                                                .TextDecoration.LineThrough
-                                        ),
-                                color = dev.mbakasir.com.ui.theme.secondaryText
+                            currencyFormat(product.hargaItem.toDouble()),
+                            style =
+                                MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    textDecoration =
+                                        androidx.compose.ui.text.style
+                                            .TextDecoration.LineThrough
+                                ),
+                            color = dev.mbakasir.com.ui.theme.secondaryText
                         )
                         Text(
-                                text = currencyFormat(specialPrice.toDouble()),
-                                color = dev.mbakasir.com.ui.theme.dark,
-                                style =
-                                        MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold
-                                        ),
+                            text = currencyFormat(specialPrice.toDouble()),
+                            color = dev.mbakasir.com.ui.theme.dark,
+                            style =
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
                         )
                     }
                 } else {
                     Text(
-                            text = currencyFormat(product.hargaItem.toDouble()),
-                            color = dev.mbakasir.com.ui.theme.dark,
-                            style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.SemiBold
-                                    ),
+                        text = currencyFormat(product.hargaItem.toDouble()),
+                        color = dev.mbakasir.com.ui.theme.dark,
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                     )
                 }
                 Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     IconButton(
-                            onClick = { onDecreaseQty(product) },
-                            modifier =
-                                    Modifier.border(
-                                                    width = 1.dp,
-                                                    color = dev.mbakasir.com.ui.theme.primary,
-                                                    shape = CircleShape
-                                            )
-                                            .size(24.dp),
+                        onClick = { onDecreaseQty(product) },
+                        modifier =
+                            Modifier.border(
+                                width = 1.dp,
+                                color = dev.mbakasir.com.ui.theme.primary,
+                                shape = CircleShape
+                            )
+                                .size(24.dp),
                     ) {
                         Icon(
-                                imageVector = Icons.Default.Remove,
-                                contentDescription = "Remove",
-                                tint = dev.mbakasir.com.ui.theme.primary
+                            imageVector = Icons.Default.Remove,
+                            contentDescription = "Remove",
+                            tint = dev.mbakasir.com.ui.theme.primary
                         )
                     }
                     Text(
-                            product.qtyJual.toString(),
-                            style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.SemiBold
-                                    ),
-                            color = dev.mbakasir.com.ui.theme.dark,
-                            textAlign = TextAlign.Center
+                        product.qtyJual.toString(),
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                        color = dev.mbakasir.com.ui.theme.dark,
+                        textAlign = TextAlign.Center
                     )
                     IconButton(
-                            onClick = { onIncreaseQty(product) },
-                            modifier =
-                                    Modifier.background(
-                                                    color = dev.mbakasir.com.ui.theme.primary,
-                                                    shape = CircleShape
-                                            )
-                                            .size(24.dp),
+                        onClick = { onIncreaseQty(product) },
+                        modifier =
+                            Modifier.background(
+                                color = dev.mbakasir.com.ui.theme.primary,
+                                shape = CircleShape
+                            )
+                                .size(24.dp),
                     ) {
                         Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
-                                tint = Color.White
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add",
+                            tint = Color.White
                         )
                     }
                 }

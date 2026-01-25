@@ -79,21 +79,21 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
     } else {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
-                    modifier =
-                            Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())
+                modifier =
+                    Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())
             ) {
                 Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                     Box(
-                            modifier =
-                                    Modifier.fillMaxWidth()
-                                            .height(280.dp)
-                                            .clip(
-                                                    RoundedCornerShape(
-                                                            bottomEnd = 16.dp,
-                                                            bottomStart = 16.dp
-                                                    )
-                                            )
-                                            .background(Color.White),
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .height(280.dp)
+                                .clip(
+                                    RoundedCornerShape(
+                                        bottomEnd = 16.dp,
+                                        bottomStart = 16.dp
+                                    )
+                                )
+                                .background(Color.White),
                     )
                     Box(modifier = Modifier.fillMaxWidth().height(150.dp).background(primary))
                     uiState.user?.userInfo?.let { UserInfoHeader(it) }
@@ -106,61 +106,61 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(
-                        onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
-                        border = BorderStroke(width = 1.dp, color = red),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
+                    border = BorderStroke(width = 1.dp, color = red),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     Icon(
-                            imageVector = Icons.AutoMirrored.Default.Logout,
-                            contentDescription = "Logout",
-                            modifier = Modifier.padding(4.dp)
+                        imageVector = Icons.AutoMirrored.Default.Logout,
+                        contentDescription = "Logout",
+                        modifier = Modifier.padding(4.dp)
                     )
                     Text(
-                            text = "Logout",
-                            style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.Bold
-                                    ),
-                            modifier = Modifier.padding(4.dp),
-                            maxLines = 1,
-                            softWrap = false
+                        text = "Logout",
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        modifier = Modifier.padding(4.dp),
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                                text = "Supported by ",
-                                style = MaterialTheme.typography.bodyMedium.copy(primaryText),
+                            text = "Supported by ",
+                            style = MaterialTheme.typography.bodyMedium.copy(primaryText),
                         )
                         Text(
-                                text = "Mbakasir.com",
-                                style =
-                                        MaterialTheme.typography.bodyMedium.copy(
-                                                color = primaryText
-                                        ),
-                                modifier =
-                                        Modifier.clickable(
-                                                interactionSource =
-                                                        remember { MutableInteractionSource() },
-                                                indication = null
-                                        ) {
-                                            getBrowserHelper().openBrowser("https://mbakasir.com/")
-                                        }
+                            text = "Mbakasir.com",
+                            style =
+                                MaterialTheme.typography.bodyMedium.copy(
+                                    color = primaryText
+                                ),
+                            modifier =
+                                Modifier.clickable(
+                                    interactionSource =
+                                        remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    getBrowserHelper().openBrowser("https://mbakasir.com/")
+                                }
                         )
                     }
                     Text(
-                            text = uiState.version,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = primaryText
+                        text = uiState.version,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = primaryText
                     )
                 }
             }
@@ -169,21 +169,21 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
 
     if (uiState.showDialog) {
         AlertDialog(
-                onDismissRequest = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
-                title = { Text("Yakin ingin keluar?") },
-                confirmButton = {
-                    TextButton(
-                            onClick = {
-                                onEvent(ProfileUiEvent.OnShowAlertDialog)
-                                onEvent(ProfileUiEvent.Logout)
-                            }
-                    ) { Text("Ya") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }) {
-                        Text("Tidak")
+            onDismissRequest = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
+            title = { Text("Yakin ingin keluar?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onEvent(ProfileUiEvent.OnShowAlertDialog)
+                        onEvent(ProfileUiEvent.Logout)
                     }
+                ) { Text("Ya") }
+            },
+            dismissButton = {
+                TextButton(onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }) {
+                    Text("Tidak")
                 }
+            }
         )
     }
 }
@@ -191,22 +191,22 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
 @Composable
 fun UserInfoHeader(user: User) {
     Column(
-            modifier = Modifier.fillMaxWidth().padding(top = 115.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth().padding(top = 115.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-                painter = painterResource(resource = Res.drawable.account),
-                contentDescription = "User Avatar",
-                modifier = Modifier.size(80.dp)
+            painter = painterResource(resource = Res.drawable.account),
+            contentDescription = "User Avatar",
+            modifier = Modifier.size(80.dp)
         )
         Text(
-                text = user.nama,
-                style =
-                        MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                        ),
-                color = dark,
-                modifier = Modifier.padding(top = 8.dp)
+            text = user.nama,
+            style =
+                MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            color = dark,
+            modifier = Modifier.padding(top = 8.dp)
         )
         Text(text = user.username, style = MaterialTheme.typography.bodyMedium, color = dark)
         Text(text = user.role, style = MaterialTheme.typography.bodyMedium, color = primaryText)
@@ -216,19 +216,19 @@ fun UserInfoHeader(user: User) {
 @Composable
 fun StoreInformationCard(store: Toko) {
     Card(
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                    text = "Informasi Toko",
-                    style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                            ),
-                    color = dark,
-                    maxLines = 1
+                text = "Informasi Toko",
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                color = dark,
+                maxLines = 1
             )
             Spacer(modifier = Modifier.height(6.dp))
             InfoRow(label = "Nama", info = store.nama)
@@ -241,20 +241,20 @@ fun StoreInformationCard(store: Toko) {
 @Composable
 fun InfoRow(label: String, info: String) {
     Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-                modifier = Modifier.weight(1f),
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = primaryText
+            modifier = Modifier.weight(1f),
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = primaryText
         )
         Text(
-                modifier = Modifier.weight(1f),
-                text = info,
-                style = MaterialTheme.typography.bodyMedium,
-                color = dark
+            modifier = Modifier.weight(1f),
+            text = info,
+            style = MaterialTheme.typography.bodyMedium,
+            color = dark
         )
     }
 }

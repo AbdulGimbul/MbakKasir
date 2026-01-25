@@ -52,6 +52,8 @@ val shadowColor = Color(0x1A000000) // 10% black
 val shadowColorLight = Color(0x0D000000) // 5% black
 
 // Legacy aliases for backward compatibility
-@Deprecated("Use primaryText instead", ReplaceWith("primaryText")) val primary_text = primaryText
+@Deprecated("Use primaryText instead", ReplaceWith("primaryText"))
+val primary_text = primaryText
+
 @Deprecated("Use secondaryText instead", ReplaceWith("secondaryText"))
 val secondary_text = secondaryText

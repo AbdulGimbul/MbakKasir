@@ -39,85 +39,85 @@ import dev.mbakasir.com.ui.theme.primaryDark
 
 @Composable
 fun DefaultButton(
-        text: String,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier,
-        enabled: Boolean = true,
-        isLoading: Boolean = false
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     // Subtle scale animation when pressed
     val scale by
-            animateFloatAsState(
-                    targetValue = if (isPressed && enabled) 0.98f else 1f,
-                    animationSpec = tween(durationMillis = 100),
-                    label = "buttonScale"
-            )
+    animateFloatAsState(
+        targetValue = if (isPressed && enabled) 0.98f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "buttonScale"
+    )
 
     // Dynamic elevation based on state
     val elevation =
-            when {
-                !enabled -> Elevation.none
-                isPressed -> Elevation.xs
-                else -> Elevation.sm
-            }
+        when {
+            !enabled -> Elevation.none
+            isPressed -> Elevation.xs
+            else -> Elevation.sm
+        }
 
     Button(
-            onClick = { if (!isLoading) onClick() },
-            enabled = enabled && !isLoading,
-            interactionSource = interactionSource,
-            colors =
-                    ButtonDefaults.buttonColors(
-                            containerColor = primary,
-                            contentColor = onPrimary,
-                            disabledContainerColor = disabled,
-                            disabledContentColor = Color.Gray
-                    ),
-            shape = RoundedCornerShape(CornerRadius.md),
-            contentPadding = PaddingValues(horizontal = Spacing.xl, vertical = Spacing.md),
-            elevation =
-                    ButtonDefaults.buttonElevation(
-                            defaultElevation = elevation,
-                            pressedElevation = Elevation.xs,
-                            disabledElevation = Elevation.none
-                    ),
-            modifier =
-                    modifier.defaultMinSize(minHeight = 48.dp)
-                            .scale(scale)
-                            .shadow(
-                                    elevation = if (enabled) Elevation.sm else Elevation.none,
-                                    shape = RoundedCornerShape(CornerRadius.md),
-                                    ambientColor = primaryDark.copy(alpha = 0.2f),
-                                    spotColor = primaryDark.copy(alpha = 0.2f)
-                            )
+        onClick = { if (!isLoading) onClick() },
+        enabled = enabled && !isLoading,
+        interactionSource = interactionSource,
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = primary,
+                contentColor = onPrimary,
+                disabledContainerColor = disabled,
+                disabledContentColor = Color.Gray
+            ),
+        shape = RoundedCornerShape(CornerRadius.md),
+        contentPadding = PaddingValues(horizontal = Spacing.xl, vertical = Spacing.md),
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = elevation,
+                pressedElevation = Elevation.xs,
+                disabledElevation = Elevation.none
+            ),
+        modifier =
+            modifier.defaultMinSize(minHeight = 48.dp)
+                .scale(scale)
+                .shadow(
+                    elevation = if (enabled) Elevation.sm else Elevation.none,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = primaryDark.copy(alpha = 0.2f),
+                    spotColor = primaryDark.copy(alpha = 0.2f)
+                )
     ) {
         Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = onPrimary,
-                        strokeWidth = 2.dp
+                    modifier = Modifier.size(20.dp),
+                    color = onPrimary,
+                    strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(Spacing.sm))
             }
             Text(
-                    text = text,
-                    style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    lineHeight = 1.2.em,
-                                    lineHeightStyle =
-                                            LineHeightStyle(
-                                                    alignment = LineHeightStyle.Alignment.Center,
-                                                    trim = LineHeightStyle.Trim.None
-                                            )
-                            ),
-                    maxLines = 1
+                text = text,
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 1.2.em,
+                        lineHeightStyle =
+                            LineHeightStyle(
+                                alignment = LineHeightStyle.Alignment.Center,
+                                trim = LineHeightStyle.Trim.None
+                            )
+                    ),
+                maxLines = 1
             )
         }
     }

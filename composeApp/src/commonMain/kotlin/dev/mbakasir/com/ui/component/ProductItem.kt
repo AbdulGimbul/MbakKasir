@@ -32,76 +32,76 @@ import dev.mbakasir.com.utils.currencyFormat
 fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
 
     Card(
-            modifier =
-                    modifier.fillMaxWidth()
-                            .shadow(
-                                    elevation = Elevation.xs,
-                                    shape = RoundedCornerShape(CornerRadius.md),
-                                    ambientColor = shadowColor,
-                                    spotColor = shadowColor
-                            ),
-            shape = RoundedCornerShape(CornerRadius.md),
-            border = CardDefaults.outlinedCardBorder(enabled = true),
-            colors = CardDefaults.cardColors(containerColor = surface)
+        modifier =
+            modifier.fillMaxWidth()
+                .shadow(
+                    elevation = Elevation.xs,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                ),
+        shape = RoundedCornerShape(CornerRadius.md),
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.cardColors(containerColor = surface)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Column {
                 Text(
-                        text = product.barcode,
-                        color = primaryText,
-                        style =
-                                MaterialTheme.typography.labelMedium.copy(
-                                        fontWeight = FontWeight.Medium
-                                ),
-                        modifier = Modifier.padding(bottom = Spacing.xs),
-                        maxLines = 1
+                    text = product.barcode,
+                    color = primaryText,
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                    modifier = Modifier.padding(bottom = Spacing.xs),
+                    maxLines = 1
                 )
                 Text(
-                        text = product.namaBarang,
-                        color = dark,
-                        style =
-                                MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                ),
-                        maxLines = 2
+                    text = product.namaBarang,
+                    color = dark,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    maxLines = 2
                 )
             }
             Spacer(modifier = Modifier.height(Spacing.xl))
             Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                        currencyFormat(product.hargaJual.toDouble()),
-                        color = dark,
-                        style =
-                                MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                ),
-                        maxLines = 1
+                    currencyFormat(product.hargaJual.toDouble()),
+                    color = dark,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    maxLines = 1
                 )
                 Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
                     Text(
-                            text = product.stok,
-                            color = icon,
-                            style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.SemiBold
-                                    ),
-                            maxLines = 1
+                        text = product.stok,
+                        color = icon,
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                        maxLines = 1
                     )
                     Text(
-                            text = product.satuan,
-                            color = icon,
-                            style =
-                                    MaterialTheme.typography.bodyMedium.copy(
-                                            fontWeight = FontWeight.Medium
-                                    ),
-                            maxLines = 1
+                        text = product.satuan,
+                        color = icon,
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                        maxLines = 1
                     )
                 }
             }

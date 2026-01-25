@@ -28,8 +28,8 @@ fun App() {
          */
 
         MainNavHost(
-                navController = navController,
-                windowSize = windowSizeClass.windowWidthSizeClass
+            navController = navController,
+            windowSize = windowSizeClass.windowWidthSizeClass
         )
     }
 }

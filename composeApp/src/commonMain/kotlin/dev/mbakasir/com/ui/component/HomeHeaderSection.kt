@@ -32,43 +32,43 @@ import org.jetbrains.compose.resources.painterResource
 fun HomeHeaderSection(username: String, role: String) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Image(
-                painter = painterResource(resource = Res.drawable.account),
-                contentDescription = "User avatar",
-                modifier = Modifier.size(52.dp).clip(RoundedCornerShape(CornerRadius.lg))
+            painter = painterResource(resource = Res.drawable.account),
+            contentDescription = "User avatar",
+            modifier = Modifier.size(52.dp).clip(RoundedCornerShape(CornerRadius.lg))
         )
         Spacer(modifier = Modifier.width(Spacing.md))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                    text = username,
-                    style =
-                            MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.Medium
-                            ),
-                    color = primaryText,
-                    maxLines = 1
+                text = username,
+                style =
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                color = primaryText,
+                maxLines = 1
             )
             Text(
-                    text = role,
-                    style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                            ),
-                    color = dark,
-                    maxLines = 1
+                text = role,
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                color = dark,
+                maxLines = 1
             )
         }
         IconButton(
-                onClick = {},
-                modifier =
-                        Modifier.border(
-                                width = 1.dp,
-                                color = stroke,
-                                shape = RoundedCornerShape(CornerRadius.sm)
-                        )
+            onClick = {},
+            modifier =
+                Modifier.border(
+                    width = 1.dp,
+                    color = stroke,
+                    shape = RoundedCornerShape(CornerRadius.sm)
+                )
         ) {
             Image(
-                    painter = painterResource(resource = Res.drawable.ic_bell),
-                    contentDescription = "Notifications"
+                painter = painterResource(resource = Res.drawable.ic_bell),
+                contentDescription = "Notifications"
             )
         }
     }

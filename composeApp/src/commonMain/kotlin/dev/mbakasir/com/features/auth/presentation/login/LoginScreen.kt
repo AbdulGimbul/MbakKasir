@@ -57,6 +57,7 @@ fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
                 }
             }
         }
+
         is LoginUiState.NotAuthenticated -> {
             Login(uiState = state, onEvent = { viewModel.onEvent(it) })
         }
@@ -79,104 +80,104 @@ fun Login(uiState: LoginUiState.NotAuthenticated, onEvent: (LoginUiEvent) -> Uni
     }
 
     ContentWithMessageBar(
-            messageBarState = state,
-            errorMaxLines = 2,
-            showCopyButton = false,
-            visibilityDuration = 4000L,
-            modifier = Modifier.statusBarsPadding().navigationBarsPadding()
+        messageBarState = state,
+        errorMaxLines = 2,
+        showCopyButton = false,
+        visibilityDuration = 4000L,
+        modifier = Modifier.statusBarsPadding().navigationBarsPadding()
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Column(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                            painter = painterResource(resource = Res.drawable.mbakasir_logo),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxWidth(0.4f)
+                        painter = painterResource(resource = Res.drawable.mbakasir_logo),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth(0.4f)
                     )
                     Text(
-                            "Sederhana, Untung Maksimal",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 24.dp),
-                            color = secondaryText,
-                            maxLines = 2
+                        "Sederhana, Untung Maksimal",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 24.dp),
+                        color = secondaryText,
+                        maxLines = 2
                     )
                     DefaultTextField(
-                            value = uiState.username,
-                            onValueChange = { onEvent(LoginUiEvent.UsernameChanged(it)) },
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            leadingIcon = Icons.Outlined.AccountCircle,
-                            label = "Username"
+                        value = uiState.username,
+                        onValueChange = { onEvent(LoginUiEvent.UsernameChanged(it)) },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        leadingIcon = Icons.Outlined.AccountCircle,
+                        label = "Username"
                     )
                     DefaultTextField(
-                            value = uiState.password,
-                            onValueChange = { onEvent(LoginUiEvent.PasswordChanged(it)) },
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            leadingIcon = Icons.Outlined.Lock,
-                            label = "Password",
-                            isPassword = true
+                        value = uiState.password,
+                        onValueChange = { onEvent(LoginUiEvent.PasswordChanged(it)) },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        leadingIcon = Icons.Outlined.Lock,
+                        label = "Password",
+                        isPassword = true
                     )
                     DefaultButton(
-                            text = "Login",
-                            onClick = {
-                                if (uiState.username.isBlank() || uiState.password.isBlank()) {
-                                    state.addError(
-                                            Exception("Username dan passwordnya diisi dulu yaa!")
-                                    )
-                                    return@DefaultButton
-                                }
-                                onEvent.invoke(LoginUiEvent.Login)
-                            },
-                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
+                        text = "Login",
+                        onClick = {
+                            if (uiState.username.isBlank() || uiState.password.isBlank()) {
+                                state.addError(
+                                    Exception("Username dan passwordnya diisi dulu yaa!")
+                                )
+                                return@DefaultButton
+                            }
+                            onEvent.invoke(LoginUiEvent.Login)
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
                     )
                 }
                 Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (uiState.isConnected) {
                         Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                    text = "Supported by ",
-                                    style =
-                                            MaterialTheme.typography.bodyMedium.copy(
-                                                    color = primaryText
-                                            ),
+                                text = "Supported by ",
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        color = primaryText
+                                    ),
                             )
                             Text(
-                                    text = "Mbakasir.com",
-                                    style =
-                                            MaterialTheme.typography.bodyMedium.copy(
-                                                    color = primaryText
-                                            ),
-                                    modifier =
-                                            Modifier.clickable(
-                                                    interactionSource =
-                                                            remember { MutableInteractionSource() },
-                                                    indication = null
-                                            ) {
-                                                getBrowserHelper()
-                                                        .openBrowser("https://mbakasir.com/")
-                                            }
+                                text = "Mbakasir.com",
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        color = primaryText
+                                    ),
+                                modifier =
+                                    Modifier.clickable(
+                                        interactionSource =
+                                            remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) {
+                                        getBrowserHelper()
+                                            .openBrowser("https://mbakasir.com/")
+                                    }
                             )
                         }
                         Text(
-                                text = uiState.version,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = primaryText
+                            text = uiState.version,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primaryText
                         )
                     } else {
                         Text(
-                                text = "Offline, tidak terhubung ke server.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = primaryText
+                            text = "Offline, tidak terhubung ke server.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = primaryText
                         )
                     }
                 }

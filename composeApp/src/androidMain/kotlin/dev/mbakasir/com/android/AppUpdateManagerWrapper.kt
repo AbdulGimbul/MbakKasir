@@ -18,14 +18,14 @@ class AppUpdateManagerWrapper(private val activity: ComponentActivity) {
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                            appUpdateInfo.isUpdateTypeAllowed(updateType)
+                appUpdateInfo.isUpdateTypeAllowed(updateType)
             ) {
                 // Request the update
                 appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        activity,
-                        AppUpdateOptions.newBuilder(updateType).build(),
-                        requestCode
+                    appUpdateInfo,
+                    activity,
+                    AppUpdateOptions.newBuilder(updateType).build(),
+                    requestCode
                 )
             }
         }
@@ -39,6 +39,7 @@ class AppUpdateManagerWrapper(private val activity: ComponentActivity) {
                     // This forces the user to update.
                     checkForUpdate()
                 }
+
                 com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
                     // If the update failed, request it again or handle failure.
                     checkForUpdate()
@@ -50,14 +51,14 @@ class AppUpdateManagerWrapper(private val activity: ComponentActivity) {
     fun onResume() {
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() ==
-                            UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
             ) {
                 // If an in-app update is already in progress, resume the update.
                 appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        activity,
-                        AppUpdateOptions.newBuilder(updateType).build(),
-                        requestCode
+                    appUpdateInfo,
+                    activity,
+                    AppUpdateOptions.newBuilder(updateType).build(),
+                    requestCode
                 )
             }
         }

@@ -33,93 +33,93 @@ import dev.mbakasir.com.ui.theme.surface
  */
 @Composable
 fun ElevatedCard(
-        modifier: Modifier = Modifier,
-        onClick: (() -> Unit)? = null,
-        containerColor: Color = surface,
-        borderColor: Color? = stroke,
-        elevation: Dp = Elevation.sm,
-        cornerRadius: Dp = CornerRadius.md,
-        content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = surface,
+    borderColor: Color? = stroke,
+    elevation: Dp = Elevation.sm,
+    cornerRadius: Dp = CornerRadius.md,
+    content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     // Subtle scale animation when pressed
     val scale by
-            animateFloatAsState(
-                    targetValue = if (isPressed && onClick != null) 0.98f else 1f,
-                    animationSpec = tween(durationMillis = 100),
-                    label = "cardScale"
-            )
+    animateFloatAsState(
+        targetValue = if (isPressed && onClick != null) 0.98f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "cardScale"
+    )
 
     // Elevation animation when pressed
     val animatedElevation by
-            animateDpAsState(
-                    targetValue = if (isPressed) Elevation.xs else elevation,
-                    animationSpec = tween(durationMillis = 100),
-                    label = "cardElevation"
-            )
+    animateDpAsState(
+        targetValue = if (isPressed) Elevation.xs else elevation,
+        animationSpec = tween(durationMillis = 100),
+        label = "cardElevation"
+    )
 
     Card(
-            modifier =
-                    modifier.fillMaxWidth()
-                            .scale(scale)
-                            .shadow(
-                                    elevation = animatedElevation,
-                                    shape = RoundedCornerShape(cornerRadius),
-                                    ambientColor = shadowColor,
-                                    spotColor = shadowColor
-                            )
-                            .then(
-                                    if (onClick != null) {
-                                        Modifier.clickable(
-                                                interactionSource = interactionSource,
-                                                indication = null,
-                                                onClick = onClick
-                                        )
-                                    } else Modifier
-                            ),
-            shape = RoundedCornerShape(cornerRadius),
-            colors = CardDefaults.cardColors(containerColor = containerColor),
-            border = borderColor?.let { BorderStroke(0.5.dp, it) }
+        modifier =
+            modifier.fillMaxWidth()
+                .scale(scale)
+                .shadow(
+                    elevation = animatedElevation,
+                    shape = RoundedCornerShape(cornerRadius),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                )
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onClick
+                        )
+                    } else Modifier
+                ),
+        shape = RoundedCornerShape(cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        border = borderColor?.let { BorderStroke(0.5.dp, it) }
     ) { Box { content() } }
 }
 
 /** A flat outlined card without shadow. Use for less prominent card elements. */
 @Composable
 fun OutlinedCardComponent(
-        modifier: Modifier = Modifier,
-        onClick: (() -> Unit)? = null,
-        containerColor: Color = surface,
-        borderColor: Color = stroke,
-        cornerRadius: Dp = CornerRadius.md,
-        content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = surface,
+    borderColor: Color = stroke,
+    cornerRadius: Dp = CornerRadius.md,
+    content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val scale by
-            animateFloatAsState(
-                    targetValue = if (isPressed && onClick != null) 0.98f else 1f,
-                    animationSpec = tween(durationMillis = 100),
-                    label = "cardScale"
-            )
+    animateFloatAsState(
+        targetValue = if (isPressed && onClick != null) 0.98f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "cardScale"
+    )
 
     Card(
-            modifier =
-                    modifier.fillMaxWidth()
-                            .scale(scale)
-                            .then(
-                                    if (onClick != null) {
-                                        Modifier.clickable(
-                                                interactionSource = interactionSource,
-                                                indication = null,
-                                                onClick = onClick
-                                        )
-                                    } else Modifier
-                            ),
-            shape = RoundedCornerShape(cornerRadius),
-            colors = CardDefaults.cardColors(containerColor = containerColor),
-            border = BorderStroke(1.dp, borderColor)
+        modifier =
+            modifier.fillMaxWidth()
+                .scale(scale)
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onClick
+                        )
+                    } else Modifier
+                ),
+        shape = RoundedCornerShape(cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        border = BorderStroke(1.dp, borderColor)
     ) { Box { content() } }
 }

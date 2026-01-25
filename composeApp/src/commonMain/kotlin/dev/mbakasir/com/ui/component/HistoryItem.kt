@@ -37,43 +37,43 @@ import dev.mbakasir.com.ui.theme.surface
 
 @Composable
 fun HistoryItem(
-        date: String,
-        method: String,
-        total: String,
-        cashier: String,
-        invoiceNumber: String,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier
+    date: String,
+    method: String,
+    total: String,
+    cashier: String,
+    invoiceNumber: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
-            modifier =
-                    modifier.fillMaxWidth()
-                            .shadow(
-                                    elevation = Elevation.xs,
-                                    shape = RoundedCornerShape(CornerRadius.md),
-                                    ambientColor = shadowColor,
-                                    spotColor = shadowColor
-                            ),
-            shape = RoundedCornerShape(CornerRadius.md),
-            border = CardDefaults.outlinedCardBorder(enabled = true),
-            colors = CardDefaults.cardColors(containerColor = surface)
+        modifier =
+            modifier.fillMaxWidth()
+                .shadow(
+                    elevation = Elevation.xs,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                ),
+        shape = RoundedCornerShape(CornerRadius.md),
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.cardColors(containerColor = surface)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = "Time",
-                        tint = secondaryText,
-                        modifier = Modifier.padding(end = Spacing.xs)
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = "Time",
+                    tint = secondaryText,
+                    modifier = Modifier.padding(end = Spacing.xs)
                 )
                 Text(
-                        text = date,
-                        color = secondaryText,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(bottom = Spacing.xs)
+                    text = date,
+                    color = secondaryText,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = Spacing.xs)
                 )
             }
             Spacer(modifier = Modifier.height(Spacing.lg))
@@ -84,19 +84,19 @@ fun HistoryItem(
             ItemRow(label = cashier, value = invoiceNumber)
             Spacer(modifier = Modifier.height(Spacing.lg))
             OutlinedButton(
-                    onClick = onClick,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = blue),
-                    border = BorderStroke(width = 1.5.dp, color = blue),
-                    shape = RoundedCornerShape(CornerRadius.xxl),
-                    modifier = Modifier.fillMaxWidth()
+                onClick = onClick,
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = blue),
+                border = BorderStroke(width = 1.5.dp, color = blue),
+                shape = RoundedCornerShape(CornerRadius.xxl),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                        text = "Preview",
-                        style =
-                                MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                ),
-                        modifier = Modifier.padding(vertical = Spacing.xs)
+                    text = "Preview",
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    modifier = Modifier.padding(vertical = Spacing.xs)
                 )
             }
         }
@@ -106,19 +106,19 @@ fun HistoryItem(
 @Composable
 fun ItemRow(label: String, value: String) {
     Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-                text = label,
-                color = dark,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+            text = label,
+            color = dark,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
         Text(
-                text = value,
-                color = dark,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+            text = value,
+            color = dark,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
     }
 }

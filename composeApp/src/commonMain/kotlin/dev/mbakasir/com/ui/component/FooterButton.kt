@@ -31,63 +31,63 @@ import dev.mbakasir.com.ui.theme.red
 
 @Composable
 fun FooterButton(
-        onCancelClick: () -> Unit,
-        onConfirmClick: () -> Unit,
-        cancelText: String,
-        confirmText: String,
-        borderCancelColor: Color = red,
-        contentCancelColor: Color = red,
+    onCancelClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    cancelText: String,
+    confirmText: String,
+    borderCancelColor: Color = red,
+    contentCancelColor: Color = red,
 ) {
     Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedButton(
-                onClick = onCancelClick,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = contentCancelColor),
-                border = BorderStroke(width = 1.5.dp, color = borderCancelColor),
-                shape = RoundedCornerShape(CornerRadius.md),
-                modifier =
-                        Modifier.weight(1f).defaultMinSize(minHeight = ComponentHeight.buttonMedium)
+            onClick = onCancelClick,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = contentCancelColor),
+            border = BorderStroke(width = 1.5.dp, color = borderCancelColor),
+            shape = RoundedCornerShape(CornerRadius.md),
+            modifier =
+                Modifier.weight(1f).defaultMinSize(minHeight = ComponentHeight.buttonMedium)
         ) {
             Text(
-                    text = cancelText,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(Spacing.xs),
-                    maxLines = 1,
-                    softWrap = false
+                text = cancelText,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(Spacing.xs),
+                maxLines = 1,
+                softWrap = false
             )
         }
         Spacer(modifier = Modifier.width(Spacing.lg))
         Button(
-                onClick = onConfirmClick,
-                colors =
-                        ButtonDefaults.buttonColors(
-                                containerColor = primary,
-                                contentColor = onPrimary
-                        ),
-                shape = RoundedCornerShape(CornerRadius.md),
-                elevation =
-                        ButtonDefaults.buttonElevation(
-                                defaultElevation = Elevation.sm,
-                                pressedElevation = Elevation.xs
-                        ),
-                modifier =
-                        Modifier.weight(1f)
-                                .defaultMinSize(minHeight = ComponentHeight.buttonMedium)
-                                .shadow(
-                                        elevation = Elevation.sm,
-                                        shape = RoundedCornerShape(CornerRadius.md),
-                                        ambientColor = primaryDark.copy(alpha = 0.2f),
-                                        spotColor = primaryDark.copy(alpha = 0.2f)
-                                )
+            onClick = onConfirmClick,
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = primary,
+                    contentColor = onPrimary
+                ),
+            shape = RoundedCornerShape(CornerRadius.md),
+            elevation =
+                ButtonDefaults.buttonElevation(
+                    defaultElevation = Elevation.sm,
+                    pressedElevation = Elevation.xs
+                ),
+            modifier =
+                Modifier.weight(1f)
+                    .defaultMinSize(minHeight = ComponentHeight.buttonMedium)
+                    .shadow(
+                        elevation = Elevation.sm,
+                        shape = RoundedCornerShape(CornerRadius.md),
+                        ambientColor = primaryDark.copy(alpha = 0.2f),
+                        spotColor = primaryDark.copy(alpha = 0.2f)
+                    )
         ) {
             Text(
-                    text = confirmText,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(Spacing.xs),
-                    maxLines = 1,
-                    softWrap = false
+                text = confirmText,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(Spacing.xs),
+                maxLines = 1,
+                softWrap = false
             )
         }
     }

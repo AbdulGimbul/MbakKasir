@@ -27,39 +27,39 @@ object AnimationDuration {
  */
 @Composable
 fun AnimatedListItem(
-        visible: Boolean,
-        modifier: Modifier = Modifier,
-        content: @Composable () -> Unit
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
     AnimatedVisibility(
-            visible = visible,
-            enter =
-                    fadeIn(animationSpec = tween(AnimationDuration.FAST)) +
-                            slideInVertically(
-                                    animationSpec = tween(AnimationDuration.FAST),
-                                    initialOffsetY = { it / 4 } // Subtle slide from 25% below
-                            ),
-            exit =
-                    fadeOut(animationSpec = tween(AnimationDuration.FAST)) +
-                            slideOutVertically(
-                                    animationSpec = tween(AnimationDuration.FAST),
-                                    targetOffsetY = { -it / 4 } // Subtle slide up
-                            ),
-            modifier = modifier
+        visible = visible,
+        enter =
+            fadeIn(animationSpec = tween(AnimationDuration.FAST)) +
+                    slideInVertically(
+                        animationSpec = tween(AnimationDuration.FAST),
+                        initialOffsetY = { it / 4 } // Subtle slide from 25% below
+                    ),
+        exit =
+            fadeOut(animationSpec = tween(AnimationDuration.FAST)) +
+                    slideOutVertically(
+                        animationSpec = tween(AnimationDuration.FAST),
+                        targetOffsetY = { -it / 4 } // Subtle slide up
+                    ),
+        modifier = modifier
     ) { content() }
 }
 
 /** Fade-only animated visibility (even more minimal). */
 @Composable
 fun FadeAnimatedContent(
-        visible: Boolean,
-        modifier: Modifier = Modifier,
-        content: @Composable () -> Unit
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
     AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(animationSpec = tween(AnimationDuration.NORMAL)),
-            exit = fadeOut(animationSpec = tween(AnimationDuration.NORMAL)),
-            modifier = modifier
+        visible = visible,
+        enter = fadeIn(animationSpec = tween(AnimationDuration.NORMAL)),
+        exit = fadeOut(animationSpec = tween(AnimationDuration.NORMAL)),
+        modifier = modifier
     ) { content() }
 }

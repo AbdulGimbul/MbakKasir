@@ -41,73 +41,73 @@ import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun SalesItem(
-        product: dev.mbakasir.com.features.cashier_role.sales.data.ProductDraftWithItems,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier
+    product: dev.mbakasir.com.features.cashier_role.sales.data.ProductDraftWithItems,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
-            modifier =
-                    modifier.fillMaxWidth()
-                            .shadow(
-                                    elevation = Elevation.xs,
-                                    shape = RoundedCornerShape(CornerRadius.md),
-                                    ambientColor = shadowColor,
-                                    spotColor = shadowColor
-                            ),
-            shape = RoundedCornerShape(CornerRadius.md),
-            border = CardDefaults.outlinedCardBorder(enabled = true),
-            colors = CardDefaults.cardColors(containerColor = surface)
+        modifier =
+            modifier.fillMaxWidth()
+                .shadow(
+                    elevation = Elevation.xs,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                ),
+        shape = RoundedCornerShape(CornerRadius.md),
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.cardColors(containerColor = surface)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = "Time",
-                        tint = secondaryText,
-                        modifier = Modifier.padding(end = Spacing.xs)
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = "Time",
+                    tint = secondaryText,
+                    modifier = Modifier.padding(end = Spacing.xs)
                 )
                 Text(
-                        text = product.draft.dateTime,
-                        color = secondaryText,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1
+                    text = product.draft.dateTime,
+                    color = secondaryText,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1
                 )
             }
             Spacer(modifier = Modifier.height(Spacing.lg))
             HorizontalDivider(color = dev.mbakasir.com.ui.theme.strokeLight)
             Spacer(modifier = Modifier.height(Spacing.lg))
             ItemRowSales(
-                    label = if (product.draft.isPrinted) "Belum posting" else "Draft",
-                    value = currencyFormat(product.totalAmount.toDouble()),
-                    color = if (product.draft.isPrinted) yellow else red
+                label = if (product.draft.isPrinted) "Belum posting" else "Draft",
+                value = currencyFormat(product.totalAmount.toDouble()),
+                color = if (product.draft.isPrinted) yellow else red
             )
             Spacer(modifier = Modifier.height(Spacing.lg))
             ItemRowSales(label = product.draft.cashier, value = product.draft.draftId, color = dark)
             Spacer(modifier = Modifier.height(Spacing.lg))
             OutlinedButton(
-                    onClick = onClick,
-                    colors =
-                            ButtonDefaults.outlinedButtonColors(
-                                    contentColor = if (product.draft.isPrinted) blue else primary
-                            ),
-                    border =
-                            BorderStroke(
-                                    width = 1.5.dp,
-                                    color = if (product.draft.isPrinted) blue else primary
-                            ),
-                    shape = RoundedCornerShape(CornerRadius.xxl),
-                    modifier = Modifier.fillMaxWidth()
+                onClick = onClick,
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        contentColor = if (product.draft.isPrinted) blue else primary
+                    ),
+                border =
+                    BorderStroke(
+                        width = 1.5.dp,
+                        color = if (product.draft.isPrinted) blue else primary
+                    ),
+                shape = RoundedCornerShape(CornerRadius.xxl),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                        text = if (product.draft.isPrinted) "Kirim ulang" else "Selesaikan",
-                        style =
-                                MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                ),
-                        modifier = Modifier.padding(vertical = Spacing.xs)
+                    text = if (product.draft.isPrinted) "Kirim ulang" else "Selesaikan",
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    modifier = Modifier.padding(vertical = Spacing.xs)
                 )
             }
         }
@@ -117,22 +117,22 @@ fun SalesItem(
 @Composable
 fun ItemRowSales(label: String, value: String, color: Color) {
     Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-                text = label,
-                color = color,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                maxLines = 1,
-                modifier = Modifier.weight(1f, fill = false)
+            text = label,
+            color = color,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            maxLines = 1,
+            modifier = Modifier.weight(1f, fill = false)
         )
         Text(
-                text = value,
-                color = dark,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                maxLines = 1
+            text = value,
+            color = dark,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            maxLines = 1
         )
     }
 }

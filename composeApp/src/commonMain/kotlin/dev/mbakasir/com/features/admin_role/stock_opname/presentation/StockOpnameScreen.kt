@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -66,8 +66,7 @@ fun StockOpnameScreen(viewModel: StockOpnameViewModel, navController: NavControl
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.collect {
-                lastVisibleIndex ->
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.collect { lastVisibleIndex ->
             val stockOpnameCount = state.stockOpname?.data?.size ?: 0
             if (lastVisibleIndex != null && stockOpnameCount > 0) {
                 if (lastVisibleIndex >= stockOpnameCount - 1) {
@@ -78,20 +77,20 @@ fun StockOpnameScreen(viewModel: StockOpnameViewModel, navController: NavControl
     }
 
     StockOpname(
-            uiState = state,
-            onEvent = viewModel::onEvent,
-            moveToEntryStcokOpname = { navController.navigate(AdminScreen.EntryStockOpname.route) },
-            listState = listState
+        uiState = state,
+        onEvent = viewModel::onEvent,
+        moveToEntryStcokOpname = { navController.navigate(AdminScreen.EntryStockOpname.route) },
+        listState = listState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockOpname(
-        uiState: StockOpnameUiState,
-        onEvent: (StockOpnameUiEvent) -> Unit,
-        moveToEntryStcokOpname: () -> Unit,
-        listState: LazyListState
+    uiState: StockOpnameUiState,
+    onEvent: (StockOpnameUiEvent) -> Unit,
+    moveToEntryStcokOpname: () -> Unit,
+    listState: LazyListState
 ) {
     val state = rememberDateRangePickerState()
     var isDateRangePickerVisible by remember { mutableStateOf(false) }
@@ -100,104 +99,84 @@ fun StockOpname(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         HeadlineText("Stock Opname", modifier = Modifier.padding(bottom = 32.dp))
         OutlinedTextField(
-                value = selectedDateRange,
-                onValueChange = {},
-                textStyle = MaterialTheme.typography.bodyMedium,
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                },
-                placeholder = { Text(text = "Search ...", color = secondaryText) },
-                trailingIcon = {
-                    IconButton(onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }) {
-                        Icon(
-                                Icons.Outlined.FilterAlt,
-                                contentDescription = "Filter",
-                                tint = primary
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                colors =
-                        OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = stroke,
-                                unfocusedBorderColor = stroke,
-                                cursorColor = primaryText,
-                                focusedLabelColor = primary,
-                                unfocusedLabelColor = secondaryText,
-                        ),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            value = selectedDateRange,
+            onValueChange = {},
+            textStyle = MaterialTheme.typography.bodyMedium,
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+            },
+            placeholder = { Text(text = "Search ...", color = secondaryText) },
+            trailingIcon = {
+                IconButton(onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }) {
+                    Icon(
+                        Icons.Outlined.FilterAlt,
+                        contentDescription = "Filter",
+                        tint = primary
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            singleLine = true,
+            shape = RoundedCornerShape(10.dp),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = stroke,
+                    unfocusedBorderColor = stroke,
+                    cursorColor = primaryText,
+                    focusedLabelColor = primary,
+                    unfocusedLabelColor = secondaryText,
+                ),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
         )
 
         if (isDateRangePickerVisible) {
             Row(
-                    modifier =
-                            Modifier.fillMaxWidth()
-                                    .background(DatePickerDefaults.colors().containerColor),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .background(DatePickerDefaults.colors().containerColor),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                        onClick = {
-                            val startDate = state.selectedStartDateMillis
-                            val endDate = state.selectedEndDateMillis
+                    onClick = {
+                        val startDate = state.selectedStartDateMillis
+                        val endDate = state.selectedEndDateMillis
 
-                            if (startDate != null && endDate != null) {
-                                selectedDateRange = formatDateRange(startDate, endDate)
+                        if (startDate != null && endDate != null) {
+                            selectedDateRange = formatDateRange(startDate, endDate)
 
-                                val apiStartDate = formatDateForApi(startDate)
-                                val apiEndDate = formatDateForApi(endDate)
+                            val apiStartDate = formatDateForApi(startDate)
+                            val apiEndDate = formatDateForApi(endDate)
 
-                                onEvent(StockOpnameUiEvent.UpdateDate(apiStartDate, apiEndDate))
-                                onEvent(StockOpnameUiEvent.GetStockOpname)
+                            onEvent(StockOpnameUiEvent.UpdateDate(apiStartDate, apiEndDate))
+                            onEvent(StockOpnameUiEvent.GetStockOpname)
 
-                                isDateRangePickerVisible = false
-                            }
-                        },
-                        enabled = state.selectedEndDateMillis != null
+                            isDateRangePickerVisible = false
+                        }
+                    },
+                    enabled = state.selectedEndDateMillis != null
                 ) { Icon(imageVector = Icons.Default.Check, contentDescription = "") }
             }
 
             DateRangePicker(
-                    state = state,
-                    showModeToggle = false,
-                    modifier = Modifier.fillMaxWidth()
+                state = state,
+                showModeToggle = false,
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
         LazyColumn(state = listState) {
             uiState.stockOpname?.let { stock ->
-                itemsIndexed(stock.data) { index, it ->
-                    androidx.compose.animation.AnimatedVisibility(
-                            visible = true,
-                            enter =
-                                    androidx.compose.animation.fadeIn(
-                                            animationSpec =
-                                                    androidx.compose.animation.core.tween(
-                                                            durationMillis = 150,
-                                                            delayMillis = index * 30
-                                                    )
-                                    ) +
-                                            androidx.compose.animation.slideInVertically(
-                                                    animationSpec =
-                                                            androidx.compose.animation.core.tween(
-                                                                    durationMillis = 150,
-                                                                    delayMillis = index * 30
-                                                            ),
-                                                    initialOffsetY = { offset -> offset / 4 }
-                                            )
-                    ) {
-                        StockOpnameItem(
-                                price = it.nilai,
-                                date = it.tanggal,
-                                barcode = it.namaBarang,
-                                onPreviewClick = {},
-                                onDeleteClick = {},
-                                productName = it.keterangan,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                        )
-                    }
+                items(stock.data) { it ->
+                    StockOpnameItem(
+                        price = it.nilai,
+                        date = it.tanggal,
+                        barcode = it.namaBarang,
+                        onPreviewClick = {},
+                        onDeleteClick = {},
+                        productName = it.keterangan,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
                 }
             }
         }

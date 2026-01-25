@@ -34,134 +34,134 @@ import dev.mbakasir.com.ui.theme.surfaceVariant
 
 @Composable
 fun DefaultTextField(
-        modifier: Modifier = Modifier,
-        leadingIcon: ImageVector? = null,
-        label: String? = null,
-        value: String,
-        onValueChange: (String) -> Unit,
-        isPassword: Boolean = false,
-        minLines: Int = 1,
-        singleLine: Boolean = true,
-        placehoder: String? = null,
-        keyboardOptions: KeyboardOptions? = null,
-        visualTransformation: VisualTransformation? = null,
-        isError: Boolean = false,
-        errorMessage: String? = null
+    modifier: Modifier = Modifier,
+    leadingIcon: ImageVector? = null,
+    label: String? = null,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isPassword: Boolean = false,
+    minLines: Int = 1,
+    singleLine: Boolean = true,
+    placehoder: String? = null,
+    keyboardOptions: KeyboardOptions? = null,
+    visualTransformation: VisualTransformation? = null,
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
     var passwordVisibility by remember { mutableStateOf(isPassword) }
     var isFocused by remember { mutableStateOf(false) }
 
     // Animated border color based on focus state
     val borderColor by
-            animateColorAsState(
-                    targetValue =
-                            when {
-                                isError -> MaterialTheme.colorScheme.error
-                                isFocused -> primary
-                                else -> stroke
-                            },
-                    animationSpec = tween(durationMillis = 200),
-                    label = "borderColor"
-            )
+    animateColorAsState(
+        targetValue =
+            when {
+                isError -> MaterialTheme.colorScheme.error
+                isFocused -> primary
+                else -> stroke
+            },
+        animationSpec = tween(durationMillis = 200),
+        label = "borderColor"
+    )
 
     // Animated container color based on focus state
     val containerColor by
-            animateColorAsState(
-                    targetValue =
-                            if (isFocused) primaryContainer.copy(alpha = 0.1f)
-                            else surfaceVariant.copy(alpha = 0.3f),
-                    animationSpec = tween(durationMillis = 200),
-                    label = "containerColor"
-            )
+    animateColorAsState(
+        targetValue =
+            if (isFocused) primaryContainer.copy(alpha = 0.1f)
+            else surfaceVariant.copy(alpha = 0.3f),
+        animationSpec = tween(durationMillis = 200),
+        label = "containerColor"
+    )
 
     // Animated icon color based on focus state
     val iconColor by
-            animateColorAsState(
-                    targetValue = if (isFocused) primary else secondaryText,
-                    animationSpec = tween(durationMillis = 200),
-                    label = "iconColor"
-            )
+    animateColorAsState(
+        targetValue = if (isFocused) primary else secondaryText,
+        animationSpec = tween(durationMillis = 200),
+        label = "iconColor"
+    )
 
     OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(lineHeight = 1.2.em),
-            label =
-                    if (label != null) {
-                        { Text(text = label, color = if (isFocused) primary else secondaryText) }
-                    } else null,
-            modifier =
-                    modifier.fillMaxWidth().onFocusChanged { focusState ->
-                        isFocused = focusState.isFocused
-                    },
-            shape = RoundedCornerShape(CornerRadius.md),
-            colors =
-                    OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = primary,
-                            unfocusedBorderColor = stroke,
-                            errorBorderColor = MaterialTheme.colorScheme.error,
-                            cursorColor = primary,
-                            focusedLabelColor = primary,
-                            unfocusedLabelColor = secondaryText,
-                            focusedPlaceholderColor = secondaryText,
-                            unfocusedPlaceholderColor = secondaryText,
-                            focusedLeadingIconColor = primary,
-                            unfocusedLeadingIconColor = secondaryText,
-                            focusedTrailingIconColor = secondaryText,
-                            unfocusedTrailingIconColor = secondaryText,
-                            focusedContainerColor = primaryContainer.copy(alpha = 0.05f),
-                            unfocusedContainerColor =
-                                    androidx.compose.ui.graphics.Color.Transparent,
-                    ),
-            leadingIcon =
-                    if (leadingIcon != null) {
-                        {
-                            Icon(
-                                    imageVector = leadingIcon,
-                                    contentDescription = label ?: "Input icon",
-                                    tint = iconColor
-                            )
-                        }
-                    } else null,
-            trailingIcon =
-                    if (isPassword) {
-                        {
-                            IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                                Icon(
-                                        imageVector =
-                                                if (isPassword && passwordVisibility)
-                                                        Icons.Outlined.VisibilityOff
-                                                else Icons.Outlined.Visibility,
-                                        contentDescription =
-                                                if (passwordVisibility) "Hide password"
-                                                else "Show password"
-                                )
-                            }
-                        }
-                    } else null,
-            visualTransformation =
-                    when {
-                        isPassword && passwordVisibility -> PasswordVisualTransformation()
-                        visualTransformation != null -> visualTransformation
-                        else -> VisualTransformation.None
-                    },
-            minLines = minLines,
-            singleLine = singleLine,
-            isError = isError,
-            supportingText =
-                    if (isError && errorMessage != null) {
-                        {
-                            Text(
-                                    text = errorMessage,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    } else null,
-            placeholder =
-                    if (placehoder != null) {
-                        { Text(text = placehoder, color = secondaryText) }
-                    } else null,
-            keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
+        value = value,
+        onValueChange = onValueChange,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(lineHeight = 1.2.em),
+        label =
+            if (label != null) {
+                { Text(text = label, color = if (isFocused) primary else secondaryText) }
+            } else null,
+        modifier =
+            modifier.fillMaxWidth().onFocusChanged { focusState ->
+                isFocused = focusState.isFocused
+            },
+        shape = RoundedCornerShape(CornerRadius.md),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = primary,
+                unfocusedBorderColor = stroke,
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                cursorColor = primary,
+                focusedLabelColor = primary,
+                unfocusedLabelColor = secondaryText,
+                focusedPlaceholderColor = secondaryText,
+                unfocusedPlaceholderColor = secondaryText,
+                focusedLeadingIconColor = primary,
+                unfocusedLeadingIconColor = secondaryText,
+                focusedTrailingIconColor = secondaryText,
+                unfocusedTrailingIconColor = secondaryText,
+                focusedContainerColor = primaryContainer.copy(alpha = 0.05f),
+                unfocusedContainerColor =
+                    androidx.compose.ui.graphics.Color.Transparent,
+            ),
+        leadingIcon =
+            if (leadingIcon != null) {
+                {
+                    Icon(
+                        imageVector = leadingIcon,
+                        contentDescription = label ?: "Input icon",
+                        tint = iconColor
+                    )
+                }
+            } else null,
+        trailingIcon =
+            if (isPassword) {
+                {
+                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                        Icon(
+                            imageVector =
+                                if (isPassword && passwordVisibility)
+                                    Icons.Outlined.VisibilityOff
+                                else Icons.Outlined.Visibility,
+                            contentDescription =
+                                if (passwordVisibility) "Hide password"
+                                else "Show password"
+                        )
+                    }
+                }
+            } else null,
+        visualTransformation =
+            when {
+                isPassword && passwordVisibility -> PasswordVisualTransformation()
+                visualTransformation != null -> visualTransformation
+                else -> VisualTransformation.None
+            },
+        minLines = minLines,
+        singleLine = singleLine,
+        isError = isError,
+        supportingText =
+            if (isError && errorMessage != null) {
+                {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            } else null,
+        placeholder =
+            if (placehoder != null) {
+                { Text(text = placehoder, color = secondaryText) }
+            } else null,
+        keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
     )
 }
