@@ -50,6 +50,9 @@ kotlin {
             implementation(libs.core.splashscreen)
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
+            // Android-only paging libs (transitively depend on kotlinx-coroutines-android)
+            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -73,8 +76,6 @@ kotlin {
             implementation(libs.compottie.dot)
             api(libs.androidx.datastore)
             api(libs.androidx.datastore.preferences)
-            implementation(libs.androidx.paging.runtime)
-            implementation(libs.androidx.paging.compose)
             implementation(libs.bundles.ktor)
             implementation(libs.messagebarkmp)
             implementation(libs.qrkit)
