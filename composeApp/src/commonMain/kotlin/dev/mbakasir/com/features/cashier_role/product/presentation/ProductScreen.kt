@@ -81,7 +81,7 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
         errorMaxLines = 2,
         showCopyButton = false,
         visibilityDuration = 3000L,
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier
     ) {
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
@@ -89,16 +89,22 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
             state = pullToRefreshState,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Text(
-                    "Barang",
-                    style =
-                        MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                    color = dark,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
-                )
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Barang",
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        color = dark,
+                        maxLines = 1
+                    )
+                }
                 DefaultTextField(
                     value = search,
                     onValueChange = { search = it },

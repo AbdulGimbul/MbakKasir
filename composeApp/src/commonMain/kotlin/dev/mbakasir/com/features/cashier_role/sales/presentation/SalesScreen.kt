@@ -96,12 +96,12 @@ fun Sales(
         errorMaxLines = 2,
         showCopyButton = false,
         visibilityDuration = 3000L,
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier
     ) {
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                     verticalAlignment = Alignment.CenterVertically,
