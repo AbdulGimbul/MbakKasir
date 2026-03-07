@@ -3,7 +3,8 @@ package dev.mbakasir.com.utils
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.refTo
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -29,10 +30,12 @@ actual class ShareManager {
                 val tempDir = NSTemporaryDirectory()
                 val fileURL = NSURL.fileURLWithPath("$tempDir$fileName")
 
-                val nsData = NSData.create(
-                    bytes = byteArray.refTo(0),
-                    length = byteArray.size.toULong()
-                )
+                val nsData = byteArray.usePinned { pinned ->
+                    NSData.create(
+                        bytes = pinned.addressOf(0),
+                        length = byteArray.size.toULong()
+                    )
+                }
 
                 nsData.writeToURL(fileURL, atomically = true)
 
