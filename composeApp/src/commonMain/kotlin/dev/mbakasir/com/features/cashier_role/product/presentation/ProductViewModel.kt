@@ -38,15 +38,15 @@ class ProductViewModel(private val productRepository: ProductRepository) : ViewM
 
             try {
                 val lastUpdateCache = productRepository.getLastUpdateCache()
-                _uiState.value = _uiState.value.copy(latestUpdate = lastUpdateCache)
+                _uiState.value = _uiState.value.copy(latestUpdate = lastUpdateCache.ifEmpty { "Belum ada update" })
                 val getLastUpdateMaster = productRepository.getLastUpdateMaster()
 
                 withContext(Dispatchers.Main) {
                     getLastUpdateMaster
                         .onSuccess {
-                            lastUpdateMaster.value = it.lastUpdate.toString()
+                            lastUpdateMaster.value = it.lastUpdate ?: ""
                             _uiState.value =
-                                _uiState.value.copy(latestUpdate = lastUpdateMaster.value)
+                                _uiState.value.copy(latestUpdate = it.lastUpdate ?: "Belum ada update")
 
                             if (lastUpdateCache.isEmpty() ||
                                 lastUpdateCache == "null" ||

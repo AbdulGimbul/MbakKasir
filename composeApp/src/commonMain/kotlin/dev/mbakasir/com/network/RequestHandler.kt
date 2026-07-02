@@ -67,9 +67,12 @@ class RequestHandler(val httpClient: HttpClient, val sessionHandler: SessionHand
                 val networkException =
                     when (e.response.status) {
                         HttpStatusCode.Unauthorized -> {
-                            sessionHandler.clearData()
+                            if (body !is dev.mbakasir.com.features.auth.domain.LoginRequest) {
+                                sessionHandler.clearData()
+                            }
                             NetworkException.UnauthorizedException(
-                                "Sesi Anda telah berakhir, silakan login kembali.",
+                                errorBody?.message
+                                    ?: "Sesi Anda telah berakhir, silakan login kembali.",
                                 e
                             )
                         }
