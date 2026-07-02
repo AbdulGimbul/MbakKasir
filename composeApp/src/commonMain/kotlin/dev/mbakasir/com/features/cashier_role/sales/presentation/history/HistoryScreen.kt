@@ -46,8 +46,8 @@ import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.HistoryItem
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.formatDateForApi
 import kotlin.time.Clock
@@ -114,7 +114,7 @@ fun History(
                         contentDescription = "Date Range"
                     )
                 },
-                placeholder = { Text(text = "Select Date Range", color = secondary_text) },
+                placeholder = { Text(text = "Select Date Range", color = secondaryText) },
                 trailingIcon = {
                     IconButton(
                         onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }
@@ -133,9 +133,9 @@ fun History(
                     OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = stroke,
                         unfocusedBorderColor = stroke,
-                        cursorColor = primary_text,
+                        cursorColor = primaryText,
                         focusedLabelColor = primary,
-                        unfocusedLabelColor = secondary_text,
+                        unfocusedLabelColor = secondaryText,
                     ),
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             )
@@ -179,7 +179,7 @@ fun History(
 
         LazyColumn(state = listState) {
             uiState.history?.let { hist ->
-                items(hist.data) {
+                items(hist.data) { it ->
                     HistoryItem(
                         date = it.tanggal,
                         method = it.method,

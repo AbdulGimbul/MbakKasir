@@ -10,7 +10,20 @@ import network.chaintech.composeMultiplatformScreenCapture.AppContext
 
 class MainActivity : ComponentActivity() {
 
+    // Define properties first
     private lateinit var appUpdateManagerWrapper: AppUpdateManagerWrapper
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: android.content.Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Forward the result to the update manager
+        if (::appUpdateManagerWrapper.isInitialized) {
+            appUpdateManagerWrapper.processActivityResult(requestCode, resultCode)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

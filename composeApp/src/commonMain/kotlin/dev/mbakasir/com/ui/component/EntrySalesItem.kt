@@ -64,7 +64,7 @@ fun EntrySalesItem(
             Column {
                 Text(
                     text = "[${product.kodeBarang}] ${product.barcode}",
-                    color = dev.mbakasir.com.ui.theme.primary_text,
+                    color = dev.mbakasir.com.ui.theme.primaryText,
                     style =
                         MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.SemiBold
@@ -89,43 +89,23 @@ fun EntrySalesItem(
                 if (specialPrice > 0 && specialPrice != product.hargaItem) {
                     Column {
                         Text(
-                            currencyFormat(
-                                product.hargaItem.toDouble()
-                            ),
+                            currencyFormat(product.hargaItem.toDouble()),
                             style =
-                                MaterialTheme.typography.bodySmall
-                                    .copy(
-                                        fontWeight =
-                                            FontWeight
-                                                .SemiBold,
-                                        textDecoration =
-                                            androidx.compose
-                                                .ui
-                                                .text
-                                                .style
-                                                .TextDecoration
-                                                .LineThrough
-                                    ),
-                            color =
-                                dev.mbakasir
-                                    .com
-                                    .ui
-                                    .theme
-                                    .secondary_text
+                                MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    textDecoration =
+                                        androidx.compose.ui.text.style
+                                            .TextDecoration.LineThrough
+                                ),
+                            color = dev.mbakasir.com.ui.theme.secondaryText
                         )
                         Text(
-                            text =
-                                currencyFormat(
-                                    specialPrice.toDouble()
-                                ),
+                            text = currencyFormat(specialPrice.toDouble()),
                             color = dev.mbakasir.com.ui.theme.dark,
                             style =
-                                MaterialTheme.typography.titleMedium
-                                    .copy(
-                                        fontWeight =
-                                            FontWeight
-                                                .SemiBold
-                                    ),
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
                         )
                     }
                 } else {
@@ -147,12 +127,7 @@ fun EntrySalesItem(
                         modifier =
                             Modifier.border(
                                 width = 1.dp,
-                                color =
-                                    dev.mbakasir
-                                        .com
-                                        .ui
-                                        .theme
-                                        .primary,
+                                color = dev.mbakasir.com.ui.theme.primary,
                                 shape = CircleShape
                             )
                                 .size(24.dp),
@@ -176,12 +151,7 @@ fun EntrySalesItem(
                         onClick = { onIncreaseQty(product) },
                         modifier =
                             Modifier.background(
-                                color =
-                                    dev.mbakasir
-                                        .com
-                                        .ui
-                                        .theme
-                                        .primary,
+                                color = dev.mbakasir.com.ui.theme.primary,
                                 shape = CircleShape
                             )
                                 .size(24.dp),

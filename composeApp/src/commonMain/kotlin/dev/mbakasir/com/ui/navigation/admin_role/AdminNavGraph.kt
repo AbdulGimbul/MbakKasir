@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -174,7 +175,7 @@ fun NavHostContent(
 
 @Composable
 private fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavigationBar(modifier = modifier) {
+    NavigationBar(modifier = modifier, containerColor = MaterialTheme.colorScheme.background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

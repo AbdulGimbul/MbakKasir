@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -47,7 +48,7 @@ import dev.mbakasir.com.features.auth.domain.User
 import dev.mbakasir.com.ui.navigation.MainScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
+import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.red
 import dev.mbakasir.com.utils.getBrowserHelper
 import mbakkasir.composeapp.generated.resources.Res
@@ -77,12 +78,10 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
             CircularProgressIndicator(color = primary)
         }
     } else {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface).statusBarsPadding()) {
             Column(
                 modifier =
-                    Modifier.fillMaxWidth()
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState())
+                    Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())
             ) {
                 Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                     Box(
@@ -97,12 +96,7 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                                 )
                                 .background(Color.White),
                     )
-                    Box(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .height(150.dp)
-                                .background(primary)
-                    )
+                    Box(modifier = Modifier.fillMaxWidth().height(150.dp).background(primary))
                     uiState.user?.userInfo?.let { UserInfoHeader(it) }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -114,14 +108,10 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(
                     onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
-                    colors =
-                        ButtonDefaults.outlinedButtonColors(
-                            contentColor = red
-                        ),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(width = 1.dp, color = red),
                     shape = RoundedCornerShape(10.dp),
-                    modifier =
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Logout,
@@ -150,34 +140,28 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                     ) {
                         Text(
                             text = "Supported by ",
-                            style =
-                                MaterialTheme.typography.bodyMedium
-                                    .copy(primary_text),
+                            style = MaterialTheme.typography.bodyMedium.copy(primaryText),
                         )
                         Text(
                             text = "Mbakasir.com",
                             style =
-                                MaterialTheme.typography.bodyMedium
-                                    .copy(color = primary_text),
+                                MaterialTheme.typography.bodyMedium.copy(
+                                    color = primaryText
+                                ),
                             modifier =
                                 Modifier.clickable(
                                     interactionSource =
-                                        remember {
-                                            MutableInteractionSource()
-                                        },
+                                        remember { MutableInteractionSource() },
                                     indication = null
                                 ) {
-                                    getBrowserHelper()
-                                        .openBrowser(
-                                            "https://mbakasir.com/"
-                                        )
+                                    getBrowserHelper().openBrowser("https://mbakasir.com/")
                                 }
                         )
                     }
                     Text(
                         text = uiState.version,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = primary_text
+                        color = primaryText
                     )
                 }
             }
@@ -197,9 +181,9 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                 ) { Text("Ya") }
             },
             dismissButton = {
-                TextButton(
-                    onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }
-                ) { Text("Tidak") }
+                TextButton(onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) }) {
+                    Text("Tidak")
+                }
             }
         )
     }
@@ -225,16 +209,8 @@ fun UserInfoHeader(user: User) {
             color = dark,
             modifier = Modifier.padding(top = 8.dp)
         )
-        Text(
-            text = user.username,
-            style = MaterialTheme.typography.bodyMedium,
-            color = dark
-        )
-        Text(
-            text = user.role,
-            style = MaterialTheme.typography.bodyMedium,
-            color = primary_text
-        )
+        Text(text = user.username, style = MaterialTheme.typography.bodyMedium, color = dark)
+        Text(text = user.role, style = MaterialTheme.typography.bodyMedium, color = primaryText)
     }
 }
 
@@ -273,7 +249,7 @@ fun InfoRow(label: String, info: String) {
             modifier = Modifier.weight(1f),
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = primary_text
+            color = primaryText
         )
         Text(
             modifier = Modifier.weight(1f),

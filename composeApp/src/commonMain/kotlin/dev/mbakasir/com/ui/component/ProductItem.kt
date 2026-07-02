@@ -8,47 +8,52 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import dev.mbakasir.com.features.cashier_role.product.data.ProductEntity
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Elevation
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
-import dev.mbakasir.com.ui.theme.primary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.shadowColor
+import dev.mbakasir.com.ui.theme.surface
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
 
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        border =
-            CardDefaults.outlinedCardBorder(
-                enabled = true,
-            ),
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = Color.White,
-            )
+    Card(
+        modifier =
+            modifier.fillMaxWidth()
+                .shadow(
+                    elevation = Elevation.xs,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                ),
+        shape = RoundedCornerShape(CornerRadius.md),
+        border = CardDefaults.outlinedCardBorder(enabled = true),
+        colors = CardDefaults.cardColors(containerColor = surface)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Column {
                 Text(
                     text = product.barcode,
-                    color = primary_text,
+                    color = primaryText,
                     style =
-                        MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.SemiBold
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium
                         ),
-                    modifier = Modifier.padding(bottom = 4.dp),
+                    modifier = Modifier.padding(bottom = Spacing.xs),
                     maxLines = 1
                 )
                 Text(
@@ -61,7 +66,7 @@ fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
                     maxLines = 2
                 )
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
@@ -72,13 +77,13 @@ fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
                     color = dark,
                     style =
                         MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold
                         ),
                     maxLines = 1
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
                     Text(
                         text = product.stok,
@@ -93,8 +98,8 @@ fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
                         text = product.satuan,
                         color = icon,
                         style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold
+                            MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Medium
                             ),
                         maxLines = 1
                     )

@@ -46,8 +46,8 @@ import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.StockOpnameItem
 import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.formatDateForApi
 import dev.mbakasir.com.utils.formatDateRange
@@ -66,23 +66,20 @@ fun StockOpnameScreen(viewModel: StockOpnameViewModel, navController: NavControl
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-            .collect { lastVisibleIndex ->
-                val stockOpnameCount = state.stockOpname?.data?.size ?: 0
-                if (lastVisibleIndex != null && stockOpnameCount > 0) {
-                    if (lastVisibleIndex >= stockOpnameCount - 1) {
-                        viewModel.onEvent(StockOpnameUiEvent.GetStockOpname)
-                    }
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.collect { lastVisibleIndex ->
+            val stockOpnameCount = state.stockOpname?.data?.size ?: 0
+            if (lastVisibleIndex != null && stockOpnameCount > 0) {
+                if (lastVisibleIndex >= stockOpnameCount - 1) {
+                    viewModel.onEvent(StockOpnameUiEvent.GetStockOpname)
                 }
             }
+        }
     }
 
     StockOpname(
         uiState = state,
         onEvent = viewModel::onEvent,
-        moveToEntryStcokOpname = {
-            navController.navigate(AdminScreen.EntryStockOpname.route)
-        },
+        moveToEntryStcokOpname = { navController.navigate(AdminScreen.EntryStockOpname.route) },
         listState = listState
     )
 }
@@ -99,22 +96,16 @@ fun StockOpname(
     var isDateRangePickerVisible by remember { mutableStateOf(false) }
     var selectedDateRange by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(16.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         HeadlineText("Stock Opname", modifier = Modifier.padding(bottom = 32.dp))
         OutlinedTextField(
             value = selectedDateRange,
             onValueChange = {},
             textStyle = MaterialTheme.typography.bodyMedium,
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
             },
-            placeholder = { Text(text = "Search ...", color = secondary_text) },
+            placeholder = { Text(text = "Search ...", color = secondaryText) },
             trailingIcon = {
                 IconButton(onClick = { isDateRangePickerVisible = !isDateRangePickerVisible }) {
                     Icon(
@@ -127,23 +118,22 @@ fun StockOpname(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             singleLine = true,
             shape = RoundedCornerShape(10.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = stroke,
-                unfocusedBorderColor = stroke,
-                cursorColor = primary_text,
-                focusedLabelColor = primary,
-                unfocusedLabelColor = secondary_text,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = stroke,
+                    unfocusedBorderColor = stroke,
+                    cursorColor = primaryText,
+                    focusedLabelColor = primary,
+                    unfocusedLabelColor = secondaryText,
+                ),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
         )
 
         if (isDateRangePickerVisible) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(DatePickerDefaults.colors().containerColor),
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .background(DatePickerDefaults.colors().containerColor),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
@@ -153,11 +143,9 @@ fun StockOpname(
                         val endDate = state.selectedEndDateMillis
 
                         if (startDate != null && endDate != null) {
-                            selectedDateRange =
-                                formatDateRange(startDate, endDate)
+                            selectedDateRange = formatDateRange(startDate, endDate)
 
-                            val apiStartDate =
-                                formatDateForApi(startDate)
+                            val apiStartDate = formatDateForApi(startDate)
                             val apiEndDate = formatDateForApi(endDate)
 
                             onEvent(StockOpnameUiEvent.UpdateDate(apiStartDate, apiEndDate))
@@ -167,9 +155,7 @@ fun StockOpname(
                         }
                     },
                     enabled = state.selectedEndDateMillis != null
-                ) {
-                    Icon(imageVector = Icons.Default.Check, contentDescription = "")
-                }
+                ) { Icon(imageVector = Icons.Default.Check, contentDescription = "") }
             }
 
             DateRangePicker(
@@ -181,7 +167,7 @@ fun StockOpname(
 
         LazyColumn(state = listState) {
             uiState.stockOpname?.let { stock ->
-                items(stock.data) {
+                items(stock.data) { it ->
                     StockOpnameItem(
                         price = it.nilai,
                         date = it.tanggal,

@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.ProductItem
@@ -48,7 +47,6 @@ import rememberMessageBarState
 fun ProductScreen(viewModel: ProductViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
@@ -60,7 +58,12 @@ fun ProductScreen(viewModel: ProductViewModel) {
             }
     }
 
-    Product(uiState = uiState, listState = listState, onRefresh = { viewModel.reloadData() })
+    Product(
+        uiState = uiState,
+        listState = listState,
+    ) {
+        viewModel.reloadData()
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
@@ -81,7 +84,7 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
         errorMaxLines = 2,
         showCopyButton = false,
         visibilityDuration = 3000L,
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier,
     ) {
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
@@ -89,16 +92,22 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
             state = pullToRefreshState,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Text(
-                    "Barang",
-                    style =
-                        MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                    color = dark,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
-                )
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Barang",
+                        style =
+                            MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        color = dark,
+                        maxLines = 1
+                    )
+                }
                 DefaultTextField(
                     value = search,
                     onValueChange = { search = it },
@@ -116,46 +125,33 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
                             text = "Terakhir Diperbaharui",
                             color = dark,
                             style =
-                                MaterialTheme.typography.titleMedium
-                                    .copy(
-                                        fontWeight =
-                                            FontWeight
-                                                .SemiBold
-                                    ),
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
                             maxLines = 2
                         )
                         Text(
-                            text = uiState.latestUpdate.ifEmpty { "-" },
+                            text = uiState.latestUpdate,
                             color = primary,
-                            style =
-                                MaterialTheme.typography
-                                    .titleMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             maxLines = 1
                         )
                     }
-                    Column(
-                        modifier = Modifier.weight(0.5f),
-                        horizontalAlignment = Alignment.End
-                    ) {
+                    Column(modifier = Modifier.weight(0.5f), horizontalAlignment = Alignment.End) {
                         Text(
                             text = "Jumlah Barang",
                             color = dark,
                             style =
-                                MaterialTheme.typography.titleMedium
-                                    .copy(
-                                        fontWeight =
-                                            FontWeight
-                                                .SemiBold
-                                    ),
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
                             maxLines = 2,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
                             text = uiState.totalProduct.toString(),
                             color = primary,
-                            style =
-                                MaterialTheme.typography
-                                    .titleMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             modifier = Modifier.fillMaxWidth()
                         )

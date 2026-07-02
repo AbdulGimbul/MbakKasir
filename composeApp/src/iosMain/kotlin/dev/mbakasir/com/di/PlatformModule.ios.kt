@@ -7,13 +7,14 @@ import dev.mbakasir.com.utils.ShareManager
 import io.ktor.client.engine.darwin.Darwin
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import platform.UIKit.UIApplication
 
 actual val platformModule: Module
     get() = module {
         single { createDataStore() }
 //        single { RemoteConfigManager() }
         single { Darwin.create() }
-        single { BlueFalcon(context = ApplicationContext()) }
+        single { BlueFalcon(context = UIApplication.sharedApplication) }
         single { DatabaseFactory() }
         single { ShareManager() }
     }

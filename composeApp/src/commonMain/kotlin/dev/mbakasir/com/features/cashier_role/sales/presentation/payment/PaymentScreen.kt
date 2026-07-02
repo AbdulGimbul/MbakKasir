@@ -48,7 +48,7 @@ import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.secondary
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.utils.currencyFormat
 import kotlinx.serialization.json.Json
 import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerView
@@ -213,7 +213,7 @@ fun Payment(
                     //                                    "dd/mm/yyyy",
                     //                                    style =
                     // MaterialTheme.typography.bodyMedium,
-                    //                                    color = secondary_text
+                    //                                    color = secondaryText
                     //                                )
                     //                            },
                     //                            enabled = false,
@@ -234,13 +234,13 @@ fun Payment(
                     //                            colors =
                     // OutlinedTextFieldDefaults.colors(
                     //                                disabledPlaceholderColor =
-                    // secondary_text,
+                    // secondaryText,
                     //                                disabledBorderColor =
                     // stroke,
                     //                                disabledLabelColor =
-                    // secondary_text,
+                    // secondaryText,
                     //                                disabledTextColor =
-                    // primary_text,
+                    // primaryText,
                     //                                disabledTrailingIconColor
                     // = icon,
                     //                            ),
@@ -476,7 +476,7 @@ fun PaymentOptions(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = secondary_text,
+                    color = secondaryText,
                 )
             }
         }
@@ -498,7 +498,7 @@ fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
                         fontWeight = FontWeight.SemiBold
                     )
                 else MaterialTheme.typography.bodyMedium,
-            color = if (isBold) dark else secondary_text
+            color = if (isBold) dark else secondaryText
         )
         Text(
             text = value,

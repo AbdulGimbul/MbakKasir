@@ -50,7 +50,7 @@ import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.ShareManager
 import dev.mbakasir.com.utils.currencyFormat
@@ -313,7 +313,7 @@ fun Invoice(
                         text = "==TERIMA KASIH SUDAH BERBELANJA==",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        color = secondary_text,
+                        color = secondaryText,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -322,7 +322,7 @@ fun Invoice(
                             "BARANG YANG SUDAH DIBELI TIDAK BOLEH DIKEMBALIKAN",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        color = secondary_text,
+                        color = secondaryText,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -418,21 +418,21 @@ fun ItemRow(name: String, qty: String, price: String, discount: String) {
         Row {
             Text(
                 text = name,
-                color = secondary_text,
+                color = secondaryText,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(3f)
             )
             Text(
                 text = qty,
                 textAlign = TextAlign.Center,
-                color = secondary_text,
+                color = secondaryText,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = price,
                 textAlign = TextAlign.End,
-                color = secondary_text,
+                color = secondaryText,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(2f)
             )
@@ -440,7 +440,7 @@ fun ItemRow(name: String, qty: String, price: String, discount: String) {
         Text(
             text = "Diskon: $discount",
             textAlign = TextAlign.End,
-            color = secondary_text,
+            color = secondaryText,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth().padding(end = 24.dp)
         )

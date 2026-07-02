@@ -46,7 +46,7 @@ fun StockOpnamePreviewScreen() {
             Text(
                 "Stock Opname",
                 style = MaterialTheme.typography.titleLarge,
-                color = dev.mbakasir.com.ui.theme.secondary_text,
+                color = dev.mbakasir.com.ui.theme.secondaryText,
             )
             Spacer(modifier = Modifier.height(16.dp))
             StockOpnameDetail(label = "Tanggal:", detail = "2024-06-20 17:07:38")
@@ -77,7 +77,7 @@ fun StockOpnameDetail(label: String, detail: String) {
         Text(
             text = detail,
             style = MaterialTheme.typography.bodyMedium,
-            color = dev.mbakasir.com.ui.theme.primary_text,
+            color = dev.mbakasir.com.ui.theme.primaryText,
             modifier = Modifier.padding(start = 4.dp)
         )
     }

@@ -12,19 +12,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Elevation
+import dev.mbakasir.com.ui.theme.Spacing
+import dev.mbakasir.com.ui.theme.blue
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.red
+import dev.mbakasir.com.ui.theme.secondaryText
+import dev.mbakasir.com.ui.theme.shadowColor
+import dev.mbakasir.com.ui.theme.surface
+import dev.mbakasir.com.ui.theme.yellow
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
@@ -33,13 +45,20 @@ fun SalesItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
+    Card(
+        modifier =
+            modifier.fillMaxWidth()
+                .shadow(
+                    elevation = Elevation.xs,
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
+                ),
+        shape = RoundedCornerShape(CornerRadius.md),
         border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = surface)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -47,61 +66,48 @@ fun SalesItem(
                 Icon(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = "Time",
-                    modifier = Modifier.padding(end = 4.dp)
+                    tint = secondaryText,
+                    modifier = Modifier.padding(end = Spacing.xs)
                 )
                 Text(
                     text = product.draft.dateTime,
-                    color = dev.mbakasir.com.ui.theme.secondary_text,
+                    color = secondaryText,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
+            HorizontalDivider(color = dev.mbakasir.com.ui.theme.strokeLight)
+            Spacer(modifier = Modifier.height(Spacing.lg))
             ItemRowSales(
                 label = if (product.draft.isPrinted) "Belum posting" else "Draft",
                 value = currencyFormat(product.totalAmount.toDouble()),
-                color =
-                    if (product.draft.isPrinted)
-                        dev.mbakasir.com.ui.theme.yellow
-                    else dev.mbakasir.com.ui.theme.red
+                color = if (product.draft.isPrinted) yellow else red
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            ItemRowSales(
-                label = product.draft.cashier,
-                value = product.draft.draftId,
-                color = dev.mbakasir.com.ui.theme.dark
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
+            ItemRowSales(label = product.draft.cashier, value = product.draft.draftId, color = dark)
+            Spacer(modifier = Modifier.height(Spacing.lg))
             OutlinedButton(
                 onClick = onClick,
                 colors =
                     ButtonDefaults.outlinedButtonColors(
-                        contentColor =
-                            if (product.draft.isPrinted)
-                                dev.mbakasir.com.ui.theme.blue
-                            else dev.mbakasir.com.ui.theme.primary
+                        contentColor = if (product.draft.isPrinted) blue else primary
                     ),
                 border =
                     BorderStroke(
-                        width = 1.dp,
-                        color =
-                            if (product.draft.isPrinted)
-                                dev.mbakasir.com.ui.theme.blue
-                            else dev.mbakasir.com.ui.theme.primary
+                        width = 1.5.dp,
+                        color = if (product.draft.isPrinted) blue else primary
                     ),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(CornerRadius.xxl),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text =
-                        if (product.draft.isPrinted) "Kirim ulang"
-                        else "Selesaikan",
+                    text = if (product.draft.isPrinted) "Kirim ulang" else "Selesaikan",
                     style =
-                        MaterialTheme.typography.bodySmall.copy(
+                        MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Bold
-                        )
+                        ),
+                    modifier = Modifier.padding(vertical = Spacing.xs)
                 )
             }
         }
@@ -118,20 +124,14 @@ fun ItemRowSales(label: String, value: String, color: Color) {
         Text(
             text = label,
             color = color,
-            style =
-                MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             maxLines = 1,
             modifier = Modifier.weight(1f, fill = false)
         )
         Text(
             text = value,
-            color = dev.mbakasir.com.ui.theme.dark,
-            style =
-                MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
+            color = dark,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             maxLines = 1
         )
     }

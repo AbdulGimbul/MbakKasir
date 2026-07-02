@@ -29,8 +29,8 @@ import dev.mbakasir.com.ui.component.DefaultButton
 import dev.mbakasir.com.ui.component.DefaultTextField
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.navigation.MainScreen
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.utils.getBrowserHelper
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.mbakasir_logo
@@ -43,9 +43,7 @@ fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
 
     when (val state = uiState) {
         is LoginUiState.Authenticated -> {
-            if (state.role == "Kasir" ||
-                state.role.equals("Guest", ignoreCase = true)
-            ) {
+            if (state.role == "Kasir" || state.role.equals("Guest", ignoreCase = true)) {
                 LaunchedEffect(Unit) {
                     navController.navigate("${MainScreen.Cashier.route}/${state.role}") {
                         popUpTo(MainScreen.Login.route) { inclusive = true }
@@ -105,7 +103,7 @@ fun Login(uiState: LoginUiState.NotAuthenticated, onEvent: (LoginUiEvent) -> Uni
                         "Sederhana, Untung Maksimal",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 24.dp),
-                        color = secondary_text,
+                        color = secondaryText,
                         maxLines = 2
                     )
                     DefaultTextField(
@@ -148,13 +146,16 @@ fun Login(uiState: LoginUiState.NotAuthenticated, onEvent: (LoginUiEvent) -> Uni
                         ) {
                             Text(
                                 text = "Supported by ",
-                                style = MaterialTheme.typography.bodyMedium.copy(primary_text),
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        color = primaryText
+                                    ),
                             )
                             Text(
                                 text = "Mbakasir.com",
                                 style =
                                     MaterialTheme.typography.bodyMedium.copy(
-                                        color = primary_text
+                                        color = primaryText
                                     ),
                                 modifier =
                                     Modifier.clickable(
@@ -170,13 +171,13 @@ fun Login(uiState: LoginUiState.NotAuthenticated, onEvent: (LoginUiEvent) -> Uni
                         Text(
                             text = uiState.version,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = primary_text
+                            color = primaryText
                         )
                     } else {
                         Text(
                             text = "Offline, tidak terhubung ke server.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = primary_text
+                            color = primaryText
                         )
                     }
                 }

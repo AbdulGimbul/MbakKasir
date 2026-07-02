@@ -1,6 +1,7 @@
 package dev.mbakasir.com.utils
 
 import platform.Foundation.NSLocale
+import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
 import platform.Foundation.NSNumberFormatterCurrencyStyle
 import platform.Foundation.NSURL
@@ -12,7 +13,7 @@ actual fun currencyFormat(value: Double): String {
             numberStyle = NSNumberFormatterCurrencyStyle
             locale = NSLocale("in_ID")
         }
-    return formatter.stringFromNumber(value) ?: "$value"
+    return formatter.stringFromNumber(NSNumber(double = value)) ?: "$value"
 }
 
 actual interface JavaSerializable

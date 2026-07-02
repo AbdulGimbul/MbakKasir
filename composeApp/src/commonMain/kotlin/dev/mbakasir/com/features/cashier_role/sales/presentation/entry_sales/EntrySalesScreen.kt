@@ -59,8 +59,8 @@ import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.formatCurrencyInput
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
 import dev.mbakasir.com.ui.navigation.cashier_role.MbakKasirNavigationType
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.utils.currencyFormat
 import kotlinx.serialization.json.Json
 import mbakkasir.composeapp.generated.resources.Res
@@ -157,7 +157,7 @@ fun EntrySales(
                     Spacer(modifier = Modifier.width(8.dp))
                     HeadlineText(
                         text = stringResource(Res.string.entry_sales_title),
-                        color = primary_text
+                        color = primaryText
                     )
                 }
 
@@ -330,7 +330,7 @@ fun EntrySalesAndPayment(
                     HeadlineText(stringResource(Res.string.entry_sales_label))
                     HeadlineText(
                         text = stringResource(Res.string.entry_sales_title),
-                        color = secondary_text,
+                        color = secondaryText,
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
 

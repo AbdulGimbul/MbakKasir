@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import dev.mbakasir.com.ui.theme.blue
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
-import dev.mbakasir.com.ui.theme.primary_text
+import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.red
 import dev.mbakasir.com.utils.currencyFormat
 
@@ -65,10 +65,7 @@ fun StockOpnameItem(
                     )
                     Text(
                         text = date,
-                        style =
-                            MaterialTheme.typography.bodyMedium.copy(
-                                color = primary_text
-                            )
+                        style = MaterialTheme.typography.bodyMedium.copy(color = primaryText)
                     )
                 }
                 Text(
@@ -89,7 +86,7 @@ fun StockOpnameItem(
                     style =
                         MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = primary_text
+                            color = primaryText
                         )
                 )
                 Text(
@@ -119,10 +116,7 @@ fun StockOpnameItem(
                 Spacer(modifier = Modifier.width(10.dp))
                 OutlinedButton(
                     onClick = onDeleteClick,
-                    colors =
-                        ButtonDefaults.outlinedButtonColors(
-                            contentColor = red
-                        ),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(width = 1.dp, color = red),
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.weight(1f)

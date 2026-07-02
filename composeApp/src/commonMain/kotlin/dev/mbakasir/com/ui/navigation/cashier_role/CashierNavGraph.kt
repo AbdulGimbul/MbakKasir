@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -34,6 +35,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
@@ -212,7 +214,7 @@ fun NavHostContent(
         composable(
             route = "${CashierScreen.EntrySales.route}/{draftId}",
         ) { backStackEntry ->
-            val draftId = backStackEntry.arguments?.getString("draftId")
+            val draftId = backStackEntry.arguments?.read { getStringOrNull("draftId") }
             EntrySalesScreen(
                 viewModel = koinViewModel<EntrySalesViewModel>(),
                 navController = navController,
@@ -234,9 +236,9 @@ fun NavHostContent(
                     }
                 )
         ) { backStackEntry ->
-            val draftId = backStackEntry.arguments?.getString("draftId")
-            val jsonResponse = backStackEntry.arguments?.getString("scannedProducts")
-            val customerCode = backStackEntry.arguments?.getString("customerCode") ?: ""
+            val draftId = backStackEntry.arguments?.read { getStringOrNull("draftId") }
+            val jsonResponse = backStackEntry.arguments?.read { getStringOrNull("scannedProducts") }
+            val customerCode = backStackEntry.arguments?.read { getStringOrNull("customerCode") } ?: ""
             val scannedProducts =
                 jsonResponse?.let { Json.decodeFromString<List<ProductTransSerializable>>(it) }
             PaymentScreen(
@@ -256,8 +258,8 @@ fun NavHostContent(
                     navArgument("noInvoice") { nullable = true }
                 )
         ) { backStackEntry ->
-            val jsonResponse = backStackEntry.arguments?.getString("paymentData")
-            val noInvoice = backStackEntry.arguments?.getString("noInvoice")
+            val jsonResponse = backStackEntry.arguments?.read { getStringOrNull("paymentData") }
+            val noInvoice = backStackEntry.arguments?.read { getStringOrNull("noInvoice") }
             val paymentData = jsonResponse?.let { Json.decodeFromString<PaymentUiState>(it) }
             InvoiceScreen(
                 viewModel = koinViewModel<InvoiceViewModel>(),
@@ -276,7 +278,7 @@ private fun BottomBar(
     items: List<CashierBottomRailNavItem>,
     modifier: Modifier = Modifier
 ) {
-    NavigationBar(modifier = modifier) {
+    NavigationBar(modifier = modifier, containerColor = MaterialTheme.colorScheme.background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

@@ -2,6 +2,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -49,6 +50,9 @@ kotlin {
             implementation(libs.core.splashscreen)
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
+            // Android-only paging libs (transitively depend on kotlinx-coroutines-android)
+            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -72,8 +76,6 @@ kotlin {
             implementation(libs.compottie.dot)
             api(libs.androidx.datastore)
             api(libs.androidx.datastore.preferences)
-            implementation(libs.androidx.paging.runtime)
-            implementation(libs.androidx.paging.compose)
             implementation(libs.bundles.ktor)
             implementation(libs.messagebarkmp)
             implementation(libs.qrkit)
@@ -153,17 +155,32 @@ android {
         applicationId = "dev.mbakasir.com"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 5
-        versionName = "1.0.1"
+        versionCode = 4
+        versionName = "1.0.0"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        create("release") {
+            val keystoreFile = File(rootProject.rootDir, "keystore.properties")
+            if (keystoreFile.exists()) {
+                val properties = Properties()
+                properties.load(keystoreFile.inputStream())
+                storeFile = File(rootProject.rootDir, properties.getProperty("storeFile"))
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

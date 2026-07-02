@@ -41,8 +41,8 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.Summary
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
-import dev.mbakasir.com.ui.theme.primary_text
-import dev.mbakasir.com.ui.theme.secondary_text
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
 import dev.mbakasir.com.utils.currencyFormat
 import mbakkasir.composeapp.generated.resources.Res
@@ -80,7 +80,7 @@ fun ProductSearchSection(
                 Text(
                     stringResource(Res.string.scan_barcode_label),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = secondary_text
+                    color = secondaryText
                 )
             },
             trailingIcon = {
@@ -99,9 +99,9 @@ fun ProductSearchSection(
                 OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = stroke,
                     unfocusedBorderColor = stroke,
-                    cursorColor = primary_text,
+                    cursorColor = primaryText,
                     focusedLabelColor = primary,
-                    unfocusedLabelColor = secondary_text,
+                    unfocusedLabelColor = secondaryText,
                 ),
             modifier =
                 Modifier.fillMaxWidth()
@@ -224,7 +224,7 @@ fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> 
                     Text(
                         text = stringResource(Res.string.choose_customer),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = secondary_text,
+                        color = secondaryText,
                         modifier =
                             Modifier.clickable { setCustExpanded(true) }
                     )
@@ -245,7 +245,7 @@ fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> 
                         Text(
                             stringResource(Res.string.search_customer),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = secondary_text
+                            color = secondaryText
                         )
                     },
                     keyboardOptions =
@@ -256,9 +256,9 @@ fun CustomerSection(uiState: EntrySalesUiState, onEvent: (EntrySalesUiEvent) -> 
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = stroke,
                             unfocusedBorderColor = stroke,
-                            cursorColor = primary_text,
+                            cursorColor = primaryText,
                             focusedLabelColor = primary,
-                            unfocusedLabelColor = secondary_text,
+                            unfocusedLabelColor = secondaryText,
                         ),
                     modifier =
                         Modifier.fillMaxWidth()

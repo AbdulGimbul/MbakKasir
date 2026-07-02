@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.auth.presentation.login.LoginScreen
 import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
@@ -45,7 +46,7 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
             route = "${MainScreen.Cashier.route}/{role}",
             arguments = listOf(navArgument("role") { type = NavType.StringType })
         ) { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role") ?: ""
+            val role = backStackEntry.arguments?.read { getStringOrNull("role") } ?: ""
             CashierNavHost(
                 navController = rememberNavController(),
                 windowSize = windowSize,
