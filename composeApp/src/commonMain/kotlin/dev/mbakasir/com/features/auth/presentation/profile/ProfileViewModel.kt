@@ -81,17 +81,15 @@ class ProfileViewModel(
 
     private fun getVersion() {
         viewModelScope.launch {
-            viewModelScope.launch {
-                val result = authRepository.getVersion()
-                withContext(Dispatchers.Main) {
-                    result
-                        .onSuccess { data ->
-                            _uiState.value = _uiState.value.copy(version = data.version)
-                        }
-                        .onError { error ->
-                            _uiState.value = _uiState.value.copy(errorMessage = error.message)
-                        }
-                }
+            val result = authRepository.getVersion()
+            withContext(Dispatchers.Main) {
+                result
+                    .onSuccess { data ->
+                        _uiState.value = _uiState.value.copy(version = data.version)
+                    }
+                    .onError { error ->
+                        _uiState.value = _uiState.value.copy(errorMessage = error.message)
+                    }
             }
         }
     }
