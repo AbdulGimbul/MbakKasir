@@ -47,9 +47,15 @@ val cyanLight3 = Color(0xFFD0F0FD)
 val pinkLight3 = Color(0xFFF6D8FE)
 val purpleLight3 = Color(0xFFDDD6FE)
 
+// Card Gradient Endpoints (deeper shades for gradient end)
+val cyanDeep = Color(0xFFA0DFF5)
+val pinkDeep = Color(0xFFEDB8FE)
+val purpleDeep = Color(0xFFC4B8FE)
+
 // Shadow Colors
 val shadowColor = Color(0x1A000000) // 10% black
 val shadowColorLight = Color(0x0D000000) // 5% black
+val primaryGlow = Color(0x1413C296) // 8% primary — colored card glow
 
 // Legacy aliases for backward compatibility
 @Deprecated("Use primaryText instead", ReplaceWith("primaryText"))

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -18,7 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.FilterAlt
-import androidx.compose.material3.CircularProgressIndicator
+import dev.mbakasir.com.ui.component.LottieLoadingIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,9 +43,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import dev.mbakasir.com.ui.component.EmptyStateView
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.HistoryItem
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.secondaryText
@@ -99,8 +103,8 @@ fun History(
         )
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp).imePadding().statusBarsPadding()) {
-        HeadlineText("History", modifier = Modifier.padding(bottom = 32.dp))
+    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg).imePadding().statusBarsPadding()) {
+        HeadlineText("History", modifier = Modifier.padding(bottom = Spacing.xxl))
 
         Box {
             OutlinedTextField(
@@ -128,7 +132,7 @@ fun History(
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 singleLine = true,
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(CornerRadius.md),
                 colors =
                     OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = stroke,
@@ -137,7 +141,7 @@ fun History(
                         focusedLabelColor = primary,
                         unfocusedLabelColor = secondaryText,
                     ),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.lg),
             )
         }
 
@@ -177,26 +181,30 @@ fun History(
             )
         }
 
-        LazyColumn(state = listState) {
-            uiState.history?.let { hist ->
-                items(hist.data) { it ->
-                    HistoryItem(
-                        date = it.tanggal,
-                        method = it.method,
-                        total = it.bayar,
-                        invoiceNumber = it.invoice,
-                        cashier = it.kasir,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        onClick = { moveToInvoice(it.invoice) }
-                    )
-                }
+        if (uiState.history?.data.isNullOrEmpty() && !uiState.isLoading) {
+            EmptyStateView(message = "Belum ada riwayat transaksi.")
+        } else {
+            LazyColumn(state = listState) {
+                uiState.history?.let { hist ->
+                    items(hist.data) { it ->
+                        HistoryItem(
+                            date = it.tanggal,
+                            method = it.method,
+                            total = it.bayar,
+                            invoiceNumber = it.invoice,
+                            cashier = it.kasir,
+                            modifier = Modifier.padding(vertical = Spacing.xs),
+                            onClick = { moveToInvoice(it.invoice) }
+                        )
+                    }
 
-                if (uiState.isLoading) {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) { CircularProgressIndicator() }
+                    if (uiState.isLoading) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.lg),
+                                contentAlignment = Alignment.Center
+                            ) { LottieLoadingIndicator(modifier = Modifier.size(24.dp)) }
+                        }
                     }
                 }
             }

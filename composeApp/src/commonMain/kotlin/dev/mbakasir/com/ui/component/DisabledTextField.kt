@@ -6,7 +6,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.CornerRadius
 
 @Composable
 fun DisabledTextField(
@@ -23,6 +23,6 @@ fun DisabledTextField(
             disabledBorderColor = dev.mbakasir.com.ui.theme.disabled,
             disabledContainerColor = dev.mbakasir.com.ui.theme.disabled,
         ),
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(CornerRadius.md)
     )
 }

@@ -1,11 +1,10 @@
 package dev.mbakasir.com.ui.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,32 +22,39 @@ import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mbakkasir.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
+/**
+ * Reusable empty state composable that shows a Lottie animation and a message.
+ * Use this in list screens when there's no data to display.
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun EnhancedLoading(modifier: Modifier = Modifier) {
+fun EmptyStateView(
+    message: String,
+    modifier: Modifier = Modifier
+) {
     val composition by rememberLottieComposition {
-        LottieCompositionSpec.JsonString(Res.readBytes("files/loading.json").decodeToString())
+        LottieCompositionSpec.JsonString(Res.readBytes("files/nodata.json").decodeToString())
     }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
+    Column(
+        modifier = modifier.fillMaxWidth().padding(top = Spacing.xxl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = rememberLottiePainter(
+        Image(
+            painter =
+                rememberLottiePainter(
                     composition = composition,
                     iterations = Compottie.IterateForever
                 ),
-                contentDescription = "Memuat data",
-                modifier = Modifier.size(120.dp)
-            )
-            Spacer(modifier = Modifier.height(Spacing.sm))
-            Text(
-                "Mohon tunggu...",
-                style = MaterialTheme.typography.bodyMedium,
-                color = secondaryText
-            )
-        }
+            contentDescription = "Tidak ada data",
+            modifier = Modifier.size(170.dp)
+        )
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+            color = secondaryText,
+            modifier = Modifier.padding(top = Spacing.sm)
+        )
     }
 }

@@ -1,5 +1,9 @@
 package dev.mbakasir.com.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,6 +24,8 @@ import dev.mbakasir.com.ui.navigation.cashier_role.CashierNavHost
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
+private const val NAV_ANIM_DURATION = 300
+
 @Composable
 fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass) {
     val sessionHandler: SessionHandler = koinInject()
@@ -37,7 +43,38 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
         }
     }
 
-    NavHost(navController = navController, startDestination = MainScreen.Login.route) {
+    NavHost(
+        navController = navController,
+        startDestination = MainScreen.Login.route,
+        enterTransition = {
+            fadeIn(animationSpec = tween(NAV_ANIM_DURATION)) +
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(NAV_ANIM_DURATION)
+                )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(NAV_ANIM_DURATION)) +
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(NAV_ANIM_DURATION)
+                )
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(NAV_ANIM_DURATION)) +
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(NAV_ANIM_DURATION)
+                )
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(NAV_ANIM_DURATION)) +
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(NAV_ANIM_DURATION)
+                )
+        }
+    ) {
         composable(MainScreen.Login.route) {
             LoginScreen(viewModel = koinViewModel<LoginViewModel>(), navController = navController)
         }
@@ -64,3 +101,4 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
         }
     }
 }
+

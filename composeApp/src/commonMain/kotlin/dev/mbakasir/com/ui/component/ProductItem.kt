@@ -7,43 +7,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import dev.mbakasir.com.features.cashier_role.product.data.ProductEntity
-import dev.mbakasir.com.ui.theme.CornerRadius
-import dev.mbakasir.com.ui.theme.Elevation
 import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
+import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primaryText
-import dev.mbakasir.com.ui.theme.shadowColor
-import dev.mbakasir.com.ui.theme.surface
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
 fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
 
-    Card(
-        modifier =
-            modifier.fillMaxWidth()
-                .shadow(
-                    elevation = Elevation.xs,
-                    shape = RoundedCornerShape(CornerRadius.md),
-                    ambientColor = shadowColor,
-                    spotColor = shadowColor
-                ),
-        shape = RoundedCornerShape(CornerRadius.md),
-        border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.cardColors(containerColor = surface)
-    ) {
+    ElevatedCard(modifier = modifier, accentColor = primary) {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Column {
                 Text(

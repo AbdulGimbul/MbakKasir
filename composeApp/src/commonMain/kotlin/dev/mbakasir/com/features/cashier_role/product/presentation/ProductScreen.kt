@@ -31,12 +31,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.mbakasir.com.ui.component.DefaultTextField
+import dev.mbakasir.com.ui.component.EmptyStateView
 import dev.mbakasir.com.ui.component.ProductItem
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -92,9 +93,9 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
             state = pullToRefreshState,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(Spacing.lg)) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xxl),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -111,9 +112,9 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
                 DefaultTextField(
                     value = search,
                     onValueChange = { search = it },
-                    placehoder = "Search ...",
+                    placeholder = "Search ...",
                     leadingIcon = Icons.Default.Search,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl)
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -157,13 +158,17 @@ fun Product(uiState: ProductUiState, listState: LazyListState, onRefresh: () -> 
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn(state = listState) {
-                    items(uiState.productList) { product ->
-                        ProductItem(
-                            product = product,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                Spacer(modifier = Modifier.height(Spacing.lg))
+                if (uiState.productList.isEmpty() && !uiState.isLoading) {
+                    EmptyStateView(message = "Belum ada data barang.")
+                } else {
+                    LazyColumn(state = listState) {
+                        items(uiState.productList) { product ->
+                            ProductItem(
+                                product = product,
+                                modifier = Modifier.padding(vertical = Spacing.xs)
+                            )
+                        }
                     }
                 }
             }

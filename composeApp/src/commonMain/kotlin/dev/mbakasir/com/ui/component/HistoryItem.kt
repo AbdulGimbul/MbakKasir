@@ -12,8 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,18 +20,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.mbakasir.com.ui.theme.CornerRadius
-import dev.mbakasir.com.ui.theme.Elevation
 import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.blue
+
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.secondaryText
-import dev.mbakasir.com.ui.theme.shadowColor
 import dev.mbakasir.com.ui.theme.strokeLight
-import dev.mbakasir.com.ui.theme.surface
 
 @Composable
 fun HistoryItem(
@@ -45,19 +40,7 @@ fun HistoryItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier =
-            modifier.fillMaxWidth()
-                .shadow(
-                    elevation = Elevation.xs,
-                    shape = RoundedCornerShape(CornerRadius.md),
-                    ambientColor = shadowColor,
-                    spotColor = shadowColor
-                ),
-        shape = RoundedCornerShape(CornerRadius.md),
-        border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.cardColors(containerColor = surface)
-    ) {
+    ElevatedCard(modifier = modifier, accentColor = blue) {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -65,7 +48,7 @@ fun HistoryItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.AccessTime,
-                    contentDescription = "Time",
+                    contentDescription = "Waktu",
                     tint = secondaryText,
                     modifier = Modifier.padding(end = Spacing.xs)
                 )

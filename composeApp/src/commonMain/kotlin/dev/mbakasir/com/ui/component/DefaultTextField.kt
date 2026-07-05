@@ -42,7 +42,7 @@ fun DefaultTextField(
     isPassword: Boolean = false,
     minLines: Int = 1,
     singleLine: Boolean = true,
-    placehoder: String? = null,
+    placeholder: String? = null,
     keyboardOptions: KeyboardOptions? = null,
     visualTransformation: VisualTransformation? = null,
     isError: Boolean = false,
@@ -159,8 +159,8 @@ fun DefaultTextField(
                 }
             } else null,
         placeholder =
-            if (placehoder != null) {
-                { Text(text = placehoder, color = secondaryText) }
+            if (placeholder != null) {
+                { Text(text = placeholder, color = secondaryText) }
             } else null,
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
     )
