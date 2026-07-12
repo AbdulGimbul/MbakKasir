@@ -35,6 +35,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.admin_role.home.presentation.HomeScreen
 import dev.mbakasir.com.features.admin_role.product.StockOpnamePreviewScreen
@@ -53,18 +54,18 @@ import dev.mbakasir.com.features.admin_role.product.presentation.ProductViewMode
 @Composable
 fun AdminNavHost(
     navController: NavHostController,
-    windowSize: WindowWidthSizeClass,
+    windowSizeClass: WindowSizeClass,
     parentNavController: NavHostController,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val navigationType: MbakKasirNavigationType =
-        when (windowSize) {
-            WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-            WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-            else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        }
+    @Suppress("DEPRECATION")
+    val navigationType = when (windowSizeClass.windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+        else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+    }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {

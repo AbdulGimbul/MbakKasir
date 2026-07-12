@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -90,7 +92,7 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                     Box(
                         modifier =
                             Modifier.fillMaxWidth()
-                                .height(280.dp)
+                                .heightIn(min = 280.dp)
                                 .clip(
                                     RoundedCornerShape(
                                         bottomEnd = CornerRadius.xl,
@@ -241,7 +243,7 @@ fun StoreInformationCard(store: Toko) {
                         fontWeight = FontWeight.SemiBold
                     ),
                 color = dark,
-                maxLines = 1
+                maxLines = 2
             )
             Spacer(modifier = Modifier.height(Spacing.sm))
             InfoRow(label = "Nama", info = store.nama)

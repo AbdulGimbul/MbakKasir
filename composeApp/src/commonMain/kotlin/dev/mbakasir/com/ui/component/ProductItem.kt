@@ -35,7 +35,7 @@ fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
                             fontWeight = FontWeight.Medium
                         ),
                     modifier = Modifier.padding(bottom = Spacing.xs),
-                    maxLines = 1
+                    maxLines = 2
                 )
                 Text(
                     text = product.namaBarang,
@@ -60,7 +60,7 @@ fun ProductItem(product: ProductEntity, modifier: Modifier = Modifier) {
                         MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
-                    maxLines = 1
+                    maxLines = 2
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

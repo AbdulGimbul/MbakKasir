@@ -56,7 +56,7 @@ fun SalesItem(
                     text = product.draft.dateTime,
                     color = secondaryText,
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
             Spacer(modifier = Modifier.height(Spacing.lg))
@@ -108,14 +108,14 @@ fun ItemRowSales(label: String, value: String, color: Color) {
             text = label,
             color = color,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            maxLines = 1,
+            maxLines = 2,
             modifier = Modifier.weight(1f, fill = false)
         )
         Text(
             text = value,
             color = dark,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            maxLines = 1
+            maxLines = 2
         )
     }
 }

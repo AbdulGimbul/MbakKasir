@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -172,7 +173,8 @@ fun DefaultButton(
                                     trim = LineHeightStyle.Trim.None
                                 )
                         ),
-                    maxLines = 1
+                    maxLines = 1,
+                    modifier = Modifier.basicMarquee()
                 )
             }
         }

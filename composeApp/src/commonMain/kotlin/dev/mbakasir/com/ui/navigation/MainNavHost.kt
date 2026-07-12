@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.savedstate.read
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import dev.mbakasir.com.features.auth.presentation.login.LoginScreen
 import dev.mbakasir.com.features.auth.presentation.login.LoginViewModel
 import dev.mbakasir.com.storage.SessionHandler
@@ -27,7 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 private const val NAV_ANIM_DURATION = 300
 
 @Composable
-fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeClass) {
+fun MainNavHost(navController: NavHostController, windowSizeClass: WindowSizeClass) {
     val sessionHandler: SessionHandler = koinInject()
     val token by sessionHandler.getToken().collectAsStateWithLifecycle("")
 
@@ -86,7 +86,7 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
             val role = backStackEntry.arguments?.read { getStringOrNull("role") } ?: ""
             CashierNavHost(
                 navController = rememberNavController(),
-                windowSize = windowSize,
+                windowSizeClass = windowSizeClass,
                 parentNavController = navController,
                 role = role
             )
@@ -95,7 +95,7 @@ fun MainNavHost(navController: NavHostController, windowSize: WindowWidthSizeCla
         composable(MainScreen.Admin.route) {
             AdminNavHost(
                 navController = rememberNavController(),
-                windowSize = windowSize,
+                windowSizeClass = windowSizeClass,
                 parentNavController = navController
             )
         }

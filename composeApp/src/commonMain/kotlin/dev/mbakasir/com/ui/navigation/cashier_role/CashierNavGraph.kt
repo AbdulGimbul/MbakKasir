@@ -39,6 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.savedstate.read
+import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileScreen
 import dev.mbakasir.com.features.auth.presentation.profile.ProfileViewModel
@@ -67,7 +68,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CashierNavHost(
     navController: NavHostController,
-    windowSize: WindowWidthSizeClass,
+    windowSizeClass: WindowSizeClass,
     parentNavController: NavHostController,
     role: String
 ) {
@@ -90,12 +91,12 @@ fun CashierNavHost(
             navigationItems
         }
 
-    val navigationType: MbakKasirNavigationType =
-        when (windowSize) {
-            WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-            WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
-            else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
-        }
+    @Suppress("DEPRECATION")
+    val navigationType = when (windowSizeClass.windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+        WindowWidthSizeClass.EXPANDED -> MbakKasirNavigationType.PERMANENT_NAVIGATION_DRAWER
+        else -> MbakKasirNavigationType.BOTTOM_NAVIGATION
+    }
 
     when (navigationType) {
         MbakKasirNavigationType.BOTTOM_NAVIGATION -> {
