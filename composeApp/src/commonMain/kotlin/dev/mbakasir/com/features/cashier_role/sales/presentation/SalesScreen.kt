@@ -35,18 +35,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import dev.mbakasir.com.ui.component.DefaultTextField
+import dev.mbakasir.com.ui.component.EmptyStateView
 import dev.mbakasir.com.ui.component.EnhancedLoading
 import dev.mbakasir.com.ui.component.SalesItem
 import dev.mbakasir.com.ui.navigation.cashier_role.CashierScreen
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
-import io.github.alexzhirkevich.compottie.Compottie
-import io.github.alexzhirkevich.compottie.LottieCompositionSpec
-import io.github.alexzhirkevich.compottie.rememberLottieComposition
-import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.ic_notes
-import mbakkasir.composeapp.generated.resources.msg_data_not_available
 import mbakkasir.composeapp.generated.resources.placeholder_search
 import mbakkasir.composeapp.generated.resources.title_penjualan
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -82,9 +79,6 @@ fun Sales(
     moveToHistory: () -> Unit
 ) {
     var search by remember { mutableStateOf("") }
-    val composition by rememberLottieComposition {
-        LottieCompositionSpec.JsonString(Res.readBytes("files/nodata.json").decodeToString())
-    }
     val state = rememberMessageBarState()
 
     LaunchedEffect(uiState.errorMessage) {
@@ -101,9 +95,9 @@ fun Sales(
         if (uiState.isLoading) {
             EnhancedLoading()
         } else {
-            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(Spacing.lg)) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xxl),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -120,7 +114,7 @@ fun Sales(
                         Icon(
                             painter = painterResource(Res.drawable.ic_notes),
                             tint = primary,
-                            contentDescription = null,
+                            contentDescription = "Riwayat",
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -128,11 +122,11 @@ fun Sales(
                 DefaultTextField(
                     value = search,
                     onValueChange = { search = it },
-                    placehoder = stringResource(Res.string.placeholder_search),
+                    placeholder = stringResource(Res.string.placeholder_search),
                     leadingIcon = Icons.Default.Search,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.lg))
                 if (uiState.draftList.isNotEmpty()) {
                     LazyColumn {
                         items(uiState.draftList) { product ->
@@ -149,30 +143,12 @@ fun Sales(
                                         moveToEntrySales(product.draft.draftId)
                                     }
                                 },
-                                modifier = Modifier.padding(vertical = 4.dp)
+                                modifier = Modifier.padding(vertical = Spacing.xs)
                             )
                         }
                     }
                 } else {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter =
-                                rememberLottiePainter(
-                                    composition = composition,
-                                    iterations = Compottie.IterateForever
-                                ),
-                            contentDescription = "Lottie animation",
-                            modifier = Modifier.size(170.dp)
-                        )
-                        Text(
-                            stringResource(Res.string.msg_data_not_available),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
+                    EmptyStateView(message = "Belum ada data penjualan.")
                 }
             }
         }

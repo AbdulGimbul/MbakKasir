@@ -25,7 +25,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import dev.mbakasir.com.ui.component.LottieLoadingIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -38,7 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,8 +46,11 @@ import androidx.navigation.NavController
 import dev.mbakasir.com.features.auth.domain.Toko
 import dev.mbakasir.com.features.auth.domain.User
 import dev.mbakasir.com.ui.navigation.MainScreen
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.primaryDark
 import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.red
 import dev.mbakasir.com.utils.getBrowserHelper
@@ -75,7 +78,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
 fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
     if (uiState.isLoading) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(color = primary)
+            LottieLoadingIndicator()
         }
     } else {
         Column(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface).statusBarsPadding()) {
@@ -83,40 +86,49 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                 modifier =
                     Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())
             ) {
-                Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                Box(modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.lg)) {
                     Box(
                         modifier =
                             Modifier.fillMaxWidth()
                                 .height(280.dp)
                                 .clip(
                                     RoundedCornerShape(
-                                        bottomEnd = 16.dp,
-                                        bottomStart = 16.dp
+                                        bottomEnd = CornerRadius.xl,
+                                        bottomStart = CornerRadius.xl
                                     )
                                 )
-                                .background(Color.White),
+                                .background(MaterialTheme.colorScheme.surface),
                     )
-                    Box(modifier = Modifier.fillMaxWidth().height(150.dp).background(primary))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(primary, primaryDark)
+                                )
+                            )
+                    )
                     uiState.user?.userInfo?.let { UserInfoHeader(it) }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.sm))
                 uiState.user?.storeInfo?.let {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Box(modifier = Modifier.padding(horizontal = Spacing.lg)) {
                         StoreInformationCard(it)
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.lg))
                 OutlinedButton(
                     onClick = { onEvent(ProfileUiEvent.OnShowAlertDialog) },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(width = 1.dp, color = red),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    shape = RoundedCornerShape(CornerRadius.md),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Logout,
                         contentDescription = "Logout",
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier.padding(Spacing.xs)
                     )
                     Text(
                         text = "Logout",
@@ -124,14 +136,14 @@ fun Profile(uiState: ProfileUiState, onEvent: (ProfileUiEvent) -> Unit) {
                             MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(Spacing.xs),
                         maxLines = 1,
                         softWrap = false
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.lg))
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(Spacing.lg),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
@@ -207,7 +219,7 @@ fun UserInfoHeader(user: User) {
                     fontWeight = FontWeight.SemiBold,
                 ),
             color = dark,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = Spacing.sm)
         )
         Text(text = user.username, style = MaterialTheme.typography.bodyMedium, color = dark)
         Text(text = user.role, style = MaterialTheme.typography.bodyMedium, color = primaryText)
@@ -217,11 +229,11 @@ fun UserInfoHeader(user: User) {
 @Composable
 fun StoreInformationCard(store: Toko) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(CornerRadius.xl),
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(Spacing.md)) {
             Text(
                 text = "Informasi Toko",
                 style =
@@ -231,7 +243,7 @@ fun StoreInformationCard(store: Toko) {
                 color = dark,
                 maxLines = 1
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(Spacing.sm))
             InfoRow(label = "Nama", info = store.nama)
             InfoRow(label = "Alamat", info = store.alamat)
             InfoRow(label = "Telp", info = store.telp)
@@ -242,7 +254,7 @@ fun StoreInformationCard(store: Toko) {
 @Composable
 fun InfoRow(label: String, info: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.xs),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

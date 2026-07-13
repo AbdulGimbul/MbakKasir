@@ -283,7 +283,7 @@ fun Payment(
                                 )
                             }
                         },
-                        placehoder =
+                        placeholder =
                             if (selectedOption == "QRIS")
                                 "Dari? (Mandiri/BNI/BRI dst)"
                             else "Nominal Uang",

@@ -42,9 +42,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import dev.mbakasir.com.ui.component.EmptyStateView
 import dev.mbakasir.com.ui.component.HeadlineText
 import dev.mbakasir.com.ui.component.StockOpnameItem
 import dev.mbakasir.com.ui.navigation.admin_role.AdminScreen
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.secondaryText
@@ -96,8 +99,8 @@ fun StockOpname(
     var isDateRangePickerVisible by remember { mutableStateOf(false) }
     var selectedDateRange by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        HeadlineText("Stock Opname", modifier = Modifier.padding(bottom = 32.dp))
+    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
+        HeadlineText("Stock Opname", modifier = Modifier.padding(bottom = Spacing.xxl))
         OutlinedTextField(
             value = selectedDateRange,
             onValueChange = {},
@@ -117,7 +120,7 @@ fun StockOpname(
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             singleLine = true,
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(CornerRadius.md),
             colors =
                 OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = stroke,
@@ -126,7 +129,7 @@ fun StockOpname(
                     focusedLabelColor = primary,
                     unfocusedLabelColor = secondaryText,
                 ),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xl),
         )
 
         if (isDateRangePickerVisible) {
@@ -165,18 +168,22 @@ fun StockOpname(
             )
         }
 
-        LazyColumn(state = listState) {
-            uiState.stockOpname?.let { stock ->
-                items(stock.data) { it ->
-                    StockOpnameItem(
-                        price = it.nilai,
-                        date = it.tanggal,
-                        barcode = it.namaBarang,
-                        onPreviewClick = {},
-                        onDeleteClick = {},
-                        productName = it.keterangan,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
+        if (uiState.stockOpname?.data.isNullOrEmpty() && !uiState.isLoading) {
+            EmptyStateView(message = "Belum ada data stock opname.")
+        } else {
+            LazyColumn(state = listState) {
+                uiState.stockOpname?.let { stock ->
+                    items(stock.data) { it ->
+                        StockOpnameItem(
+                            price = it.nilai,
+                            date = it.tanggal,
+                            barcode = it.namaBarang,
+                            onPreviewClick = {},
+                            onDeleteClick = {},
+                            productName = it.keterangan,
+                            modifier = Modifier.padding(vertical = Spacing.xs)
+                        )
+                    }
                 }
             }
         }

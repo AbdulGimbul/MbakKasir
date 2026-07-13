@@ -13,7 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.CircularProgressIndicator
+import dev.mbakasir.com.ui.component.LottieLoadingIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -211,7 +211,7 @@ fun EntryStockOpname(
         DefaultTextField(
             value = uiState.product.jumlah,
             onValueChange = { onEvent(EntryStockOpnameUiEvent.OnJumlahChanged(it)) },
-            placehoder = "Input Stok Nyata",
+            placeholder = "Input Stok Nyata",
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
         Text(
@@ -223,13 +223,13 @@ fun EntryStockOpname(
         DefaultTextField(
             value = uiState.product.keterangan,
             onValueChange = { onEvent(EntryStockOpnameUiEvent.OnKeteranganChanged(it)) },
-            placehoder = "Input Keterangan",
+            placeholder = "Input Keterangan",
             minLines = 2,
             singleLine = false,
             modifier = Modifier.fillMaxWidth(),
         )
         if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 24.dp))
+            LottieLoadingIndicator(modifier = Modifier.padding(top = 24.dp))
         } else {
             DefaultButton(
                 text = "Simpan",

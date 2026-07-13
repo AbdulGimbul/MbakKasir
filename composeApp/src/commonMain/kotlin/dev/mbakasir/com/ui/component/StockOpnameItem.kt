@@ -14,12 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Spacing
 import dev.mbakasir.com.ui.theme.blue
 import dev.mbakasir.com.ui.theme.dark
 import dev.mbakasir.com.ui.theme.icon
+import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.red
 import dev.mbakasir.com.utils.currencyFormat
@@ -44,13 +45,8 @@ fun StockOpnameItem(
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.outlinedCardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+    OutlinedCardComponent(modifier = modifier, accentColor = primary) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.md)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,8 +56,8 @@ fun StockOpnameItem(
                     Icon(
                         imageVector = Icons.Default.AccessTime,
                         tint = icon,
-                        contentDescription = "Lock Clock",
-                        modifier = Modifier.padding(end = 4.dp)
+                        contentDescription = "Waktu",
+                        modifier = Modifier.padding(end = Spacing.xs)
                     )
                     Text(
                         text = date,
@@ -77,9 +73,9 @@ fun StockOpnameItem(
                         )
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
             HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.lg))
             Column {
                 Text(
                     text = barcode,
@@ -98,7 +94,7 @@ fun StockOpnameItem(
                         )
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Spacing.xs))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -110,15 +106,15 @@ fun StockOpnameItem(
                             containerColor = blue,
                             contentColor = Color.White
                         ),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(CornerRadius.xxl),
                     modifier = Modifier.weight(1f)
                 ) { Text("Preview") }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(Spacing.md))
                 OutlinedButton(
                     onClick = onDeleteClick,
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = red),
                     border = BorderStroke(width = 1.dp, color = red),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(CornerRadius.xxl),
                     modifier = Modifier.weight(1f)
                 ) { Text("Delete") }
             }

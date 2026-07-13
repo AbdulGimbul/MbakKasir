@@ -1,5 +1,8 @@
 package dev.mbakasir.com.ui.navigation.cashier_role
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -188,7 +191,11 @@ fun NavHostContent(
     NavHost(
         navController = navController,
         startDestination = CashierScreen.Home.route,
-        modifier = Modifier.padding(innerPadding)
+        modifier = Modifier.padding(innerPadding),
+        enterTransition = { fadeIn(animationSpec = tween(300)) },
+        exitTransition = { fadeOut(animationSpec = tween(300)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(300)) },
+        popExitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
         composable(CashierScreen.Home.route) {
             HomeScreen(viewModel = koinViewModel<HomeViewModel>())

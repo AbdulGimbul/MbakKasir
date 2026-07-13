@@ -90,19 +90,21 @@ class LoginViewModel(
                         if (error is NetworkException.UnauthorizedException) {
                             // salesRepository.deleteAllDrafts() // Removed to persist drafts
                             // per user
-                            updateState { it.copy(errorMessage = error.message) }
+                            updateState {
+                                it.copy(errorMessage = error.message, isLoading = false)
+                            }
                         } else {
                             // Offline or other error: Check if we have a valid session locally
                             val role = authRepository.getRole()
                             if (role.isNotEmpty()) {
                                 _uiState.value = LoginUiState.Authenticated(role = role)
                             } else {
-                                updateState { it.copy(errorMessage = error.message) }
+                                updateState {
+                                    it.copy(errorMessage = error.message, isLoading = false)
+                                }
                             }
                         }
                     }
-
-                updateState { it.copy(isLoading = false) }
             }
         }
     }

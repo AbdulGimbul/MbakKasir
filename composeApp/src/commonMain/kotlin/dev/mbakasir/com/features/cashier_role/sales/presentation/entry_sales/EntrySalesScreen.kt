@@ -468,7 +468,7 @@ fun EntrySalesAndPayment(
                                 val formatted = formatCurrencyInput(it)
                                 paymentOnEvent(PaymentUiEvent.UangDiterimaChanged(formatted))
                             },
-                            placehoder = "Nominal Uang",
+                            placeholder = "Nominal Uang",
                             keyboardOptions =
                                 KeyboardOptions(keyboardType = KeyboardType.Number),
                             visualTransformation = CurrencyVisualTransformation(),

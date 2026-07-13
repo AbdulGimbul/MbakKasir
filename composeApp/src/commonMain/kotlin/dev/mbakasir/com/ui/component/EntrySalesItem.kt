@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,6 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.mbakasir.com.ui.theme.CornerRadius
+import dev.mbakasir.com.ui.theme.Spacing
+import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.utils.currencyFormat
 
 @Composable
@@ -48,39 +51,28 @@ fun EntrySalesItem(
             else -> 0
         }
 
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        border =
-            CardDefaults.outlinedCardBorder(
-                enabled = true,
-            ),
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = Color.White,
-            )
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    OutlinedCardComponent(modifier = modifier, accentColor = primary) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg)) {
             Column {
                 Text(
                     text = "[${product.kodeBarang}] ${product.barcode}",
-                    color = dev.mbakasir.com.ui.theme.primaryText,
+                    color = primaryText,
                     style =
                         MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = Spacing.xs)
                 )
                 Text(
                     text = product.namaBarang,
-                    color = dev.mbakasir.com.ui.theme.dark,
+                    color = dark,
                     style =
                         MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                 )
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
@@ -97,11 +89,11 @@ fun EntrySalesItem(
                                         androidx.compose.ui.text.style
                                             .TextDecoration.LineThrough
                                 ),
-                            color = dev.mbakasir.com.ui.theme.secondaryText
+                            color = secondaryText
                         )
                         Text(
                             text = currencyFormat(specialPrice.toDouble()),
-                            color = dev.mbakasir.com.ui.theme.dark,
+                            color = dark,
                             style =
                                 MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.SemiBold
@@ -111,7 +103,7 @@ fun EntrySalesItem(
                 } else {
                     Text(
                         text = currencyFormat(product.hargaItem.toDouble()),
-                        color = dev.mbakasir.com.ui.theme.dark,
+                        color = dark,
                         style =
                             MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
@@ -120,22 +112,22 @@ fun EntrySalesItem(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
                     IconButton(
                         onClick = { onDecreaseQty(product) },
                         modifier =
                             Modifier.border(
                                 width = 1.dp,
-                                color = dev.mbakasir.com.ui.theme.primary,
+                                color = primary,
                                 shape = CircleShape
                             )
-                                .size(24.dp),
+                                .size(36.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
-                            contentDescription = "Remove",
-                            tint = dev.mbakasir.com.ui.theme.primary
+                            contentDescription = "Kurangi jumlah",
+                            tint = primary
                         )
                     }
                     Text(
@@ -144,21 +136,21 @@ fun EntrySalesItem(
                             MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
-                        color = dev.mbakasir.com.ui.theme.dark,
+                        color = dark,
                         textAlign = TextAlign.Center
                     )
                     IconButton(
                         onClick = { onIncreaseQty(product) },
                         modifier =
                             Modifier.background(
-                                color = dev.mbakasir.com.ui.theme.primary,
+                                color = primary,
                                 shape = CircleShape
                             )
-                                .size(24.dp),
+                                .size(36.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add",
+                            contentDescription = "Tambah jumlah",
                             tint = Color.White
                         )
                     }
