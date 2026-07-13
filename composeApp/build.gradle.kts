@@ -155,7 +155,7 @@ android {
         applicationId = "dev.mbakasir.com"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 6
+        versionCode = 8
         versionName = "1.0.0"
     }
     packaging {
