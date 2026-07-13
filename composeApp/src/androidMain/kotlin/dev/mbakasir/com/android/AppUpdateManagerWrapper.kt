@@ -1,66 +1,65 @@
 package dev.mbakasir.com.android
 
-import androidx.activity.ComponentActivity
+import android.content.Context
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 
-class AppUpdateManagerWrapper(private val activity: ComponentActivity) {
+class AppUpdateManagerWrapper(
+    context: Context,
+    private val updateLauncher: ActivityResultLauncher<IntentSenderRequest>
+) {
 
-    private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(activity)
+    private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context)
     private val updateType = AppUpdateType.IMMEDIATE
-    private val requestCode = 12345
 
     fun checkForUpdate() {
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                appUpdateInfo.isUpdateTypeAllowed(updateType)
-            ) {
-                // Request the update
-                appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    activity,
-                    AppUpdateOptions.newBuilder(updateType).build(),
-                    requestCode
-                )
-            }
-        }
-    }
-
-    fun processActivityResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == this.requestCode) {
-            when (resultCode) {
-                android.app.Activity.RESULT_CANCELED -> {
-                    // If the update is cancelled by the user, request it again.
-                    // This forces the user to update.
-                    checkForUpdate()
-                }
-
-                com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
-                    // If the update failed, request it again or handle failure.
-                    checkForUpdate()
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                    appUpdateInfo.isUpdateTypeAllowed(updateType)
+                ) {
+                    Log.d(TAG, "Update available, starting update flow")
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        updateLauncher,
+                        AppUpdateOptions.newBuilder(updateType).build()
+                    )
+                } else {
+                    Log.d(TAG, "No update available or update type not allowed")
                 }
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Failed to check for update", exception)
+            }
     }
 
     fun onResume() {
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() ==
-                UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-            ) {
-                // If an in-app update is already in progress, resume the update.
-                appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    activity,
-                    AppUpdateOptions.newBuilder(updateType).build(),
-                    requestCode
-                )
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() ==
+                    UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    Log.d(TAG, "Update in progress, resuming update flow")
+                    // If an in-app update is already in progress, resume the update.
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        updateLauncher,
+                        AppUpdateOptions.newBuilder(updateType).build()
+                    )
+                }
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Failed to check update status on resume", exception)
+            }
+    }
+
+    companion object {
+        private const val TAG = "AppUpdateManager"
     }
 }
