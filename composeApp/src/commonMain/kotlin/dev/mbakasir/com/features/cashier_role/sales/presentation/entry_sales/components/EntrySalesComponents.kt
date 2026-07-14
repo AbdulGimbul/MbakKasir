@@ -1,5 +1,6 @@
 package dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,10 +41,17 @@ import dev.mbakasir.com.features.cashier_role.sales.presentation.entry_sales.Ent
 import dev.mbakasir.com.features.cashier_role.sales.presentation.payment.SummaryRow
 import dev.mbakasir.com.ui.component.FooterButton
 import dev.mbakasir.com.ui.theme.dark
+import dev.mbakasir.com.ui.theme.green
+import dev.mbakasir.com.ui.theme.greenLight
 import dev.mbakasir.com.ui.theme.primary
+import dev.mbakasir.com.ui.theme.primaryContainer
 import dev.mbakasir.com.ui.theme.primaryText
+import dev.mbakasir.com.ui.theme.red
+import dev.mbakasir.com.ui.theme.redLight
 import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
+import dev.mbakasir.com.ui.theme.strokeLight
+import dev.mbakasir.com.ui.theme.surfaceContainer
 import dev.mbakasir.com.utils.currencyFormat
 import mbakkasir.composeapp.generated.resources.Res
 import mbakkasir.composeapp.generated.resources.cancel
@@ -65,10 +73,9 @@ fun ProductSearchSection(
     draftId: String,
     onEvent: (EntrySalesUiEvent) -> Unit
 ) {
-    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
+    val expanded = uiState.searchResults.isNotEmpty()
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {}) {
         OutlinedTextField(
             value = uiState.inputUser,
             onValueChange = { newBarcode ->
@@ -111,51 +118,71 @@ fun ProductSearchSection(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
-            modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
+            onDismissRequest = { },
+            modifier = Modifier.fillMaxWidth().heightIn(max = 300.dp)
         ) {
-            uiState.searchResults.forEach { product ->
-                val displayText =
-                    when {
-                        product.barcode.contains(
-                            uiState.inputUser,
-                            ignoreCase = true
-                        ) -> product.barcode
-
-                        product.namaBarang.contains(
-                            uiState.inputUser,
-                            ignoreCase = true
-                        ) -> product.namaBarang
-
-                        product.kodeBarang.contains(
-                            uiState.inputUser,
-                            ignoreCase = true
-                        ) -> product.kodeBarang
-
-                        else -> ""
-                    }
-
-                if (displayText.isNotEmpty()) {
-                    DropdownMenuItem(
-                        onClick = {
-                            onEvent(
-                                EntrySalesUiEvent.ScanProduct(
-                                    draftId,
-                                    product.barcode
+            uiState.searchResults.forEachIndexed { index, product ->
+                DropdownMenuItem(
+                    onClick = {
+                        onEvent(
+                            EntrySalesUiEvent.ScanProduct(
+                                draftId,
+                                product.barcode
+                            )
+                        )
+                        onEvent(
+                            EntrySalesUiEvent
+                                .OnInputUserChanged("")
+                        )
+                        onEvent(EntrySalesUiEvent.SearchProduct)
+                    },
+                    text = {
+                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = product.namaBarang,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    color = dark,
+                                    maxLines = 1,
+                                    modifier = Modifier.weight(1f).padding(end = 8.dp)
                                 )
+                                Text(
+                                    text = currencyFormat(
+                                        product.hargaJual.toDoubleOrNull() ?: 0.0
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    color = primaryText
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = buildString {
+                                    append(product.kodeBarang)
+                                    append("  ·  Stok: ${product.stok}")
+                                    if (product.satuan.isNotEmpty()) {
+                                        append("  ·  ${product.satuan}")
+                                    }
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = secondaryText,
+                                maxLines = 1
                             )
-                            onEvent(
-                                EntrySalesUiEvent
-                                    .OnInputUserChanged("")
-                            )
-                            onEvent(EntrySalesUiEvent.SearchProduct)
-                            setExpanded(false)
-                        },
-                        text = { Text(displayText) },
-                        contentPadding =
-                            ExposedDropdownMenuDefaults
-                                .ItemContentPadding
-                    )
+                        }
+                    },
+                    contentPadding =
+                        ExposedDropdownMenuDefaults
+                            .ItemContentPadding
+                )
+                if (index < uiState.searchResults.lastIndex) {
+                    HorizontalDivider(color = stroke)
                 }
             }
         }

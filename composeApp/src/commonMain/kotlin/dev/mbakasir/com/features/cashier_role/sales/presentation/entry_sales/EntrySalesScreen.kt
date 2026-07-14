@@ -187,6 +187,15 @@ fun EntrySales(
                                     )
                                 )
                             },
+                            onQtyChanged = { product, qty ->
+                                onEvent(
+                                    EntrySalesUiEvent.SetProductQty(
+                                        draftId.toString(),
+                                        product,
+                                        qty
+                                    )
+                                )
+                            },
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
@@ -359,6 +368,15 @@ fun EntrySalesAndPayment(
                                         EntrySalesUiEvent.DecreaseProductQty(
                                             draftId.toString(),
                                             it
+                                        )
+                                    )
+                                },
+                                onQtyChanged = { product, qty ->
+                                    entryOnEvent(
+                                        EntrySalesUiEvent.SetProductQty(
+                                            draftId.toString(),
+                                            product,
+                                            qty
                                         )
                                     )
                                 },
