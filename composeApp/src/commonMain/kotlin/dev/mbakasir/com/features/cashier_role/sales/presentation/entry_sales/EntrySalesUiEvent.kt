@@ -16,6 +16,9 @@ sealed class EntrySalesUiEvent {
     data class DecreaseProductQty(val draftId: String, val product: ProductTransEntity) :
         EntrySalesUiEvent()
 
+    data class SetProductQty(val draftId: String, val product: ProductTransEntity, val qty: Int) :
+        EntrySalesUiEvent()
+
     data class DeleteProduct(val draftId: String) : EntrySalesUiEvent()
     data class LoadScannedProducts(val draftId: String) : EntrySalesUiEvent()
     data class OnSearchCustChanged(val searchCust: String) : EntrySalesUiEvent()

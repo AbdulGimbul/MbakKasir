@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -68,6 +69,10 @@ class EntrySalesViewModel(
 
             is EntrySalesUiEvent.DecreaseProductQty -> {
                 decreaseProductQty(event.draftId, event.product)
+            }
+
+            is EntrySalesUiEvent.SetProductQty -> {
+                setProductQty(event.draftId, event.product, event.qty)
             }
 
             is EntrySalesUiEvent.DeleteProduct -> {
@@ -142,7 +147,11 @@ class EntrySalesViewModel(
 
     private fun increaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qtyJual + 1
+            val currentProducts = salesRepository.getProductsFromDraft(draftId).first()
+            val currentQty =
+                currentProducts.find { it.idBarang == product.idBarang }?.qtyJual
+                    ?: product.qtyJual
+            val newQty = currentQty + 1
             salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
             loadScannedProducts(draftId)
         }
@@ -150,8 +159,19 @@ class EntrySalesViewModel(
 
     private fun decreaseProductQty(draftId: String, product: ProductTransEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newQty = product.qtyJual - 1
+            val currentProducts = salesRepository.getProductsFromDraft(draftId).first()
+            val currentQty =
+                currentProducts.find { it.idBarang == product.idBarang }?.qtyJual
+                    ?: product.qtyJual
+            val newQty = currentQty - 1
             salesRepository.updateProductTransInDraft(draftId, product.idBarang, newQty)
+            loadScannedProducts(draftId)
+        }
+    }
+
+    private fun setProductQty(draftId: String, product: ProductTransEntity, qty: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            salesRepository.updateProductTransInDraft(draftId, product.idBarang, qty)
             loadScannedProducts(draftId)
         }
     }

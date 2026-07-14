@@ -65,10 +65,9 @@ fun ProductSearchSection(
     draftId: String,
     onEvent: (EntrySalesUiEvent) -> Unit
 ) {
-    val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
-    val expanded = allowExpanded && uiState.searchResults.isNotEmpty()
+    val expanded = uiState.searchResults.isNotEmpty()
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {}) {
         OutlinedTextField(
             value = uiState.inputUser,
             onValueChange = { newBarcode ->
@@ -111,7 +110,7 @@ fun ProductSearchSection(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
+            onDismissRequest = { },
             modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
         ) {
             uiState.searchResults.forEach { product ->
@@ -149,7 +148,6 @@ fun ProductSearchSection(
                                     .OnInputUserChanged("")
                             )
                             onEvent(EntrySalesUiEvent.SearchProduct)
-                            setExpanded(false)
                         },
                         text = { Text(displayText) },
                         contentPadding =
