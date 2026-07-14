@@ -137,7 +137,7 @@ fun ProductSearchSection(
                         onEvent(EntrySalesUiEvent.SearchProduct)
                     },
                     text = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -182,10 +182,7 @@ fun ProductSearchSection(
                             .ItemContentPadding
                 )
                 if (index < uiState.searchResults.lastIndex) {
-                    HorizontalDivider(
-                        color = strokeLight,
-                        modifier = Modifier.padding(horizontal = 12.dp)
-                    )
+                    HorizontalDivider(color = stroke)
                 }
             }
         }
