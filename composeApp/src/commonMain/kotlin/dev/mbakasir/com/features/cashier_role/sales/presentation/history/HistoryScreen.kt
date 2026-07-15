@@ -53,6 +53,7 @@ import dev.mbakasir.com.ui.theme.primary
 import dev.mbakasir.com.ui.theme.primaryText
 import dev.mbakasir.com.ui.theme.secondaryText
 import dev.mbakasir.com.ui.theme.stroke
+import dev.mbakasir.com.utils.currencyFormat
 import dev.mbakasir.com.utils.formatDateForApi
 import kotlin.time.Clock
 
@@ -190,7 +191,7 @@ fun History(
                         HistoryItem(
                             date = it.tanggal,
                             method = it.method,
-                            total = it.bayar,
+                            total = currencyFormat(it.bayar.toDoubleOrNull() ?: 0.0),
                             invoiceNumber = it.invoice,
                             cashier = it.kasir,
                             modifier = Modifier.padding(vertical = Spacing.xs),

@@ -12,6 +12,8 @@ actual fun currencyFormat(value: Double): String {
         NSNumberFormatter().apply {
             numberStyle = NSNumberFormatterCurrencyStyle
             locale = NSLocale("in_ID")
+            minimumFractionDigits = 0u
+            maximumFractionDigits = 0u
         }
     return formatter.stringFromNumber(NSNumber(double = value)) ?: "$value"
 }
