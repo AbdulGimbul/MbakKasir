@@ -118,8 +118,7 @@ fun Invoice(
                 Modifier.fillMaxSize()
                     .background(Color.White)
                     .imePadding()
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
+                    .statusBarsPadding(),
         ) {
             Capturable(
                 modifier =
@@ -327,7 +326,6 @@ fun Invoice(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(32.dp))
             Column {
                 HorizontalDivider(modifier = Modifier.fillMaxWidth().width(1.dp))
                 Row(

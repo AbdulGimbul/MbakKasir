@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -104,7 +105,7 @@ fun History(
         )
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.lg).imePadding().statusBarsPadding()) {
+    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = Spacing.lg).padding(top = Spacing.lg)) {
         HeadlineText("History", modifier = Modifier.padding(bottom = Spacing.xxl))
 
         Box {
@@ -185,7 +186,7 @@ fun History(
         if (uiState.history?.data.isNullOrEmpty() && !uiState.isLoading) {
             EmptyStateView(message = "Belum ada riwayat transaksi.")
         } else {
-            LazyColumn(state = listState) {
+            LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
                 uiState.history?.let { hist ->
                     items(hist.data) { it ->
                         HistoryItem(
