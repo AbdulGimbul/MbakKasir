@@ -11,6 +11,8 @@ import java.util.Locale
 actual fun currencyFormat(value: Double): String {
     val indonesiaLocale = Locale("in", "ID")
     val format = NumberFormat.getCurrencyInstance(indonesiaLocale)
+    format.minimumFractionDigits = 0
+    format.maximumFractionDigits = 0
     return format.format(value)
 }
 
